@@ -102,7 +102,7 @@ public class ReferralPatientsController {
 			}
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, patientsDTO));
 
-			Patients patient = PatientsConverter.toPatients(patientsDTO);
+			ANCClients patient = PatientsConverter.toPatients(patientsDTO);
 			long healthfacilityPatientId = referralPatientService.savePatient(patient, patientsDTO.getHealthFacilityCode(), patientsDTO.getCtcNumber());
 
 			patientsDTO.setPatientId(healthfacilityPatientId);
@@ -174,7 +174,7 @@ public class ReferralPatientsController {
 			for (CTCPatientsDTO dto : patientsDTOS) {
 				try {
 					System.out.println("saving patient");
-					Patients patient = PatientsConverter.toPatients(dto);
+					ANCClients patient = PatientsConverter.toPatients(dto);
 
 					long healthfacilityPatientId = referralPatientService.savePatient(patient, dto.getHealthFacilityCode(), dto.getCtcNumber());
 
@@ -216,7 +216,7 @@ public class ReferralPatientsController {
 		try {
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, tbPatientMobileClientDTO));
 
-			Patients convertedPatient = PatientsConverter.toPatients(tbPatientMobileClientDTO);
+			ANCClients convertedPatient = PatientsConverter.toPatients(tbPatientMobileClientDTO);
 
 			System.out.println("Coze:Patient data = "+new Gson().toJson(convertedPatient));
 
@@ -240,7 +240,7 @@ public class ReferralPatientsController {
 					new Object[]{healthfacilityPatientId});
 
 			HealthFacilitiesPatients healthFacilitiesPatient = healthFacilitiesPatients.get(0);
-			List<Patients> patients = patientsRepository.getPatients("SELECT * FROM " + org.opensrp.domain.Patients.tbName + " WHERE " + org.opensrp.domain.Patients.COL_PATIENT_ID + "=?",
+			List<ANCClients> patients = patientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
 					new Object[]{healthFacilitiesPatient.getPatient().getPatientId()});
 
 			tbCompletePatientDataDTO.setPatientsDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
@@ -277,7 +277,7 @@ public class ReferralPatientsController {
 				try {
 					TBCompletePatientDataDTO tbCompletePatientDataDTO = new TBCompletePatientDataDTO();
 
-					List<Patients> patients = patientsRepository.getPatients("SELECT * FROM " + org.opensrp.domain.Patients.tbName + " WHERE " + org.opensrp.domain.Patients.COL_PATIENT_ID + "=?",
+					List<ANCClients> patients = patientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
 							new Object[]{healthFacilitiesPatient.getPatient().getPatientId()});
 
 					tbCompletePatientDataDTO.setPatientsDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
@@ -292,9 +292,9 @@ public class ReferralPatientsController {
 
 
 
-					List<TBEncounter> tbEncounters = tbEncounterRepository.getTBEncounters("SELECT * FROM " + TBEncounter.tbName + " WHERE " + TBEncounter.COL_TB_PATIENT_ID + "=?",
+					List<RoutineVisits> routineVisits = tbEncounterRepository.getTBEncounters("SELECT * FROM " + RoutineVisits.tbName + " WHERE " + RoutineVisits.COL_TB_PATIENT_ID + "=?",
 							new Object[]{tbPatients.get(0).getTbPatientId()});
-					tbCompletePatientDataDTO.setTbEncounterDTOS(PatientsConverter.toTbPatientEncounterDTOsList(tbEncounters));
+					tbCompletePatientDataDTO.setTbEncounterDTOS(PatientsConverter.toTbPatientEncounterDTOsList(routineVisits));
 
 
 
@@ -320,7 +320,7 @@ public class ReferralPatientsController {
 		TBEncounterDTO tbEncounterDTOS = new Gson().fromJson(json,TBEncounterDTO.class);
 		try {
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, tbEncounterDTOS));
-			TBEncounter encounter = PatientsConverter.toTBEncounter(tbEncounterDTOS);
+			RoutineVisits encounter = PatientsConverter.toTBEncounter(tbEncounterDTOS);
 
 			tbEncounterRepository.save(encounter);
 
@@ -328,32 +328,32 @@ public class ReferralPatientsController {
 					new Object[]{encounter.getAppointmentId()});
 
 			recalculateAppointments(patientAppointments.get(0).getHealthFacilityPatientId(),encounter.getAppointmentId(),encounter.getMedicationDate().getTime());
-			String encounterQuery = "SELECT * FROM " + TBEncounter.tbName + " WHERE " +
-					TBEncounter.COL_TB_PATIENT_ID + " = ?    AND " +
-					TBEncounter.COL_APPOINTMENT_ID + " = ?  ";
+			String encounterQuery = "SELECT * FROM " + RoutineVisits.tbName + " WHERE " +
+					RoutineVisits.COL_TB_PATIENT_ID + " = ?    AND " +
+					RoutineVisits.COL_APPOINTMENT_ID + " = ?  ";
 
 			Object[] tbEncountersParams = new Object[]{
 					encounter.getTbPatientId(),
 					encounter.getAppointmentId()};
 
-			List<TBEncounter> tbEncounters = null;
+			List<RoutineVisits> routineVisits = null;
 			try {
-				tbEncounters = tbEncounterRepository.getTBEncounters(encounterQuery, tbEncountersParams);
-				TBEncounter tbEncounter = tbEncounters.get(0);
+				routineVisits = tbEncounterRepository.getTBEncounters(encounterQuery, tbEncountersParams);
+				RoutineVisits routineVisits = routineVisits.get(0);
 
 				TBEncounterDTO tbEncounterDTO = new TBEncounterDTO();
-				tbEncounterDTO.setId(tbEncounter.getId());
-				tbEncounterDTO.setTbPatientId(tbEncounter.getTbPatientId());
-				tbEncounterDTO.setAppointmentId(tbEncounter.getAppointmentId());
-				tbEncounterDTO.setLocalID(tbEncounter.getLocalID());
-				tbEncounterDTO.setMakohozi(tbEncounter.getMakohozi());
-				tbEncounterDTO.setWeight(tbEncounter.getWeight());
-				tbEncounterDTO.setEncounterMonth(tbEncounter.getEncounterMonth());
-				tbEncounterDTO.setEncounterYear(tbEncounter.getEncounterYear());
-				tbEncounterDTO.setScheduledDate(tbEncounter.getScheduledDate().getTime());
-				tbEncounterDTO.setMedicationDate(tbEncounter.getMedicationDate().getTime());
-				tbEncounterDTO.setMedicationStatus(tbEncounter.isMedicationStatus());
-				tbEncounterDTO.setHasFinishedPreviousMonthMedication(tbEncounter.isHasFinishedPreviousMonthMedication());
+				tbEncounterDTO.setId(routineVisits.getId());
+				tbEncounterDTO.setTbPatientId(routineVisits.getTbPatientId());
+				tbEncounterDTO.setAppointmentId(routineVisits.getAppointmentId());
+				tbEncounterDTO.setLocalID(routineVisits.getLocalID());
+				tbEncounterDTO.setMakohozi(routineVisits.getMakohozi());
+				tbEncounterDTO.setWeight(routineVisits.getWeight());
+				tbEncounterDTO.setEncounterMonth(routineVisits.getEncounterMonth());
+				tbEncounterDTO.setEncounterYear(routineVisits.getEncounterYear());
+				tbEncounterDTO.setScheduledDate(routineVisits.getScheduledDate().getTime());
+				tbEncounterDTO.setMedicationDate(routineVisits.getMedicationDate().getTime());
+				tbEncounterDTO.setMedicationStatus(routineVisits.isMedicationStatus());
+				tbEncounterDTO.setHasFinishedPreviousMonthMedication(routineVisits.isHasFinishedPreviousMonthMedication());
 
 				TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
 				tbEncounterFeedbackDTO.setTbEncounterDTO(tbEncounterDTO);
@@ -429,7 +429,7 @@ public class ReferralPatientsController {
 
 			Object[] patientParams = new Object[]{
 					savedPatientReferrals.get(0).getPatient().getPatientId()};
-			List<Patients> patients = patientsRepository.getPatients("SELECT * FROM "+Patients.tbName+" WHERE "+Patients.COL_PATIENT_ID+" =?",patientParams);
+			List<ANCClients> patients = patientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" =?",patientParams);
 
 			PatientReferralsDTO patientReferralsDTO = new PatientReferralsDTO();
 			patientReferralsDTO.setPatientsDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
@@ -528,15 +528,15 @@ public class ReferralPatientsController {
 			e.printStackTrace();
 		}
 
-		List<Patients> patients = null;
+		List<ANCClients> patients = null;
 		try {
-			patients = patientsRepository.getPatients("SELECT * FROM "+ Patients.tbName+" WHERE "+Patients.COL_PATIENT_ID+" = "+patientReferral.getPatient().getPatientId(),null);
+			patients = patientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+patientReferral.getPatient().getPatientId(),null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		try {
-			Patients patient = patients.get(0);
+			ANCClients patient = patients.get(0);
 
 			HealthFacilitiesPatients healthFacilitiesPatient = healthFacilitiesPatients.get(0);
 
@@ -704,7 +704,7 @@ public class ReferralPatientsController {
 					}
 
 
-					List <Patients> patients = patientsRepository.getPatients("SELECT * FROM "+Patients.tbName+" WHERE "+Patients.COL_PATIENT_ID+" = "+patientReferral.getPatient().getPatientId(),null);
+					List <ANCClients> patients = patientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+patientReferral.getPatient().getPatientId(),null);
 					System.out.println("Coze: Send notification sms to user "+patients.get(0).getPhoneNumber());
 
 					//TODO send notification to the user
@@ -766,7 +766,7 @@ public class ReferralPatientsController {
 				if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) == 3) {
 
 					List<HealthFacilitiesPatients> healthFacilitiesPatients = healthFacilitiesPatientsRepository.getHealthFacilityPatients("SELECT * FROM "+HealthFacilitiesPatients.tbName+" WHERE "+HealthFacilitiesPatients.COL_HEALTH_FACILITY_PATIENT_ID+" = "+appointments.getHealthFacilitiesPatients().getHealthFacilityPatientId(),null);
-					List <Patients> patients = patientsRepository.getPatients("SELECT * FROM "+Patients.tbName+" WHERE "+Patients.COL_PATIENT_ID+" = "+healthFacilitiesPatients.get(0).getPatient().getPatientId(),null);
+					List <ANCClients> patients = patientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+healthFacilitiesPatients.get(0).getPatient().getPatientId(),null);
 					System.out.println("Coze: Send 3 days to Appointment notification to user "+patients.get(0).getPhoneNumber());
 
 					if(patients.get(0).getPhoneNumber().equals("")) {
@@ -793,7 +793,7 @@ public class ReferralPatientsController {
 				}else if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) == 1) {
 
 					List<HealthFacilitiesPatients> healthFacilitiesPatients = healthFacilitiesPatientsRepository.getHealthFacilityPatients("SELECT * FROM "+HealthFacilitiesPatients.tbName+" WHERE "+HealthFacilitiesPatients.COL_HEALTH_FACILITY_PATIENT_ID+" = "+appointments.getHealthFacilitiesPatients().getHealthFacilityPatientId(),null);
-					List <Patients> patients = patientsRepository.getPatients("SELECT * FROM "+Patients.tbName+" WHERE "+Patients.COL_PATIENT_ID+" = "+healthFacilitiesPatients.get(0).getPatient().getPatientId(),null);
+					List <ANCClients> patients = patientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+healthFacilitiesPatients.get(0).getPatient().getPatientId(),null);
 					System.out.println("Coze: Send 1 days to Appointment notification to user "+patients.get(0).getPhoneNumber());
 
 					if(patients.get(0).getPhoneNumber().equals("")) {

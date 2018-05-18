@@ -1,7 +1,6 @@
 package org.opensrp.repository;
 
-import org.opensrp.domain.TBEncounter;
-import org.opensrp.domain.TBEncounter;
+import org.opensrp.domain.RoutineVisits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,21 +21,21 @@ public class TBEncounterRepository {
 	JdbcTemplate jdbcTemplate;
 
 	
-	public int save(TBEncounter tBEncounter) throws Exception {
-		String insertQuery = "insert into " + TBEncounter.tbName + " (" +
-				TBEncounter.COL_TB_PATIENT_ID + "," +
-				TBEncounter.COL_APPOINTMENT_ID + "," +
-				TBEncounter.COL_LOCAL_ID + "," +
-				TBEncounter.COL_ENCOUNTER_MONTH + "," +
-				TBEncounter.COL_ENCOUNTER_YEAR + "," +
-				TBEncounter.COL_HAS_FINISHED_PREVIOUS_MONTH_MEDICATION + "," +
-				TBEncounter.COL_MAKOHOZI + "," +
-				TBEncounter.COL_WEIGHT + "," +
-				TBEncounter.COL_SCHEDULED_DATE + "," +
-				TBEncounter.COL_MEDICATION_DATE + "," +
-				TBEncounter.COL_MEDICATION_STATUS + "," +
-				TBEncounter.COL_UPDATED_AT + "," +
-				TBEncounter.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+	public int save(RoutineVisits tBEncounter) throws Exception {
+		String insertQuery = "insert into " + RoutineVisits.tbName + " (" +
+				RoutineVisits.COL_TB_PATIENT_ID + "," +
+				RoutineVisits.COL_APPOINTMENT_ID + "," +
+				RoutineVisits.COL_LOCAL_ID + "," +
+				RoutineVisits.COL_ENCOUNTER_MONTH + "," +
+				RoutineVisits.COL_ENCOUNTER_YEAR + "," +
+				RoutineVisits.COL_HAS_FINISHED_PREVIOUS_MONTH_MEDICATION + "," +
+				RoutineVisits.COL_MAKOHOZI + "," +
+				RoutineVisits.COL_WEIGHT + "," +
+				RoutineVisits.COL_SCHEDULED_DATE + "," +
+				RoutineVisits.COL_MEDICATION_DATE + "," +
+				RoutineVisits.COL_MEDICATION_STATUS + "," +
+				RoutineVisits.COL_UPDATED_AT + "," +
+				RoutineVisits.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 
 		Object[] params = new Object[] {
 				tBEncounter.getTbPatientId(),
@@ -72,16 +71,16 @@ public class TBEncounterRepository {
 	}
 
 
-	public int update(TBEncounter tBEncounter) throws Exception {
-		String insertQuery = "UPDATE " + TBEncounter.tbName + " SET " +
-				TBEncounter.COL_ENCOUNTER_MONTH + " = ? ," +
-				TBEncounter.COL_ENCOUNTER_YEAR + " = ? ," +
-				TBEncounter.COL_HAS_FINISHED_PREVIOUS_MONTH_MEDICATION + " = ? ," +
-				TBEncounter.COL_MAKOHOZI + " = ? ," +
-				TBEncounter.COL_WEIGHT + " = ? ," +
-				TBEncounter.COL_MEDICATION_DATE + " = ? ," +
-				TBEncounter.COL_MEDICATION_STATUS + " = ?," +
-				TBEncounter.COL_UPDATED_AT + " = ? " +
+	public int update(RoutineVisits tBEncounter) throws Exception {
+		String insertQuery = "UPDATE " + RoutineVisits.tbName + " SET " +
+				RoutineVisits.COL_ENCOUNTER_MONTH + " = ? ," +
+				RoutineVisits.COL_ENCOUNTER_YEAR + " = ? ," +
+				RoutineVisits.COL_HAS_FINISHED_PREVIOUS_MONTH_MEDICATION + " = ? ," +
+				RoutineVisits.COL_MAKOHOZI + " = ? ," +
+				RoutineVisits.COL_WEIGHT + " = ? ," +
+				RoutineVisits.COL_MEDICATION_DATE + " = ? ," +
+				RoutineVisits.COL_MEDICATION_STATUS + " = ?," +
+				RoutineVisits.COL_UPDATED_AT + " = ? " +
 				"WHERE _id = ? ";
 
 		Object[] params = new Object[] {
@@ -119,35 +118,35 @@ public class TBEncounterRepository {
 	}
 	
 	public void clearTable() throws Exception {
-		String query = "DELETE FROM " + TBEncounter.tbName;
+		String query = "DELETE FROM " + RoutineVisits.tbName;
 		executeQuery(query);
 	}
 
 
-	public List<TBEncounter> getTBEncounters(String sql, Object[] args) throws Exception {
+	public List<RoutineVisits> getTBEncounters(String sql, Object[] args) throws Exception {
 		return this.jdbcTemplate.query(sql, args, new TBEncounterRowMapper());
 	}
 
 	
-	public class TBEncounterRowMapper implements RowMapper<TBEncounter> {
-		public TBEncounter mapRow(ResultSet rs, int rowNum) throws SQLException {
-			TBEncounter tbEncounter = new TBEncounter();
+	public class TBEncounterRowMapper implements RowMapper<RoutineVisits> {
+		public RoutineVisits mapRow(ResultSet rs, int rowNum) throws SQLException {
+			RoutineVisits routineVisits = new RoutineVisits();
 
-			tbEncounter.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(TBEncounter.COL_CREATED_AT)).getTime()));
-			tbEncounter.setAppointmentId(rs.getLong(rs.findColumn(TBEncounter.COL_APPOINTMENT_ID)));
-			tbEncounter.setEncounterMonth(rs.getInt(rs.findColumn(TBEncounter.COL_ENCOUNTER_MONTH)));
-			tbEncounter.setEncounterYear(rs.getInt(rs.findColumn(TBEncounter.COL_ENCOUNTER_YEAR)));
-			tbEncounter.setEncounterYear(rs.getInt(rs.findColumn(TBEncounter.COL_ENCOUNTER_YEAR)));
-			tbEncounter.setTbPatientId(rs.getLong(rs.findColumn(TBEncounter.COL_TB_PATIENT_ID)));
-			tbEncounter.setLocalID(rs.getString(rs.findColumn(TBEncounter.COL_LOCAL_ID)));
-			tbEncounter.setMakohozi(rs.getString(rs.findColumn(TBEncounter.COL_MAKOHOZI)));
-			tbEncounter.setWeight(rs.getDouble(rs.findColumn(TBEncounter.COL_WEIGHT)));
-			tbEncounter.setScheduledDate(rs.getDate(rs.findColumn(TBEncounter.COL_SCHEDULED_DATE)));
-			tbEncounter.setMedicationDate(rs.getDate(rs.findColumn(TBEncounter.COL_MEDICATION_DATE)));
-			tbEncounter.setMedicationStatus(rs.getBoolean(rs.findColumn(TBEncounter.COL_MEDICATION_STATUS)));
-			tbEncounter.setUpdatedAt(rs.getDate(rs.findColumn(TBEncounter.COL_UPDATED_AT)));
-			tbEncounter.setId(rs.getLong(rs.findColumn("_id")));
-			return tbEncounter;
+			routineVisits.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(RoutineVisits.COL_CREATED_AT)).getTime()));
+			routineVisits.setAppointmentId(rs.getLong(rs.findColumn(RoutineVisits.COL_APPOINTMENT_ID)));
+			routineVisits.setEncounterMonth(rs.getInt(rs.findColumn(RoutineVisits.COL_ENCOUNTER_MONTH)));
+			routineVisits.setEncounterYear(rs.getInt(rs.findColumn(RoutineVisits.COL_ENCOUNTER_YEAR)));
+			routineVisits.setEncounterYear(rs.getInt(rs.findColumn(RoutineVisits.COL_ENCOUNTER_YEAR)));
+			routineVisits.setTbPatientId(rs.getLong(rs.findColumn(RoutineVisits.COL_TB_PATIENT_ID)));
+			routineVisits.setLocalID(rs.getString(rs.findColumn(RoutineVisits.COL_LOCAL_ID)));
+			routineVisits.setMakohozi(rs.getString(rs.findColumn(RoutineVisits.COL_MAKOHOZI)));
+			routineVisits.setWeight(rs.getDouble(rs.findColumn(RoutineVisits.COL_WEIGHT)));
+			routineVisits.setScheduledDate(rs.getDate(rs.findColumn(RoutineVisits.COL_SCHEDULED_DATE)));
+			routineVisits.setMedicationDate(rs.getDate(rs.findColumn(RoutineVisits.COL_MEDICATION_DATE)));
+			routineVisits.setMedicationStatus(rs.getBoolean(rs.findColumn(RoutineVisits.COL_MEDICATION_STATUS)));
+			routineVisits.setUpdatedAt(rs.getDate(rs.findColumn(RoutineVisits.COL_UPDATED_AT)));
+			routineVisits.setId(rs.getLong(rs.findColumn("_id")));
+			return routineVisits;
 		}
 		
 	}

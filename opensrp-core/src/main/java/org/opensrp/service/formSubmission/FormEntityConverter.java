@@ -2,9 +2,7 @@
 package org.opensrp.service.formSubmission;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,7 +17,6 @@ import org.opensrp.common.FormEntityConstants.FormEntity;
 import org.opensrp.common.FormEntityConstants.Person;
 import org.opensrp.common.util.DateUtil;
 import org.opensrp.domain.*;
-import org.opensrp.dto.PatientsDTO;
 import org.opensrp.form.domain.*;
 import org.opensrp.form.service.FormAttributeParser;
 import org.opensrp.form.service.FormFieldMap;
@@ -343,53 +340,53 @@ public class FormEntityConverter {
 	}
 
 
-	public Patients getPatientFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
-		Patients patients = new Patients();
+	public ANCClients getPatientFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
+		ANCClients ANCClients = new ANCClients();
 		try {
 			FormData formData = fsubmission.instance().form();
 			List<org.opensrp.form.domain.FormField> formFields = formData.fields();
 			for(org.opensrp.form.domain.FormField formField : formFields){
-				if(formField.name().equals(Patients.COL_PATIENT_FIRST_NAME))
-					patients.setFirstName(formField.value());
+				if(formField.name().equals(ANCClients.COL_PATIENT_FIRST_NAME))
+					ANCClients.setFirstName(formField.value());
 
-				if(formField.name().equals(Patients.COL_PATIENT_MIDDLE_NAME))
-					patients.setMiddleName(formField.value());
+				if(formField.name().equals(ANCClients.COL_PATIENT_MIDDLE_NAME))
+					ANCClients.setMiddleName(formField.value());
 
-				if(formField.name().equals(Patients.COL_PATIENT_SURNAME))
-					patients.setSurname(formField.value());
+				if(formField.name().equals(ANCClients.COL_PATIENT_SURNAME))
+					ANCClients.setSurname(formField.value());
 
-				if(formField.name().equals(Patients.COL_PHONE_NUMBER))
-					patients.setPhoneNumber(formField.value());
+				if(formField.name().equals(ANCClients.COL_PHONE_NUMBER))
+					ANCClients.setPhoneNumber(formField.value());
 
-				if(formField.name().equals(Patients.COL_VILLAGE))
-					patients.setVillage(formField.value());
+				if(formField.name().equals(ANCClients.COL_VILLAGE))
+					ANCClients.setVillage(formField.value());
 
 
-				if(formField.name().equals(Patients.COL_WARD))
-					patients.setWard(formField.value());
+				if(formField.name().equals(ANCClients.COL_WARD))
+					ANCClients.setWard(formField.value());
 
-				if(formField.name().equals(Patients.COL_DATE_OF_BIRTH)) {
+				if(formField.name().equals(ANCClients.COL_DATE_OF_BIRTH)) {
 					Date startDate = new Date();
 					try{
 						startDate.setTime(Long.parseLong(formField.value()));
-						patients.setDateOfBirth(startDate);
+						ANCClients.setDateOfBirth(startDate);
 					}catch (Exception e1){
 						e1.printStackTrace();
 					}
 				}
 
-				if(formField.name().equals(Patients.COL_GENDER))
-					patients.setGender(formField.value());
+				if(formField.name().equals(ANCClients.COL_GENDER))
+					ANCClients.setGender(formField.value());
 			}
 
-			return patients;
+			return ANCClients;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	public JSONArray getReferralIndicatorsFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
-		Patients patients = new Patients();
+		ANCClients ANCClients = new ANCClients();
 		try {
 			FormData formData = fsubmission.instance().form();
 			List<org.opensrp.form.domain.FormField> formFields = formData.fields();

@@ -1,7 +1,7 @@
 package org.opensrp.repository;
 
+import org.opensrp.domain.ANCClients;
 import org.opensrp.domain.HealthFacilitiesPatients;
-import org.opensrp.domain.Patients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,10 +67,10 @@ public class HealthFacilitiesPatientsRepository {
 
 			facilitiesPatients.setHealthFacilityPatientId(rs.getLong(rs.findColumn(HealthFacilitiesPatients.COL_HEALTH_FACILITY_PATIENT_ID)));
 
-			Patients patients = new Patients();
-			patients.setPatientId(rs.getLong(rs.findColumn(HealthFacilitiesPatients.COL_PATIENT_ID)));
+			ANCClients ANCClients = new ANCClients();
+			ANCClients.setPatientId(rs.getLong(rs.findColumn(HealthFacilitiesPatients.COL_PATIENT_ID)));
 
-			facilitiesPatients.setPatient(patients);
+			facilitiesPatients.setPatient(ANCClients);
 			facilitiesPatients.setCtcNumber(rs.getString(rs.findColumn(HealthFacilitiesPatients.COL_CTC_NUMBER)));
 			facilitiesPatients.setFacilityId(rs.getLong(rs.findColumn(HealthFacilitiesPatients.COL_FACILITY_ID)));
 			facilitiesPatients.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(HealthFacilitiesPatients.COL_CREATED_AT)).getTime()));

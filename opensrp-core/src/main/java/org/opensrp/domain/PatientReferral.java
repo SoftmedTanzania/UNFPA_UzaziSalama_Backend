@@ -4,50 +4,30 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "tbl_patient_referral")
+@Table(name = "tbl_client_referral")
 public class PatientReferral {
 
-	public static final String tbName = "tbl_patient_referral";
+	public static final String tbName = "tbl_client_referral";
 
-	public static final String COL_PATIENT_ID = "patient_id";
+	public static final String COL_ANC_CLIENT_ID = "anc_client_id";
 
 	public static final String COL_REFERRAL_ID = "referral_id";
 
 	public static final String COL_REFERRAL_UUID = "referral_uuid";
 
-	public static final String COL_COMMUNITY_BASED_HIV_SERVICE = "community_based_hiv_service";
-
 	public static final String COL_REFERRAL_REASON = "referral_reason";
-
-	public static final String COL_SERVICE_ID = "referral_service_id";
-
-	public static final String COL_CTC_NUMBER = "ctc_number";
 
 	public static final String COL_FACILITY_ID = "facility_id";
 
 	public static final String COL_REFERRAL_DATE= "referral_date";
 
-	public static final String COL_SERVICE_PROVIDER_UIID= "service_provider_uiid";
-
-	public static final String COL_SERVICE_PROVIDER_GROUP= "service_provider_group";
+	public static final String COL_SERVICE_PROVIDER_UUID= "service_provider_uuid";
 
 	public static final String COL_FROM_FACILITY_ID= "from_facility_id";
 
 	public static final String COL_OTHER_CLINICAL_INFORMATION= "other_clinical_information";
 
-	public static final String COL_SERVICES_GIVEN_TO_PATIENT= "services_given_to_patient";
-
-	public static final String COL_LAB_TEST= "lab_test";
-
-	public static final String COL_TEST_RESULTS= "test_results";
-
-	public static final String COL_OTHER_NOTES= "other_notes";
-
 	public static final String COL_REFERRAL_TYPE= "referral_type";
-
-	public static final String COL_REFERRAL_SOURCE= "referral_source";
-
-	public static final String COL_VILLAGE_LEADER= "village_leader";
 
 	public static final String COL_REFERRAL_STATUS= "referral_status";
 
@@ -64,21 +44,11 @@ public class PatientReferral {
 	private Long id;
 
 
-	@ManyToOne
-	@JoinColumn(name=COL_PATIENT_ID)
-	private Patients patient;
-
-	@Column(name = COL_COMMUNITY_BASED_HIV_SERVICE)
-	private String communityBasedHivService;
+	@Column(name = COL_ANC_CLIENT_ID)
+	private int ancClientId;
 
 	@Column(name = COL_REFERRAL_REASON)
 	private String referralReason;
-
-	@Column(name = COL_SERVICE_ID)
-	private int serviceId;
-
-	@Column(name = COL_CTC_NUMBER)
-	private String ctcNumber;
 
 	@Column(name = COL_INSTANCE_ID,unique = true)
 	private String instanceId;
@@ -86,23 +56,12 @@ public class PatientReferral {
 	@Column(name = COL_REFERRAL_UUID)
 	private String referralUUID;
 
-	@Column(name = COL_SERVICE_PROVIDER_UIID)
-	private String serviceProviderUIID;
-
-	@Column(name = COL_SERVICE_PROVIDER_GROUP)
-	private String serviceProviderGroup;
-
-	@Column(name = COL_VILLAGE_LEADER)
-	private String villageLeader;
+	@Column(name = COL_SERVICE_PROVIDER_UUID)
+	private String serviceProviderUUID;
 
 	@Column(name = COL_OTHER_CLINICAL_INFORMATION)
 	private String otherClinicalInformation;
 
-	@Column(name = COL_OTHER_NOTES)
-	private String otherNotes;
-
-	@Column(name = COL_SERVICES_GIVEN_TO_PATIENT)
-	private String serviceGivenToPatient;
 
 	@Column(name = COL_REFERRAL_TYPE)
 	private long referralType;
@@ -110,9 +69,6 @@ public class PatientReferral {
 
 	@Column(name = COL_FROM_FACILITY_ID)
 	private String fromFacilityId;
-
-	@Column(name = COL_REFERRAL_SOURCE)
-	private int referralSource;
 
 	@Column(name = COL_REFERRAL_DATE)
 	private Date referralDate;
@@ -128,14 +84,6 @@ public class PatientReferral {
 	@Column(name = COL_REFERRAL_STATUS)
 	private int referralStatus;
 
-
-	@Column(name = COL_LAB_TEST)
-	private int labTest;
-
-	@Column(name = COL_TEST_RESULTS)
-	private boolean testResults;
-
-
 	@Column(name = COL_CREATED_AT, columnDefinition = "TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -143,14 +91,6 @@ public class PatientReferral {
 	@Column(name = COL_UPDATED_AT, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-
-	public Patients getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patients patient) {
-		this.patient = patient;
-	}
 
 	public Long getId() {
 		return id;
@@ -160,13 +100,12 @@ public class PatientReferral {
 		this.id = id;
 	}
 
-
-	public String getCommunityBasedHivService() {
-		return communityBasedHivService;
+	public int getAncClientId() {
+		return ancClientId;
 	}
 
-	public void setCommunityBasedHivService(String communityBasedHivService) {
-		this.communityBasedHivService = communityBasedHivService;
+	public void setAncClientId(int ancClientId) {
+		this.ancClientId = ancClientId;
 	}
 
 	public String getReferralReason() {
@@ -177,45 +116,52 @@ public class PatientReferral {
 		this.referralReason = referralReason;
 	}
 
-	public int getServiceId() {
-		return serviceId;
+	public String getInstanceId() {
+		return instanceId;
 	}
 
-	public void setServiceId(int serviceId) {
-		this.serviceId = serviceId;
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
 	}
 
-	public String getCtcNumber() {
-		return ctcNumber;
+	public String getReferralUUID() {
+		return referralUUID;
 	}
 
-	public void setCtcNumber(String ctcNumber) {
-		this.ctcNumber = ctcNumber;
+	public void setReferralUUID(String referralUUID) {
+		this.referralUUID = referralUUID;
 	}
 
-
-	public String getServiceProviderUIID() {
-		return serviceProviderUIID;
+	public String getServiceProviderUUID() {
+		return serviceProviderUUID;
 	}
 
-	public void setServiceProviderUIID(String serviceProviderUIID) {
-		this.serviceProviderUIID = serviceProviderUIID;
+	public void setServiceProviderUUID(String serviceProviderUUID) {
+		this.serviceProviderUUID = serviceProviderUUID;
 	}
 
-	public String getServiceProviderGroup() {
-		return serviceProviderGroup;
+	public String getOtherClinicalInformation() {
+		return otherClinicalInformation;
 	}
 
-	public void setServiceProviderGroup(String serviceProviderGroup) {
-		this.serviceProviderGroup = serviceProviderGroup;
+	public void setOtherClinicalInformation(String otherClinicalInformation) {
+		this.otherClinicalInformation = otherClinicalInformation;
 	}
 
-	public String getVillageLeader() {
-		return villageLeader;
+	public long getReferralType() {
+		return referralType;
 	}
 
-	public void setVillageLeader(String villageLeader) {
-		this.villageLeader = villageLeader;
+	public void setReferralType(long referralType) {
+		this.referralType = referralType;
+	}
+
+	public String getFromFacilityId() {
+		return fromFacilityId;
+	}
+
+	public void setFromFacilityId(String fromFacilityId) {
+		this.fromFacilityId = fromFacilityId;
 	}
 
 	public Date getReferralDate() {
@@ -240,86 +186,6 @@ public class PatientReferral {
 
 	public void setReferralStatus(int referralStatus) {
 		this.referralStatus = referralStatus;
-	}
-
-	public String getOtherClinicalInformation() {
-		return otherClinicalInformation;
-	}
-
-	public void setOtherClinicalInformation(String otherClinicalInformation) {
-		this.otherClinicalInformation = otherClinicalInformation;
-	}
-
-	public String getOtherNotes() {
-		return otherNotes;
-	}
-
-	public void setOtherNotes(String otherNotes) {
-		this.otherNotes = otherNotes;
-	}
-
-	public String getServiceGivenToPatient() {
-		return serviceGivenToPatient;
-	}
-
-	public void setServiceGivenToPatient(String serviceGivenToPatient) {
-		this.serviceGivenToPatient = serviceGivenToPatient;
-	}
-
-	public int getLabTest() {
-		return labTest;
-	}
-
-	public void setLabTest(int labTest) {
-		this.labTest = labTest;
-	}
-
-	public long getReferralType() {
-		return referralType;
-	}
-
-	public void setReferralType(long referralType) {
-		this.referralType = referralType;
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public int getReferralSource() {
-		return referralSource;
-	}
-
-	public void setReferralSource(int referralSource) {
-		this.referralSource = referralSource;
-	}
-
-	public String getFromFacilityId() {
-		return fromFacilityId;
-	}
-
-	public void setFromFacilityId(String fromFacilityId) {
-		this.fromFacilityId = fromFacilityId;
-	}
-
-	public boolean isTestResults() {
-		return testResults;
-	}
-
-	public void setTestResults(boolean testResults) {
-		this.testResults = testResults;
-	}
-
-	public String getReferralUUID() {
-		return referralUUID;
-	}
-
-	public void setReferralUUID(String referralUUID) {
-		this.referralUUID = referralUUID;
 	}
 
 	public Date getCreatedAt() {

@@ -45,7 +45,7 @@ public class ReferralPatientsService {
         this.client = HttpClientBuilder.create().build();
     }
 
-    public void storeCTCPatients(Patients patient) throws SQLException {
+    public void storeCTCPatients(ANCClients patient) throws SQLException {
         // create jdbc template to persist the ids
         try {
             if (!this.checkIfClientExists(patient)) {
@@ -94,9 +94,9 @@ public class ReferralPatientsService {
 
         List<PatientReferralsDTO> patientReferralsDTOS = new ArrayList<>();
         for(HealthFacilitiesPatients facilitiesPatients:healthFacilitiesPatients){
-            String getPatientsSQL = "SELECT * from " + Patients.tbName+" WHERE "+Patients.COL_PATIENT_ID+ " = "+facilitiesPatients.getPatient().getPatientId();
+            String getPatientsSQL = "SELECT * from " + ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID + " = "+facilitiesPatients.getPatient().getPatientId();
             try {
-                Patients patient = patientsRepository.getPatients(getPatientsSQL,null).get(0);
+                ANCClients patient = patientsRepository.getPatients(getPatientsSQL,null).get(0);
 
                 PatientReferralsDTO patientReferralsDTO = new PatientReferralsDTO();
                 patientReferralsDTO.setPatientsDTO(PatientsConverter.toPatientsDTO(patient));
@@ -139,9 +139,9 @@ public class ReferralPatientsService {
         return patientReferralsDTOS;
     }
 
-    public Boolean checkIfClientExists(Patients patient) throws SQLException {
+    public Boolean checkIfClientExists(ANCClients patient) throws SQLException {
         try {
-            String checkIfExistQuery = "SELECT count(*) from " + Patients.tbName + " WHERE " + Patients.COL_PATIENT_ID + " = ?";
+            String checkIfExistQuery = "SELECT count(*) from " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + " = ?";
             String[] args = new String[1];
             args[0] = patient.getPatientId()+"";
 
@@ -188,28 +188,28 @@ public class ReferralPatientsService {
 
 
 
-    public long savePatient(Patients patient, String healthFacilityCode, String ctcNumber) {
-        String query = "SELECT * FROM " + Patients.tbName + " WHERE " +
-                Patients.COL_PATIENT_FIRST_NAME + " = ?     AND " +
-                Patients.COL_PATIENT_MIDDLE_NAME + " = ?    AND " +
-                Patients.COL_PATIENT_SURNAME + " = ?        AND " +
-                Patients.COL_PHONE_NUMBER + " = ?";
+    public long savePatient(ANCClients patient, String healthFacilityCode, String ctcNumber) {
+        String query = "SELECT * FROM " + ANCClients.tbName + " WHERE " +
+                ANCClients.COL_PATIENT_FIRST_NAME + " = ?     AND " +
+                ANCClients.COL_PATIENT_MIDDLE_NAME + " = ?    AND " +
+                ANCClients.COL_PATIENT_SURNAME + " = ?        AND " +
+                ANCClients.COL_PHONE_NUMBER + " = ?";
         Object[] params = new Object[]{
                 patient.getFirstName(),
                 patient.getMiddleName(),
                 patient.getSurname(),
                 patient.getPhoneNumber()};
-        List<Patients> patientsResults = null;
+        List<ANCClients> ANCClientsResults = null;
         try {
-            patientsResults = patientsRepository.getPatients(query, params);
+            ANCClientsResults = patientsRepository.getPatients(query, params);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Coze = number of patients found = " + patientsResults.size());
+        System.out.println("Coze = number of patients found = " + ANCClientsResults.size());
         long id;
-        if (patientsResults.size() > 0) {
+        if (ANCClientsResults.size() > 0) {
             System.out.println("Coze = using the received patients ");
-            id = patientsResults.get(0).getPatientId();
+            id = ANCClientsResults.get(0).getPatientId();
         } else {
             System.out.println("Coze = saving patient Data ");
             try {
@@ -240,10 +240,10 @@ public class ReferralPatientsService {
 
         HealthFacilitiesPatients healthFacilitiesPatients = new HealthFacilitiesPatients();
 
-        Patients patients = new Patients();
-        patients.setPatientId(id);
+        ANCClients ANCClients = new ANCClients();
+        ANCClients.setPatientId(id);
 
-        healthFacilitiesPatients.setPatient(patients);
+        healthFacilitiesPatients.setPatient(ANCClients);
         healthFacilitiesPatients.setCtcNumber(ctcNumber);
         healthFacilitiesPatients.setFacilityId(healthFacilityId);
 

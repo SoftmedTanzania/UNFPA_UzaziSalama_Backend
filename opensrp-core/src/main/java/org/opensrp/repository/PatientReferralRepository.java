@@ -1,7 +1,7 @@
 package org.opensrp.repository;
 
+import org.opensrp.domain.ANCClients;
 import org.opensrp.domain.PatientReferral;
-import org.opensrp.domain.Patients;
 import org.opensrp.dto.CHWReferralsSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +90,7 @@ public class PatientReferralRepository {
 			PatientReferral patientReferral = new PatientReferral();
 			patientReferral.setId(rs.getLong(rs.findColumn(PatientReferral.COL_REFERRAL_ID)));
 
-			Patients patient = new Patients();
+			ANCClients patient = new ANCClients();
 			patient.setPatientId(rs.getLong(rs.findColumn(PatientReferral.COL_PATIENT_ID)));
 			patientReferral.setPatient(patient);
 

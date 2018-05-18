@@ -1,8 +1,5 @@
 package org.opensrp.domain;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -32,7 +29,7 @@ public class HealthFacilitiesPatients {
 
 	@ManyToOne
 	@JoinColumn(name=COL_PATIENT_ID)
-	private Patients patient;
+	private ANCClients patient;
 
 	@Column(name = COL_CTC_NUMBER)
 	private String ctcNumber;
@@ -56,11 +53,11 @@ public class HealthFacilitiesPatients {
 		this.healthFacilityPatientId = healthFacilityPatientId;
 	}
 
-	public Patients getPatient() {
+	public ANCClients getPatient() {
 		return patient;
 	}
 
-	public void setPatient(Patients patient) {
+	public void setPatient(ANCClients patient) {
 		this.patient = patient;
 	}
 
