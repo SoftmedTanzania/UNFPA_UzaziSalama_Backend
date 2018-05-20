@@ -16,7 +16,7 @@ import org.opensrp.connector.openmrs.service.EncounterService;
 import org.opensrp.connector.openmrs.service.HouseholdService;
 import org.opensrp.connector.openmrs.service.PatientService;
 import org.opensrp.domain.*;
-import org.opensrp.dto.PatientReferralsDTO;
+import org.opensrp.dto.AncClientReferralsDTO;
 import org.opensrp.dto.AncClientDTO;
 import org.opensrp.dto.ReferralsDTO;
 import org.opensrp.dto.form.FormSubmissionDTO;
@@ -215,11 +215,11 @@ public class FormSubmissionController {
         ClientReferral clientReferral = formEntityConverter.getPatientReferralFromFormSubmission(formSubmission);
 		try {
 
-			long healthfacilityPatientId = referralPatientService.savePatient(patient, clientReferral.getFacilityId(), "");
+			long healthfacilityPatientId = referralPatientService.saveClient(patient, clientReferral.getFacilityId(), "");
 
 			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM "+ HealthFacilitiesClients.tbName+" WHERE "+ HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID +" = "+healthfacilityPatientId,null);
 
-			patient.setClientId(healthFacilitiesPatients.get(0).getAncClient().getClientId());
+			clientReferral.setAncClientId(healthFacilitiesPatients.get(0).getAncClient().getClientId());
 
             //TODO remove hardcoding of these values
             clientReferral.setReferralStatus(0);
@@ -227,21 +227,6 @@ public class FormSubmissionController {
 
             long id = patientReferralRepository.save(clientReferral);
             clientReferral.setId(id);
-
-			JSONArray indicatorIds = formEntityConverter.getReferralIndicatorsFromFormSubmission(formSubmission);
-			int size  = indicatorIds.length();
-
-			List<Long> referralIndicatorIds = new ArrayList<>();
-			for(int i=0;i<size;i++){
-				PatientReferralIndicators referralIndicators = new PatientReferralIndicators();
-				referralIndicators.setActive(true);
-				referralIndicators.setReferralId(id);
-				referralIndicators.setReferralServiceIndicatorId(indicatorIds.getLong(i));
-
-				long patientReferralIndicatorId = patientReferralIndicatorRepository.save(referralIndicators);
-				referralIndicatorIds.add(indicatorIds.getLong(i));
-			}
-
 
 
 			String phoneNumber = patient.getPhoneNumber();
@@ -279,20 +264,20 @@ public class FormSubmissionController {
 			}
 
 
-			PatientReferralsDTO patientReferralsDTO = new PatientReferralsDTO();
+			AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
 
 			AncClientDTO ancClientDTO = PatientsConverter.toPatientsDTO(patient);
-			patientReferralsDTO.setAncClientDTO(ancClientDTO);
+			ancClientReferralsDTO.setAncClientDTO(ancClientDTO);
 
 
 			List<ReferralsDTO> referralsDTOS = new ArrayList<>();
 			ReferralsDTO referralsDTO = PatientsConverter.toPatientDTO(clientReferral);
 			referralsDTOS.add(referralsDTO);
-			patientReferralsDTO.setPatientReferralsList(referralsDTOS);
+			ancClientReferralsDTO.setPatientReferralsList(referralsDTOS);
 
 			JSONObject body = new JSONObject();
 
-			String json = new Gson().toJson(patientReferralsDTO);
+			String json = new Gson().toJson(ancClientReferralsDTO);
 
 			System.out.println("Coze = FCM msg : "+json);
 

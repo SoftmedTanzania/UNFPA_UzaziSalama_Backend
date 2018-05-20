@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import org.opensrp.common.AllConstants;
 import org.opensrp.domain.HealthFacilities;
 import org.opensrp.dto.HealthFacilitiesDTO;
-import org.opensrp.dto.PatientReferralsDTO;
 import org.opensrp.repository.HealthFacilityRepository;
 import org.opensrp.scheduler.SystemEvent;
 import org.opensrp.scheduler.TaskSchedulerService;

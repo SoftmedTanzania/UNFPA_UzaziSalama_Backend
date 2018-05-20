@@ -472,22 +472,7 @@ public class FormEntityConverter {
 		}
 	}
 
-	public JSONArray getReferralIndicatorsFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
-		ANCClients ANCClients = new ANCClients();
-		try {
-			FormData formData = fsubmission.instance().form();
-			List<org.opensrp.form.domain.FormField> formFields = formData.fields();
-			JSONArray indicatorIds = new JSONArray();
-			for(org.opensrp.form.domain.FormField formField : formFields){
-				if(formField.name().equals("indicator_ids"))
-					indicatorIds = new JSONArray(formField.value());
-			}
 
-			return indicatorIds;
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
 
 	public ClientReferral getPatientReferralFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
 		ClientReferral clientReferral = new ClientReferral();

@@ -1,14 +1,10 @@
 package org.opensrp.service;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.opensrp.domain.*;
 import org.opensrp.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -260,7 +256,8 @@ public class PatientsConverter {
             referral.setInstanceId(referralsDTO.getInstanceId());
             referral.setReferralUUID(referralsDTO.getReferralUUID());
             referral.setServiceProviderUUID(referralsDTO.getServiceProviderUUID());
-            referral.setOtherClinicalInformation(referralsDTO.getOtherClinicalInformation());
+            referral.setOtherNotes(referralsDTO.getOtherClinicalInformation());
+            referral.setReferralFeedback(referralsDTO.getReferralFeedback());
             referral.setReferralType(referralsDTO.getReferralType());
             referral.setFromFacilityId(referralsDTO.getFromFacilityId());
 
@@ -290,7 +287,8 @@ public class PatientsConverter {
             referralsDTO.setInstanceId(referral.getInstanceId());
             referralsDTO.setReferralUUID(referral.getReferralUUID());
             referralsDTO.setServiceProviderUUID(referral.getServiceProviderUUID());
-            referralsDTO.setOtherClinicalInformation(referral.getOtherClinicalInformation());
+            referralsDTO.setOtherClinicalInformation(referral.getOtherNotes());
+            referralsDTO.setReferralFeedback(referral.getReferralFeedback());
             referralsDTO.setReferralType(referral.getReferralType());
             referralsDTO.setFromFacilityId(referral.getFromFacilityId());
 

@@ -1,6 +1,5 @@
 package org.opensrp.repository;
 
-import org.opensrp.domain.ANCClients;
 import org.opensrp.domain.ClientReferral;
 import org.opensrp.dto.CHWReferralsSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,8 @@ public class PatientReferralRepository {
 		parameters.put(ClientReferral.COL_REFERRAL_REASON, clientReferral.getReferralReason());
 		parameters.put(ClientReferral.COL_REFERRAL_UUID, clientReferral.getReferralUUID());
 		parameters.put(ClientReferral.COL_FROM_FACILITY_ID, clientReferral.getFromFacilityId());
-		parameters.put(ClientReferral.COL_OTHER_CLINICAL_INFORMATION, clientReferral.getOtherClinicalInformation());
+		parameters.put(ClientReferral.COL_OTHER_NOTES, clientReferral.getOtherNotes());
+		parameters.put(ClientReferral.COL_REFERRAL_FEEDBACK, clientReferral.getReferralFeedback());
 		parameters.put(ClientReferral.COL_REFERRAL_DATE, clientReferral.getReferralDate());
 		parameters.put(ClientReferral.COL_REFERRAL_STATUS, clientReferral.getReferralStatus());
 		parameters.put(ClientReferral.COL_INSTANCE_ID, clientReferral.getInstanceId());
@@ -89,7 +89,8 @@ public class PatientReferralRepository {
 			clientReferral.setReferralStatus(rs.getInt(rs.findColumn(ClientReferral.COL_REFERRAL_STATUS)));
 			clientReferral.setInstanceId(rs.getString(rs.findColumn(ClientReferral.COL_INSTANCE_ID)));
 			clientReferral.setReferralType(rs.getLong(rs.findColumn(ClientReferral.COL_REFERRAL_TYPE)));
-			clientReferral.setOtherClinicalInformation(rs.getString(rs.findColumn(ClientReferral.COL_OTHER_CLINICAL_INFORMATION)));
+			clientReferral.setOtherNotes(rs.getString(rs.findColumn(ClientReferral.COL_OTHER_NOTES)));
+			clientReferral.setReferralFeedback(rs.getString(rs.findColumn(ClientReferral.COL_REFERRAL_FEEDBACK)));
 			clientReferral.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(ClientReferral.COL_CREATED_AT)).getTime()));
 			clientReferral.setUpdatedAt(rs.getDate(rs.findColumn(ClientReferral.COL_UPDATED_AT)));
 			return clientReferral;

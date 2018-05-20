@@ -3,7 +3,7 @@ package org.opensrp.service;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.opensrp.domain.*;
-import org.opensrp.dto.PatientReferralsDTO;
+import org.opensrp.dto.AncClientReferralsDTO;
 import org.opensrp.dto.ReferralsDTO;
 import org.opensrp.repository.*;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class ReferralPatientsService {
     private HttpClient client;
 
     @Autowired
-    private PatientsRepository patientsRepository;
+    private ANCClientsRepository ANCClientsRepository;
 
     @Autowired
     private PatientReferralRepository patientReferralRepository;
@@ -57,11 +57,11 @@ public class ReferralPatientsService {
         }
     }
 
-    public List<PatientReferralsDTO> getAllPatientReferrals(){
+    public List<AncClientReferralsDTO> getAllPatientReferrals(){
         return getClients("SELECT * FROM "+ HealthFacilitiesClients.tbName,null);
     }
 
-    public List<PatientReferralsDTO> getHealthFacilityReferrals(String facilityUUID){
+    public List<AncClientReferralsDTO> getHealthFacilityReferrals(String facilityUUID){
 
         String[] healthFacilityPatientArg = new String[1];
         healthFacilityPatientArg[0] =  facilityUUID;
@@ -72,44 +72,44 @@ public class ReferralPatientsService {
                 " WHERE " + HealthFacilities.COL_OPENMRS_UIID + "=?",healthFacilityPatientArg);
     }
 
-    public  List<PatientReferralsDTO> getClients(String sql, Object[] healthFacilityPatientArg){
+    public  List<AncClientReferralsDTO> getClients(String sql, Object[] healthFacilityPatientArg){
 
-        List<HealthFacilitiesClients> healthFacilitiesPatients = null;
+        List<HealthFacilitiesClients> healthFacilitiesClients = null;
         try {
-            healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients(sql,healthFacilityPatientArg);
+            healthFacilitiesClients = healthFacilitiesClientsRepository.getHealthFacilityPatients(sql,healthFacilityPatientArg);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        List<PatientReferralsDTO> patientReferralsDTOS = new ArrayList<>();
-        for(HealthFacilitiesClients facilitiesPatients:healthFacilitiesPatients){
+        List<AncClientReferralsDTO> ancClientReferralsDTOS = new ArrayList<>();
+        for(HealthFacilitiesClients facilitiesPatients:healthFacilitiesClients){
             String getPatientsSQL = "SELECT * from " + ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID + " = "+facilitiesPatients.getAncClient().getClientId();
             try {
-                ANCClients ancClient = patientsRepository.getPatients(getPatientsSQL,null).get(0);
+                ANCClients ancClient = ANCClientsRepository.getPatients(getPatientsSQL,null).get(0);
 
-                PatientReferralsDTO patientReferralsDTO = new PatientReferralsDTO();
-                patientReferralsDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(ancClient));
+                AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
+                ancClientReferralsDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(ancClient));
 
-                String getReferralPatientsSQL = "SELECT * from " + ClientReferral.tbName+" WHERE "+ ClientReferral.COL_ANC_CLIENT_ID +" =?";
+                String getReferralClientsSQL = "SELECT * from " + ClientReferral.tbName+" WHERE "+ ClientReferral.COL_ANC_CLIENT_ID +" =?";
                 Object[] args = new Object[]{ancClient.getClientId()};
 
-                List<ReferralsDTO> referralsDTOS = PatientsConverter.toPatientReferralDTOsList(patientReferralRepository.getReferrals(getReferralPatientsSQL,args));
+                List<ReferralsDTO> referralsDTOS = PatientsConverter.toPatientReferralDTOsList(patientReferralRepository.getReferrals(getReferralClientsSQL,args));
 
                 for(ReferralsDTO referralsDTO : referralsDTOS) {
                     Object[] args2 = new Object[]{referralsDTO.getId()};
                     List<PatientReferralIndicators> patientReferralIndicators = patientReferralIndicatorRepository.getPatientReferralIndicators("SELECT * FROM " + PatientReferralIndicators.tbName + " WHERE " + PatientReferralIndicators.COL_REFERRAL_ID + " =?", args2);
                 }
 
-                patientReferralsDTO.setPatientReferralsList(referralsDTOS);
+                ancClientReferralsDTO.setPatientReferralsList(referralsDTOS);
 
 
                 Object[] args2 = new Object[]{facilitiesPatients.getHealthFacilityClientId()};
                 String getPatientsAppointmentsSQL = "SELECT * from " + PatientAppointments.tbName+" WHERE "+PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID +" =?";
                 List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments(getPatientsAppointmentsSQL,args2);
 
-                patientReferralsDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(patientAppointments));
+                ancClientReferralsDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(patientAppointments));
 
-                patientReferralsDTOS.add(patientReferralsDTO);
+                ancClientReferralsDTOS.add(ancClientReferralsDTO);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -117,7 +117,7 @@ public class ReferralPatientsService {
 
         }
 
-        return patientReferralsDTOS;
+        return ancClientReferralsDTOS;
     }
 
     public Boolean checkIfClientExists(ANCClients ancClients) throws SQLException {
@@ -126,7 +126,7 @@ public class ReferralPatientsService {
             String[] args = new String[1];
             args[0] = ancClients.getClientId()+"";
 
-            int rowCount = patientsRepository.checkIfExists(checkIfExistQuery, args);
+            int rowCount = ANCClientsRepository.checkIfExists(checkIfExistQuery, args);
 
             logger.info(
                     "[checkIfClientExists] - Card Number:" + args[0] + " - [Exists] " + (rowCount == 0 ? "false" : "true"));
@@ -143,7 +143,7 @@ public class ReferralPatientsService {
             String checkIfExistQuery = "SELECT count(*) from " + ClientReferral.tbName + " WHERE  "+ ClientReferral.COL_REFERRAL_ID+" = ?";
             Object[] args = new Object[1];
             args[0] = clientReferral.getId();
-            int rowCount = patientsRepository.checkIfExists(checkIfExistQuery, args);
+            int rowCount = ANCClientsRepository.checkIfExists(checkIfExistQuery, args);
 
             logger.info(
                     "[checkIfClientExists] - Referral ID:" + args[0] + " - [Exists] " + (rowCount == 0 ? "false" : "true"));
@@ -169,7 +169,7 @@ public class ReferralPatientsService {
 
 
 
-    public long savePatient(ANCClients patient, String healthFacilityCode, String ctcNumber) {
+    public long saveClient(ANCClients patient, String healthFacilityCode, String ctcNumber) {
         String query = "SELECT * FROM " + ANCClients.tbName + " WHERE " +
                 ANCClients.COL_PATIENT_FIRST_NAME + " = ?     AND " +
                 ANCClients.COL_PATIENT_MIDDLE_NAME + " = ?    AND " +
@@ -180,21 +180,21 @@ public class ReferralPatientsService {
                 patient.getMiddleName(),
                 patient.getSurname(),
                 patient.getPhoneNumber()};
-        List<ANCClients> ANCClientsResults = null;
+        List<ANCClients> ancClientsResults = null;
         try {
-            ANCClientsResults = patientsRepository.getPatients(query, params);
+            ancClientsResults = ANCClientsRepository.getPatients(query, params);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Coze = number of patients found = " + ANCClientsResults.size());
+        System.out.println("Coze = number of patients found = " + ancClientsResults.size());
         long id;
-        if (ANCClientsResults.size() > 0) {
+        if (ancClientsResults.size() > 0) {
             System.out.println("Coze = using the received patients ");
-            id = ANCClientsResults.get(0).getClientId();
+            id = ancClientsResults.get(0).getClientId();
         } else {
             System.out.println("Coze = saving patient Data ");
             try {
-                id = patientsRepository.save(patient);
+                id = ANCClientsRepository.save(patient);
             } catch (Exception e) {
                 e.printStackTrace();
                 id = -1;

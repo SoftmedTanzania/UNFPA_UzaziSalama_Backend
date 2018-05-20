@@ -7,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
 
-public class PatientReferralsDTO {
+public class AncClientReferralsDTO {
     @JsonProperty
     private AncClientDTO ancClientDTO;
 
@@ -18,7 +18,7 @@ public class PatientReferralsDTO {
     private List<PatientsAppointmentsDTO> patientsAppointmentsDTOS;
 
 
-    public PatientReferralsDTO() {
+    public AncClientReferralsDTO() {
     }
 
     public AncClientDTO getAncClientDTO() {

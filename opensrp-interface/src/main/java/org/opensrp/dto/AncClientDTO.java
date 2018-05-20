@@ -8,24 +8,34 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import java.util.Date;
 
 public class AncClientDTO {
+	@JsonProperty
     private Long clientId;
 
+	@JsonProperty
     private String firstName;
 
+	@JsonProperty
     private String middleName;
 
+	@JsonProperty
     private String surname;
 
+	@JsonProperty
     private String phoneNumber;
 
+	@JsonProperty
     private String ward;
 
+	@JsonProperty
     private String village;
 
+	@JsonProperty
     private String mapCue;
 
+	@JsonProperty
     private long dateOfBirth;
 
+	@JsonProperty
     private boolean heightBelowAverage;
 
     /**
@@ -33,45 +43,56 @@ public class AncClientDTO {
      * 1
      * 2
      */
+    @JsonProperty
     private int pmtctStatus;
 
+	@JsonProperty
     private int levelOfEducation;
 
-
+	@JsonProperty
     private String spouseName;
-
+	@JsonProperty
     private int gravida;
-
+	@JsonProperty
     private int para;
-
+	@JsonProperty
     private long lmnpDate;
-
+	@JsonProperty
     private long edd;
-
+	@JsonProperty
     private boolean gestationalAgeBelow20;
-
+	@JsonProperty
     private boolean historyOfAbortion;
-
+	@JsonProperty
     private boolean ageBelow20Years;
-
+	@JsonProperty
     private boolean lastPregnancyOver10Years;
-
+	@JsonProperty
     private boolean pregnancyAbove35Years;
 
+	@JsonProperty
     private boolean historyOfStillBirth;
 
+	@JsonProperty
     private boolean historyOfPostmartumHaemorrhage;
 
+	@JsonProperty
     private boolean historyOfRetainedPlacenta;
 
+	@JsonProperty
     private boolean pncStatus;
 
+	@JsonProperty
     private int lastChildbirthYear;
 
-    /**
+	@JsonProperty
+	private String healthFacilityCode;
+
+	/**
      * 0 = Dead
      * 1 = Alive
      */
+	@JsonProperty
     private int lastChildbirthStatus;
 
 	public Long getClientId() {
@@ -296,6 +317,14 @@ public class AncClientDTO {
 
 	public void setLastChildbirthStatus(int lastChildbirthStatus) {
 		this.lastChildbirthStatus = lastChildbirthStatus;
+	}
+
+	public String getHealthFacilityCode() {
+		return healthFacilityCode;
+	}
+
+	public void setHealthFacilityCode(String healthFacilityCode) {
+		this.healthFacilityCode = healthFacilityCode;
 	}
 
 	@Override

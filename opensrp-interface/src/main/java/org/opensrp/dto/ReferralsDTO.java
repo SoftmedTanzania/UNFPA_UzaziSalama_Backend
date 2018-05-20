@@ -33,6 +33,9 @@ public class ReferralsDTO {
     private String otherClinicalInformation;
 
     @JsonProperty
+    private String referralFeedback;
+
+    @JsonProperty
     private long referralType;
 
     @JsonProperty
@@ -146,6 +149,14 @@ public class ReferralsDTO {
 
     public void setReferralStatus(int referralStatus) {
         this.referralStatus = referralStatus;
+    }
+
+    public String getReferralFeedback() {
+        return referralFeedback;
+    }
+
+    public void setReferralFeedback(String referralFeedback) {
+        this.referralFeedback = referralFeedback;
     }
 
     @Override

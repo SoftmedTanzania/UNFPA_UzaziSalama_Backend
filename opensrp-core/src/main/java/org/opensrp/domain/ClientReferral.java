@@ -25,7 +25,9 @@ public class ClientReferral {
 
 	public static final String COL_FROM_FACILITY_ID= "from_facility_id";
 
-	public static final String COL_OTHER_CLINICAL_INFORMATION= "other_clinical_information";
+	public static final String COL_REFERRAL_FEEDBACK= "referral_feedback";
+
+	public static final String COL_OTHER_NOTES = "other_notes";
 
 	public static final String COL_REFERRAL_TYPE= "referral_type";
 
@@ -59,8 +61,11 @@ public class ClientReferral {
 	@Column(name = COL_SERVICE_PROVIDER_UUID)
 	private String serviceProviderUUID;
 
-	@Column(name = COL_OTHER_CLINICAL_INFORMATION)
-	private String otherClinicalInformation;
+	@Column(name = COL_OTHER_NOTES)
+	private String otherNotes;
+
+	@Column(name = COL_REFERRAL_FEEDBACK)
+	private String referralFeedback;
 
 
 	@Column(name = COL_REFERRAL_TYPE)
@@ -140,12 +145,12 @@ public class ClientReferral {
 		this.serviceProviderUUID = serviceProviderUUID;
 	}
 
-	public String getOtherClinicalInformation() {
-		return otherClinicalInformation;
+	public String getOtherNotes() {
+		return otherNotes;
 	}
 
-	public void setOtherClinicalInformation(String otherClinicalInformation) {
-		this.otherClinicalInformation = otherClinicalInformation;
+	public void setOtherNotes(String otherNotes) {
+		this.otherNotes = otherNotes;
 	}
 
 	public long getReferralType() {
@@ -186,6 +191,14 @@ public class ClientReferral {
 
 	public void setReferralStatus(int referralStatus) {
 		this.referralStatus = referralStatus;
+	}
+
+	public String getReferralFeedback() {
+		return referralFeedback;
+	}
+
+	public void setReferralFeedback(String referralFeedback) {
+		this.referralFeedback = referralFeedback;
 	}
 
 	public Date getCreatedAt() {

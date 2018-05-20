@@ -35,17 +35,14 @@ public class ServiceController {
     private ReferralServiceRepository referralServiceRepository;
     private IndicatorRepository indicatorRepository;
     private ReferralTypeRepository referralTypeRepository;
-    private ReferralServiceIndicatorRepository referralServiceIndicatorRepository;
     private TBPatientTestTypeRepository tbPatientTestTypeRepository;
     private TaskSchedulerService scheduler;
 
     @Autowired
-    public ServiceController(ReferralServiceRepository referralServiceRepository, TaskSchedulerService scheduler, TBPatientTestTypeRepository tbPatientTestTypeRepository,
-                             ReferralServiceIndicatorRepository referralServiceIndicatorRepository, IndicatorRepository indicatorRepository, ReferralTypeRepository referralTypeRepository) {
+    public ServiceController(ReferralServiceRepository referralServiceRepository, TaskSchedulerService scheduler, TBPatientTestTypeRepository tbPatientTestTypeRepository, IndicatorRepository indicatorRepository, ReferralTypeRepository referralTypeRepository) {
         this.referralServiceRepository = referralServiceRepository;
         this.tbPatientTestTypeRepository = tbPatientTestTypeRepository;
         this.scheduler = scheduler;
-        this.referralServiceIndicatorRepository = referralServiceIndicatorRepository;
         this.indicatorRepository = indicatorRepository;
         this.referralTypeRepository = referralTypeRepository;
     }
@@ -181,76 +178,6 @@ public class ServiceController {
         return new ResponseEntity<>(CREATED);
     }
 
-    @RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/add-referral-services-indicators")
-    public ResponseEntity<HttpStatus> saveReferralServiceIndicators(@RequestBody String json) {
-        try {
-            List<ReferralServiceIndicatorDTO> referralServiceIndicators = new Gson().fromJson(json, new TypeToken<List<ReferralServiceIndicatorDTO>>() {
-            }.getType());
-
-            if (referralServiceIndicators.isEmpty()) {
-                return new ResponseEntity<>(BAD_REQUEST);
-            }
-
-            scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.HEALTH_FACILITY_SUBMISSION, referralServiceIndicators));
-
-
-            List<List<ServiceIndicator>> referralIndicatorsList =  with(referralServiceIndicators).convert(new Converter<ReferralServiceIndicatorDTO, List<ServiceIndicator>>() {
-                @Override
-                public List<ServiceIndicator> convert(ReferralServiceIndicatorDTO referralServiceIndicatorDTO) {
-                    List<ServiceIndicator> referralIndicators = new ArrayList<>();
-
-                    for (Long indicatorId:referralServiceIndicatorDTO.getReferralIndicatorId()) {
-
-                        ServiceIndicator serviceIndicator = new ServiceIndicator();
-                        PKReferralServiceIndicator pkReferralServiceIndicator = new PKReferralServiceIndicator(indicatorId, referralServiceIndicatorDTO.getReferralServiceId());
-                        serviceIndicator.setPkReferralServiceIndicator(pkReferralServiceIndicator);
-
-                        referralIndicators.add(serviceIndicator);
-                    }
-
-
-                    return referralIndicators;
-                }
-            });
-
-            long id = 1;
-            List<ServiceIndicator> indicators =  referralServiceIndicatorRepository.getReferralServicesIndicators("SELECT * FROM "+ ServiceIndicator.tbName+" ORDER BY "+ ServiceIndicator.COL_SERVICE_ID+" LIMIT 1",null);
-            if(indicators.size()>0){
-                id = indicators.get(0).getServiceIndicatorId()+1;
-            }
-
-            Exception exp = null;
-            for (List<ServiceIndicator> serviceIndicatorsList : referralIndicatorsList) {
-                String indicatorIds = "";
-                long serviceId = 0;
-                for (ServiceIndicator serviceIndicator : serviceIndicatorsList) {
-                    try {
-                        indicatorIds+= serviceIndicator.getPkReferralServiceIndicator().getIndicatorId();
-                        serviceId = serviceIndicator.getPkReferralServiceIndicator().getServiceId();
-
-                        serviceIndicator.setServiceIndicatorId(id);
-                        id++;
-                        referralServiceIndicatorRepository.save(serviceIndicator);
-                    }catch (Exception e){
-                        exp = e;
-                        e.printStackTrace();
-                    }
-                }
-
-                //TODO reimplement this
-//                referralServiceIndicatorRepository.executeQuery("DELETE FROM "+ReferralServiceIndicator.tbName+" WHERE "+ReferralServiceIndicator.COL_SERVICE_ID+" = "+serviceId + " AND "+ReferralServiceIndicator.COL_INDICATOR_ID+" NOT IN ("+indicatorIds+")");
-            }
-
-            if(exp!=null)
-                throw  exp;
-            logger.debug(format("Saved Referral Indicator to queue.\nSubmissions: {0}", referralServiceIndicators));
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(format("Referral Indicators processing failed with exception {0}.\nSubmissions: {1}", e, json));
-            return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(CREATED);
-    }
 //
 //    @RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/add-referral-service-indicator")
 //    public ResponseEntity<HttpStatus> saveReferralServiceIndicator(@RequestBody String json) {
@@ -302,93 +229,7 @@ public class ServiceController {
 //    }
 
 
-    @RequestMapping(headers = {"Accept=application/json"}, method = GET, value = "/boresha-afya-services")
-    @ResponseBody
-    public List<ReferralServiceIndicatorsDTO> getBoreshaAfyaServices() {
 
-        List<ReferralService> allReferralServices = null;
-        try {
-            allReferralServices = referralServiceRepository.getReferralServices("Select * from "+ ReferralService.tbName,null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        List<ReferralServiceIndicatorsDTO> referralServiceIndicatorsDTOS = new ArrayList<>();
-        for(ReferralService referralService:allReferralServices) {
-            ReferralServiceIndicatorsDTO referralServiceIndicatorsDTO = new ReferralServiceIndicatorsDTO();
-
-            referralServiceIndicatorsDTO.setCategory(referralService.getReferralCategoryName());
-            referralServiceIndicatorsDTO.setServiceId(referralService.getReferralServiceId());
-            referralServiceIndicatorsDTO.setServiceName(referralService.getReferralServiceName());
-            referralServiceIndicatorsDTO.setServiceNameSw(referralService.getReferralServiceNameSw());
-            referralServiceIndicatorsDTO.setActive(referralService.isActive());
-
-
-            List<ServiceIndicator> serviceIndicators = null;
-            try {
-                Object[] objects = new Object[]{
-                        referralService.getReferralServiceId()
-                };
-                serviceIndicators =
-                        referralServiceIndicatorRepository.getReferralServicesIndicators("SELECT * FROM " + ServiceIndicator.tbName+" WHERE "+ ServiceIndicator.COL_SERVICE_ID +" =?", objects);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            List<IndicatorDTO> indicatorDTOS = new ArrayList<>();
-            for(ServiceIndicator serviceIndicator: serviceIndicators){
-                IndicatorDTO indicatorDTO = new IndicatorDTO();
-                indicatorDTO.setReferralServiceIndicatorId(serviceIndicator.getServiceIndicatorId());
-
-
-                Object[] objects = new Object[]{
-                        serviceIndicator.getPkReferralServiceIndicator().getIndicatorId()
-                };
-                List<Indicator> indicators = null;
-                try {
-                    indicators = indicatorRepository.getReferralIndicators("SELECT * FROM "+ Indicator.tbName+" WHERE "+ Indicator.COL_REFERRAL_INDICATOR_ID+" =?",objects);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if(indicators.size()>0) {
-                    indicatorDTO.setIndicatorName(indicators.get(0).getReferralIndicatorName());
-                    indicatorDTO.setIndicatorNameSw(indicators.get(0).getReferralIndicatorNameSw());
-                    indicatorDTO.setReferralIndicatorId(indicators.get(0).getReferralIndicatorId());
-                    indicatorDTO.setActive(indicators.get(0).isActive());
-                }
-
-                indicatorDTOS.add(indicatorDTO);
-
-            }
-            referralServiceIndicatorsDTO.setIndicators(indicatorDTOS);
-
-            referralServiceIndicatorsDTOS.add(referralServiceIndicatorsDTO);
-        }
-
-
-
-
-        return referralServiceIndicatorsDTOS;
-    }
-
-
-    @RequestMapping("delete-referral-service-indicator/{referralServiceIndicatorId}")
-    @ResponseBody
-    private ResponseEntity<ServiceIndicator>  deleteReferralServiceIndicatorId(@PathVariable("referralServiceIndicatorId") String referralServiceIndicatorId) {
-        if(referralServiceIndicatorId.equals("")){
-            return new ResponseEntity<ServiceIndicator>(BAD_REQUEST);
-        }
-
-        try {
-            referralServiceIndicatorRepository.executeQuery("DELETE  FROM "+ ServiceIndicator.tbName+" WHERE "+ ServiceIndicator.COL_SERVICE_INDICATOR_ID +" = "+referralServiceIndicatorId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<ServiceIndicator>(NOT_FOUND);
-        }
-        return new ResponseEntity<ServiceIndicator>(OK);
-    }
 
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = GET, value = "/referral-types")

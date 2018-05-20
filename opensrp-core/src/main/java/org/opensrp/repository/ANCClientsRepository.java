@@ -17,7 +17,7 @@ import java.util.Map;
 //import org.opensrp.domain.Patients;
 
 @Repository
-public class PatientsRepository {
+public class ANCClientsRepository {
 
 
 	@Autowired
