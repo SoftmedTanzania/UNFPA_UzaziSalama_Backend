@@ -5,12 +5,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.Date;
 import java.util.List;
 
 public class PatientReferralsDTO {
     @JsonProperty
-    private PatientsDTO patientsDTO;
+    private AncClientDTO ancClientDTO;
 
     @JsonProperty
     private List<ReferralsDTO> patientReferralsList;
@@ -22,12 +21,12 @@ public class PatientReferralsDTO {
     public PatientReferralsDTO() {
     }
 
-    public PatientsDTO getPatientsDTO() {
-        return patientsDTO;
+    public AncClientDTO getAncClientDTO() {
+        return ancClientDTO;
     }
 
-    public void setPatientsDTO(PatientsDTO patientsDTO) {
-        this.patientsDTO = patientsDTO;
+    public void setAncClientDTO(AncClientDTO ancClientDTO) {
+        this.ancClientDTO = ancClientDTO;
     }
 
     public List<ReferralsDTO> getPatientReferralsList() {

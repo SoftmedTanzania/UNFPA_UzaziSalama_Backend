@@ -1,7 +1,5 @@
 package org.opensrp.repository;
 
-import org.opensrp.domain.HealthFacilitiesPatients;
-import org.opensrp.domain.PatientAppointments;
 import org.opensrp.domain.PatientAppointments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +22,7 @@ public class PatientsAppointmentsRepository {
 	
 	public int save(PatientAppointments patientAppointments) throws Exception {
 		String insertQuery = "insert into " + PatientAppointments.tbName + " (" +
-				PatientAppointments.COL_HEALTH_FACILITY_PATIENT_ID + "," +
+				PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "," +
 				PatientAppointments.COL_APPOINTMENT_DATE + "," +
 				PatientAppointments.COL_IS_CANCELLED + "," +
 				PatientAppointments.COL_STATUS + "," +
@@ -34,7 +32,7 @@ public class PatientsAppointmentsRepository {
 				PatientAppointments.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?) ";
 
 		Object[] params = new Object[] {
-				patientAppointments.getHealthFacilityPatientId(),
+				patientAppointments.getHealthFacilityClientId(),
 				patientAppointments.getAppointmentDate(),
 				patientAppointments.getIsCancelled(),
 				patientAppointments.getStatus(),
@@ -86,7 +84,7 @@ public class PatientsAppointmentsRepository {
 			PatientAppointments patientAppointments = new PatientAppointments();
 
 			patientAppointments.setAppointment_id(rs.getLong(rs.findColumn(PatientAppointments.COL_APPOINTMENT_ID)));
-			patientAppointments.setHealthFacilityPatientId(rs.getLong(rs.findColumn(PatientAppointments.COL_HEALTH_FACILITY_PATIENT_ID)));
+			patientAppointments.setHealthFacilityClientId(rs.getLong(rs.findColumn(PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID)));
 			patientAppointments.setAppointmentDate(rs.getDate(rs.findColumn(PatientAppointments.COL_APPOINTMENT_DATE)));
 			patientAppointments.setIsCancelled(rs.getBoolean(rs.findColumn(PatientAppointments.COL_IS_CANCELLED)));
 			patientAppointments.setStatus(rs.getString(rs.findColumn(PatientAppointments.COL_STATUS)));

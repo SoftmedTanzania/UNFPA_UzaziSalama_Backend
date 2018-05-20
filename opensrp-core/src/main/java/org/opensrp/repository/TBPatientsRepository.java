@@ -1,7 +1,6 @@
 package org.opensrp.repository;
 
-import org.opensrp.domain.HealthFacilitiesPatients;
-import org.opensrp.domain.TBPatient;
+import org.opensrp.domain.HealthFacilitiesClients;
 import org.opensrp.domain.TBPatient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,7 +43,7 @@ public class TBPatientsRepository {
 				TBPatient.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 
 		Object[] params = new Object[] {
-				tBPatient.getHealthFacilitiesPatients().getHealthFacilityPatientId(),
+				tBPatient.getHealthFacilitiesClients().getHealthFacilityClientId(),
 				tBPatient.getPatientType(),
 				tBPatient.getTransferType(),
 				tBPatient.getReferralType(),
@@ -110,10 +109,10 @@ public class TBPatientsRepository {
 
 			tbPatient.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(TBPatient.COL_CREATED_AT)).getTime()));
 
-			HealthFacilitiesPatients healthFacilitiesPatients = new HealthFacilitiesPatients();
-			healthFacilitiesPatients.setHealthFacilityPatientId(rs.getLong(rs.findColumn(TBPatient.COL_HEALTH_FACILITY_PATIENT_ID)));
+			HealthFacilitiesClients healthFacilitiesClients = new HealthFacilitiesClients();
+			healthFacilitiesClients.setHealthFacilityClientId(rs.getLong(rs.findColumn(TBPatient.COL_HEALTH_FACILITY_PATIENT_ID)));
 
-			tbPatient.setHealthFacilitiesPatients(healthFacilitiesPatients);
+			tbPatient.setHealthFacilitiesClients(healthFacilitiesClients);
 			tbPatient.setPatientType(rs.getInt(rs.findColumn(TBPatient.COL_PATIENT_TYPE)));
 			tbPatient.setTransferType(rs.getInt(rs.findColumn(TBPatient.COL_TRANSFER_TYPE)));
 			tbPatient.setReferralType(rs.getInt(rs.findColumn(TBPatient.COL_REFERRAL_TYPE)));

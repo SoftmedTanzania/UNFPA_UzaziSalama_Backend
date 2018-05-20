@@ -4,15 +4,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 @Entity
-@Table(name = "tbl_patients_appointments")
+@Table(name = "tbl_client_appointments")
 public class PatientAppointments implements Serializable {
 
-	public static final String tbName = "tbl_patients_appointments";
+	public static final String tbName = "tbl_client_appointments";
 
-	public static final String COL_HEALTH_FACILITY_PATIENT_ID = "health_facility_patient_id";
+	public static final String COL_HEALTH_FACILITY_CLIENT_ID = "health_facility_client_id";
 
 	public static final String COL_APPOINTMENT_ID = "appointment_id";
 
@@ -34,12 +32,12 @@ public class PatientAppointments implements Serializable {
 	@Column(name = COL_APPOINTMENT_ID, unique = true, nullable = false, insertable = false, updatable = false)
 	private Long appointment_id;
 
-	private Long healthFacilityPatientId;
+	private Long healthFacilityClientId;
 
 	@Id
 	@ManyToOne
-	@JoinColumn(name=COL_HEALTH_FACILITY_PATIENT_ID)
-	private HealthFacilitiesPatients healthFacilitiesPatients;
+	@JoinColumn(name= COL_HEALTH_FACILITY_CLIENT_ID)
+	private HealthFacilitiesClients healthFacilitiesClients;
 
 
 	@Id
@@ -73,12 +71,12 @@ public class PatientAppointments implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 
-	public HealthFacilitiesPatients getHealthFacilitiesPatients() {
-		return healthFacilitiesPatients;
+	public HealthFacilitiesClients getHealthFacilitiesClients() {
+		return healthFacilitiesClients;
 	}
 
-	public void setHealthFacilitiesPatients(HealthFacilitiesPatients healthFacilitiesPatients) {
-		this.healthFacilitiesPatients = healthFacilitiesPatients;
+	public void setHealthFacilitiesClients(HealthFacilitiesClients healthFacilitiesClients) {
+		this.healthFacilitiesClients = healthFacilitiesClients;
 	}
 
 	public Long getAppointment_id() {
@@ -89,12 +87,12 @@ public class PatientAppointments implements Serializable {
 		this.appointment_id = appointment_id;
 	}
 
-	public Long getHealthFacilityPatientId() {
-		return healthFacilityPatientId;
+	public Long getHealthFacilityClientId() {
+		return healthFacilityClientId;
 	}
 
-	public void setHealthFacilityPatientId(Long healthFacilityPatientId) {
-		this.healthFacilityPatientId = healthFacilityPatientId;
+	public void setHealthFacilityClientId(Long healthFacilityClientId) {
+		this.healthFacilityClientId = healthFacilityClientId;
 	}
 
 	public Date getAppointmentDate() {

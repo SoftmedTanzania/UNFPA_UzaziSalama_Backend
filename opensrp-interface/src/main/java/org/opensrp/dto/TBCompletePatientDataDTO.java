@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TBCompletePatientDataDTO {
     @JsonProperty
-    private PatientsDTO patientsDTO;
+    private AncClientDTO ancClientDTO;
 
     @JsonProperty
     private TBPatientDTO tbPatientDTO;
@@ -19,14 +19,14 @@ public class TBCompletePatientDataDTO {
 
 
     @JsonProperty
-    private List<TBEncounterDTO> tbEncounterDTOS;
+    private List<RoutineVisitDTO> routineVisitDTOS;
 
-    public PatientsDTO getPatientsDTO() {
-        return patientsDTO;
+    public AncClientDTO getAncClientDTO() {
+        return ancClientDTO;
     }
 
-    public void setPatientsDTO(PatientsDTO patientsDTO) {
-        this.patientsDTO = patientsDTO;
+    public void setAncClientDTO(AncClientDTO ancClientDTO) {
+        this.ancClientDTO = ancClientDTO;
     }
 
     public List<PatientsAppointmentsDTO> getPatientsAppointmentsDTOS() {
@@ -45,12 +45,12 @@ public class TBCompletePatientDataDTO {
         this.tbPatientDTO = tbPatientDTO;
     }
 
-    public List<TBEncounterDTO> getTbEncounterDTOS() {
-        return tbEncounterDTOS;
+    public List<RoutineVisitDTO> getRoutineVisitDTOS() {
+        return routineVisitDTOS;
     }
 
-    public void setTbEncounterDTOS(List<TBEncounterDTO> tbEncounterDTOS) {
-        this.tbEncounterDTOS = tbEncounterDTOS;
+    public void setRoutineVisitDTOS(List<RoutineVisitDTO> routineVisitDTOS) {
+        this.routineVisitDTOS = routineVisitDTOS;
     }
 
     @Override

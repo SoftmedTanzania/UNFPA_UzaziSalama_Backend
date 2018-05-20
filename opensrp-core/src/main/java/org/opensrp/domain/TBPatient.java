@@ -1,7 +1,6 @@
 package org.opensrp.domain;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -54,7 +53,7 @@ public class TBPatient  {
 	//TODO recheck this implementation for reoccuring tb cases
 	@OneToOne
 	@JoinColumn(name=COL_HEALTH_FACILITY_PATIENT_ID,unique=true)
-	private HealthFacilitiesPatients healthFacilitiesPatients;
+	private HealthFacilitiesClients healthFacilitiesClients;
 
 	@Column(name = COL_PATIENT_TYPE)
 	private int patientType;
@@ -115,12 +114,12 @@ public class TBPatient  {
 		this.tbPatientId = tbPatientId;
 	}
 
-	public HealthFacilitiesPatients getHealthFacilitiesPatients() {
-		return healthFacilitiesPatients;
+	public HealthFacilitiesClients getHealthFacilitiesClients() {
+		return healthFacilitiesClients;
 	}
 
-	public void setHealthFacilitiesPatients(HealthFacilitiesPatients healthFacilitiesPatients) {
-		this.healthFacilitiesPatients = healthFacilitiesPatients;
+	public void setHealthFacilitiesClients(HealthFacilitiesClients healthFacilitiesClients) {
+		this.healthFacilitiesClients = healthFacilitiesClients;
 	}
 
 	public int getPatientType() {

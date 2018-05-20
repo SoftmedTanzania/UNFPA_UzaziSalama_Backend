@@ -9,17 +9,17 @@ import java.util.List;
 
 public class TBEncounterFeedbackDTO {
 	@JsonProperty
-	private TBEncounterDTO tbEncounterDTO;
+	private RoutineVisitDTO routineVisitDTO;
 
 	@JsonProperty
 	private List<PatientsAppointmentsDTO> patientsAppointmentsDTOS;
 
-	public TBEncounterDTO getTbEncounterDTO() {
-		return tbEncounterDTO;
+	public RoutineVisitDTO getRoutineVisitDTO() {
+		return routineVisitDTO;
 	}
 
-	public void setTbEncounterDTO(TBEncounterDTO tbEncounterDTO) {
-		this.tbEncounterDTO = tbEncounterDTO;
+	public void setRoutineVisitDTO(RoutineVisitDTO routineVisitDTO) {
+		this.routineVisitDTO = routineVisitDTO;
 	}
 
 	public List<PatientsAppointmentsDTO> getPatientsAppointmentsDTOS() {

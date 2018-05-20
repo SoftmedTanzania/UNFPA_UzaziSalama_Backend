@@ -12,70 +12,37 @@ import java.util.List;
 public class ReferralsDTO {
 
     @JsonProperty
-    private Long referralId;
+    private Long id;
 
     @JsonProperty
-    private Long patientId;
-
-    @JsonProperty
-    private String communityBasedHivService;
+    private long ancClientId;
 
     @JsonProperty
     private String referralReason;
 
     @JsonProperty
-    private int serviceId;
-
-    @JsonProperty
-    private String ctcNumber;
+    private String instanceId;
 
     @JsonProperty
     private String referralUUID;
 
     @JsonProperty
-    private String serviceProviderUIID;
-
-    @JsonProperty
-    private String serviceProviderGroup;
-
-    @JsonProperty
-    private String villageLeader;
+    private String serviceProviderUUID;
 
     @JsonProperty
     private String otherClinicalInformation;
 
     @JsonProperty
-    private String otherNotes;
-
-    @JsonProperty
-    private String serviceGivenToPatient;
-
-
-    @JsonProperty
-    private int labTest;
-
-    @JsonProperty
-    private boolean testResults;
-
+    private long referralType;
 
     @JsonProperty
     private String fromFacilityId;
 
     @JsonProperty
-    private int referralSource;
-
-    @JsonProperty
-    private int referralType;
-
-    @JsonProperty
-    private Long referralDate;
+    private long referralDate;
 
     @JsonProperty
     private String facilityId;
-
-
-    @JsonProperty
-    private String intanceId;
 
     /*
 	 *  0 = new
@@ -85,24 +52,20 @@ public class ReferralsDTO {
     @JsonProperty
     private int referralStatus;
 
-	@JsonProperty
-    private List<Long> serviceIndicatorIds;
-
-
-    public Long getPatientId() {
-        return patientId;
+    public Long getId() {
+        return id;
     }
 
-    public void setPatientId(Long patientId) {
-        this.patientId = patientId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getCommunityBasedHivService() {
-        return communityBasedHivService;
+    public long getAncClientId() {
+        return ancClientId;
     }
 
-    public void setCommunityBasedHivService(String communityBasedHivService) {
-        this.communityBasedHivService = communityBasedHivService;
+    public void setAncClientId(long ancClientId) {
+        this.ancClientId = ancClientId;
     }
 
     public String getReferralReason() {
@@ -113,20 +76,12 @@ public class ReferralsDTO {
         this.referralReason = referralReason;
     }
 
-    public int getServiceId() {
-        return serviceId;
+    public String getInstanceId() {
+        return instanceId;
     }
 
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
-    }
-
-    public String getCtcNumber() {
-        return ctcNumber;
-    }
-
-    public void setCtcNumber(String ctcNumber) {
-        this.ctcNumber = ctcNumber;
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
     }
 
     public String getReferralUUID() {
@@ -137,48 +92,36 @@ public class ReferralsDTO {
         this.referralUUID = referralUUID;
     }
 
-    public String getServiceProviderUIID() {
-        return serviceProviderUIID;
+    public String getServiceProviderUUID() {
+        return serviceProviderUUID;
     }
 
-    public void setServiceProviderUIID(String serviceProviderUIID) {
-        this.serviceProviderUIID = serviceProviderUIID;
+    public void setServiceProviderUUID(String serviceProviderUUID) {
+        this.serviceProviderUUID = serviceProviderUUID;
     }
 
-    public String getServiceProviderGroup() {
-        return serviceProviderGroup;
+    public String getOtherClinicalInformation() {
+        return otherClinicalInformation;
     }
 
-    public void setServiceProviderGroup(String serviceProviderGroup) {
-        this.serviceProviderGroup = serviceProviderGroup;
+    public void setOtherClinicalInformation(String otherClinicalInformation) {
+        this.otherClinicalInformation = otherClinicalInformation;
     }
 
-    public Long getReferralId() {
-        return referralId;
+    public long getReferralType() {
+        return referralType;
     }
 
-    public void setReferralId(Long referralId) {
-        this.referralId = referralId;
+    public void setReferralType(long referralType) {
+        this.referralType = referralType;
     }
 
-    public boolean getTestResults() {
-        return testResults;
+    public String getFromFacilityId() {
+        return fromFacilityId;
     }
 
-    public void setTestResults(boolean testResults) {
-        this.testResults = testResults;
-    }
-
-    public void setReferralDate(Long referralDate) {
-        this.referralDate = referralDate;
-    }
-
-    public String getVillageLeader() {
-        return villageLeader;
-    }
-
-    public void setVillageLeader(String villageLeader) {
-        this.villageLeader = villageLeader;
+    public void setFromFacilityId(String fromFacilityId) {
+        this.fromFacilityId = fromFacilityId;
     }
 
     public long getReferralDate() {
@@ -203,78 +146,6 @@ public class ReferralsDTO {
 
     public void setReferralStatus(int referralStatus) {
         this.referralStatus = referralStatus;
-    }
-
-    public String getOtherClinicalInformation() {
-        return otherClinicalInformation;
-    }
-
-    public void setOtherClinicalInformation(String otherClinicalInformation) {
-        this.otherClinicalInformation = otherClinicalInformation;
-    }
-
-    public String getOtherNotes() {
-        return otherNotes;
-    }
-
-    public void setOtherNotes(String otherNotes) {
-        this.otherNotes = otherNotes;
-    }
-
-    public String getServiceGivenToPatient() {
-        return serviceGivenToPatient;
-    }
-
-    public void setServiceGivenToPatient(String serviceGivenToPatient) {
-        this.serviceGivenToPatient = serviceGivenToPatient;
-    }
-
-    public int getLabTest() {
-        return labTest;
-    }
-
-    public void setLabTest(int labTest) {
-        this.labTest = labTest;
-    }
-
-    public int getReferralType() {
-        return referralType;
-    }
-
-    public void setReferralType(int referralType) {
-        this.referralType = referralType;
-    }
-
-    public String getFromFacilityId() {
-        return fromFacilityId;
-    }
-
-    public void setFromFacilityId(String fromFacilityId) {
-        this.fromFacilityId = fromFacilityId;
-    }
-
-    public int getReferralSource() {
-        return referralSource;
-    }
-
-    public void setReferralSource(int referralSource) {
-        this.referralSource = referralSource;
-    }
-
-	public List<Long> getServiceIndicatorIds() {
-		return serviceIndicatorIds;
-	}
-
-	public void setServiceIndicatorIds(List<Long> serviceIndicatorIds) {
-		this.serviceIndicatorIds = serviceIndicatorIds;
-	}
-
-    public String getIntanceId() {
-        return intanceId;
-    }
-
-    public void setIntanceId(String intanceId) {
-        this.intanceId = intanceId;
     }
 
     @Override

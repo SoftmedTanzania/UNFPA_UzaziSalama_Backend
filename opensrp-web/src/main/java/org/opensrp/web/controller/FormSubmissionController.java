@@ -17,7 +17,7 @@ import org.opensrp.connector.openmrs.service.HouseholdService;
 import org.opensrp.connector.openmrs.service.PatientService;
 import org.opensrp.domain.*;
 import org.opensrp.dto.PatientReferralsDTO;
-import org.opensrp.dto.PatientsDTO;
+import org.opensrp.dto.AncClientDTO;
 import org.opensrp.dto.ReferralsDTO;
 import org.opensrp.dto.form.FormSubmissionDTO;
 import org.opensrp.dto.form.MultimediaDTO;
@@ -63,7 +63,7 @@ public class FormSubmissionController {
     private ErrorTraceService errorTraceService;
     private MultimediaService multimediaService;
     private MultimediaRepository multimediaRepository;
-    private HealthFacilitiesPatientsRepository healthFacilitiesPatientsRepository;
+    private HealthFacilitiesClientsRepository healthFacilitiesClientsRepository;
     private PatientReferralRepository patientReferralRepository;
     private PatientReferralIndicatorRepository patientReferralIndicatorRepository;
     private GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository;
@@ -72,11 +72,11 @@ public class FormSubmissionController {
     @Autowired
     public FormSubmissionController(FormSubmissionService formSubmissionService, TaskSchedulerService scheduler,
                                     EncounterService encounterService, FormEntityConverter formEntityConverter, PatientService patientService,
-                                    HouseholdService householdService,MultimediaService multimediaService, MultimediaRepository multimediaRepository,
-                                    ErrorTraceService errorTraceService,HealthFacilitiesPatientsRepository healthFacilitiesPatientsRepository,PatientReferralRepository patientReferralRepository,
-		                            GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository,GoogleFCMService googleFCMService,
-		                            PatientReferralIndicatorRepository patientReferralIndicatorRepository,
-		                            ReferralPatientsService referralPatientService,RapidProServiceImpl rapidProService) {
+                                    HouseholdService householdService, MultimediaService multimediaService, MultimediaRepository multimediaRepository,
+                                    ErrorTraceService errorTraceService, HealthFacilitiesClientsRepository healthFacilitiesClientsRepository, PatientReferralRepository patientReferralRepository,
+                                    GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository, GoogleFCMService googleFCMService,
+                                    PatientReferralIndicatorRepository patientReferralIndicatorRepository,
+                                    ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService) {
         this.formSubmissionService = formSubmissionService;
         this.scheduler = scheduler;
         this.errorTraceService=errorTraceService;
@@ -86,7 +86,7 @@ public class FormSubmissionController {
         this.householdService = householdService;
         this.multimediaService = multimediaService;
         this.multimediaRepository = multimediaRepository;
-        this.healthFacilitiesPatientsRepository = healthFacilitiesPatientsRepository;
+        this.healthFacilitiesClientsRepository = healthFacilitiesClientsRepository;
         this.patientReferralRepository = patientReferralRepository;
         this.googlePushNotificationsUsersRepository = googlePushNotificationsUsersRepository;
 	    this.googleFCMService =googleFCMService;
@@ -150,7 +150,7 @@ public class FormSubmissionController {
 	            for (FormSubmission formSubmission : fsl) {
 	            	try{
 			            saveFormToOpenSRP(formSubmission);
-	            		addFormToOpenMRS(formSubmission);
+//	            		addFormToOpenMRS(formSubmission);
 	            	}
 	            	catch(Exception e){
 	            		e.printStackTrace();
@@ -212,24 +212,21 @@ public class FormSubmissionController {
 	private void saveFormToOpenSRP(FormSubmission formSubmission) throws ParseException, IllegalStateException, JSONException{
         System.out.println("Coze = saving patient into OpenSRP");
         ANCClients patient = formEntityConverter.getPatientFromFormSubmission(formSubmission);
-        PatientReferral patientReferral = formEntityConverter.getPatientReferralFromFormSubmission(formSubmission);
+        ClientReferral clientReferral = formEntityConverter.getPatientReferralFromFormSubmission(formSubmission);
 		try {
 
-			long healthfacilityPatientId = referralPatientService.savePatient(patient, patientReferral.getFacilityId(), patientReferral.getCtcNumber());
+			long healthfacilityPatientId = referralPatientService.savePatient(patient, clientReferral.getFacilityId(), "");
 
-			List<HealthFacilitiesPatients> healthFacilitiesPatients = healthFacilitiesPatientsRepository.getHealthFacilityPatients("SELECT * FROM "+HealthFacilitiesPatients.tbName+" WHERE "+HealthFacilitiesPatients.COL_HEALTH_FACILITY_PATIENT_ID+" = "+healthfacilityPatientId,null);
+			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM "+ HealthFacilitiesClients.tbName+" WHERE "+ HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID +" = "+healthfacilityPatientId,null);
 
-			patient.setPatientId(healthFacilitiesPatients.get(0).getPatient().getPatientId());
-			patientReferral.setPatient(patient);
+			patient.setClientId(healthFacilitiesPatients.get(0).getAncClient().getClientId());
 
             //TODO remove hardcoding of these values
-            patientReferral.setReferralSource(0);
-            patientReferral.setReferralStatus(0);
-            patientReferral.setReferralType(1);
+            clientReferral.setReferralStatus(0);
+            clientReferral.setReferralType(1);
 
-            System.out.println("Coze = saving referral Data");
-            long id = patientReferralRepository.save(patientReferral);
-            patientReferral.setId(id);
+            long id = patientReferralRepository.save(clientReferral);
+            clientReferral.setId(id);
 
 			JSONArray indicatorIds = formEntityConverter.getReferralIndicatorsFromFormSubmission(formSubmission);
 			int size  = indicatorIds.length();
@@ -274,7 +271,7 @@ public class FormSubmissionController {
 			}
 
 
-			Object[] facilityParams = new Object[]{patientReferral.getFacilityId(),1};
+			Object[] facilityParams = new Object[]{clientReferral.getFacilityId(),1};
 			List<GooglePushNotificationsUsers> googlePushNotificationsUsers = googlePushNotificationsUsersRepository.getGooglePushNotificationsUsers("SELECT * FROM "+GooglePushNotificationsUsers.tbName+" WHERE "+GooglePushNotificationsUsers.COL_FACILITY_UIID+" = ? AND "+GooglePushNotificationsUsers.COL_USER_TYPE+" = ?",facilityParams);
 			JSONArray tokens = new JSONArray();
 			for(GooglePushNotificationsUsers googlePushNotificationsUsers1:googlePushNotificationsUsers){
@@ -284,14 +281,12 @@ public class FormSubmissionController {
 
 			PatientReferralsDTO patientReferralsDTO = new PatientReferralsDTO();
 
-			PatientsDTO patientsDTO = PatientsConverter.toPatientsDTO(patient);
-			patientsDTO.setCtcNumber(patientReferral.getCtcNumber());
-			patientReferralsDTO.setPatientsDTO(patientsDTO);
+			AncClientDTO ancClientDTO = PatientsConverter.toPatientsDTO(patient);
+			patientReferralsDTO.setAncClientDTO(ancClientDTO);
 
 
 			List<ReferralsDTO> referralsDTOS = new ArrayList<>();
-			ReferralsDTO referralsDTO = PatientsConverter.toPatientDTO(patientReferral);
-			referralsDTO.setServiceIndicatorIds(referralIndicatorIds);
+			ReferralsDTO referralsDTO = PatientsConverter.toPatientDTO(clientReferral);
 			referralsDTOS.add(referralsDTO);
 			patientReferralsDTO.setPatientReferralsList(referralsDTOS);
 

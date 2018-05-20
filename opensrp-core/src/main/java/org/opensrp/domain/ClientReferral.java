@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "tbl_client_referral")
-public class PatientReferral {
+public class ClientReferral {
 
 	public static final String tbName = "tbl_client_referral";
 
@@ -45,7 +45,7 @@ public class PatientReferral {
 
 
 	@Column(name = COL_ANC_CLIENT_ID)
-	private int ancClientId;
+	private long ancClientId;
 
 	@Column(name = COL_REFERRAL_REASON)
 	private String referralReason;
@@ -100,11 +100,11 @@ public class PatientReferral {
 		this.id = id;
 	}
 
-	public int getAncClientId() {
+	public long getAncClientId() {
 		return ancClientId;
 	}
 
-	public void setAncClientId(int ancClientId) {
+	public void setAncClientId(long ancClientId) {
 		this.ancClientId = ancClientId;
 	}
 

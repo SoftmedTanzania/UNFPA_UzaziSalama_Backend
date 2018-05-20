@@ -10,7 +10,7 @@ public class RoutineVisits implements Serializable {
 
 	public static final String tbName = "tbl_routine_visits";
 
-	public static final String COL_ANC_CLIENT_ID = "anc_client_id";
+	public static final String COL_HEALTH_FACILITY_CLIENT_ID = "health_facility_client_id";
 
 	public static final String COL_VISIT_NUMBER = "visit_umber";
 
@@ -44,8 +44,8 @@ public class RoutineVisits implements Serializable {
 	private Long id;
 
 	@Id
-	@Column(name = COL_ANC_CLIENT_ID)
-	private Long ancClientId;
+	@Column(name = COL_HEALTH_FACILITY_CLIENT_ID)
+	private Long healthFacilityClientId;
 
 	@Column(name = COL_VISIT_NUMBER)
 	private int visitNumber;
@@ -91,7 +91,109 @@ public class RoutineVisits implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 
+	public Long getId() {
+		return id;
+	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getHealthFacilityClientId() {
+		return healthFacilityClientId;
+	}
+
+	public void setHealthFacilityClientId(Long healthFacilityClientId) {
+		this.healthFacilityClientId = healthFacilityClientId;
+	}
+
+	public int getVisitNumber() {
+		return visitNumber;
+	}
+
+	public void setVisitNumber(int visitNumber) {
+		this.visitNumber = visitNumber;
+	}
+
+	public Date getVisitDate() {
+		return visitDate;
+	}
+
+	public void setVisitDate(Date visitDate) {
+		this.visitDate = visitDate;
+	}
+
+	public Date getAppointmentDate() {
+		return appointmentDate;
+	}
+
+	public void setAppointmentDate(Date appointmentDate) {
+		this.appointmentDate = appointmentDate;
+	}
+
+	public boolean isAnaemia() {
+		return anaemia;
+	}
+
+	public void setAnaemia(boolean anaemia) {
+		this.anaemia = anaemia;
+	}
+
+	public boolean isOedema() {
+		return oedema;
+	}
+
+	public void setOedema(boolean oedema) {
+		this.oedema = oedema;
+	}
+
+	public boolean isProtenuria() {
+		return protenuria;
+	}
+
+	public void setProtenuria(boolean protenuria) {
+		this.protenuria = protenuria;
+	}
+
+	public boolean isHighBloodPressure() {
+		return highBloodPressure;
+	}
+
+	public void setHighBloodPressure(boolean highBloodPressure) {
+		this.highBloodPressure = highBloodPressure;
+	}
+
+	public boolean isWeightStagnation() {
+		return weightStagnation;
+	}
+
+	public void setWeightStagnation(boolean weightStagnation) {
+		this.weightStagnation = weightStagnation;
+	}
+
+	public boolean isAntepartumHaemorrhage() {
+		return antepartumHaemorrhage;
+	}
+
+	public void setAntepartumHaemorrhage(boolean antepartumHaemorrhage) {
+		this.antepartumHaemorrhage = antepartumHaemorrhage;
+	}
+
+	public boolean isSugarInTheUrine() {
+		return sugarInTheUrine;
+	}
+
+	public void setSugarInTheUrine(boolean sugarInTheUrine) {
+		this.sugarInTheUrine = sugarInTheUrine;
+	}
+
+	public boolean isFetusLie() {
+		return fetusLie;
+	}
+
+	public void setFetusLie(boolean fetusLie) {
+		this.fetusLie = fetusLie;
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;

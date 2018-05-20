@@ -1,10 +1,14 @@
 package org.opensrp.service;
 
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.opensrp.domain.*;
 import org.opensrp.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -15,143 +19,71 @@ public class PatientsConverter {
     private static Logger logger = LoggerFactory.getLogger(PatientsConverter.class.toString());
 
 
-    public static ANCClients toPatients(PatientsDTO patientsDTO) {
+    public static ANCClients toPatients(AncClientDTO ancClientDTO) {
         try {
-            ANCClients ANCClients = new ANCClients();
+            ANCClients client = new ANCClients();
 
 
-            ANCClients.setPatientId(patientsDTO.getPatientId());
-            ANCClients.setFirstName(patientsDTO.getFirstName());
-            ANCClients.setMiddleName(patientsDTO.getMiddleName());
-            ANCClients.setSurname(patientsDTO.getSurname());
-            ANCClients.setPhoneNumber(patientsDTO.getPhoneNumber());
+
+
+            client.setClientId(ancClientDTO.getClientId());
+            client.setFirstName(ancClientDTO.getFirstName());
+            client.setMiddleName(ancClientDTO.getMiddleName());
+            client.setSurname(ancClientDTO.getSurname());
+            client.setPhoneNumber(ancClientDTO.getPhoneNumber());
 
             Date dob = new Date();
-            dob.setTime(patientsDTO.getDateOfBirth());
+            dob.setTime(ancClientDTO.getDateOfBirth());
+            client.setDateOfBirth(dob);
+            client.setWard(ancClientDTO.getWard());
+            client.setVillage(ancClientDTO.getVillage());
 
-            ANCClients.setDateOfBirth(dob);
-            ANCClients.setGender(patientsDTO.getGender());
-            ANCClients.setWard(patientsDTO.getWard());
-            ANCClients.setVillage(patientsDTO.getVillage());
-            ANCClients.setHamlet(patientsDTO.getHamlet());
-            ANCClients.setCareTakerName(patientsDTO.getCareTakerName());
-            ANCClients.setCareTakerPhoneNumber(patientsDTO.getPhoneNumber());
-            ANCClients.setCareTakerRelationship(patientsDTO.getCareTakerRelationship());
-            ANCClients.setCommunityBasedHivService(patientsDTO.getCommunityBasedHivService());
+            client.setMapCue(ancClientDTO.getMapCue());
+            client.setPmtctStatus(ancClientDTO.getPmtctStatus());
+            client.setHeightBelowAverage(ancClientDTO.isHeightBelowAverage());
+            client.setLevelOfEducation(ancClientDTO.getLevelOfEducation());
+
+            client.setSpouseName(ancClientDTO.getSpouseName());
+            client.setGravida(ancClientDTO.getGravida());
+            client.setPara(ancClientDTO.getPara());
+            client.setGestationalAgeBelow20(ancClientDTO.isGestationalAgeBelow20());
+            client.setHistoryOfAbortion(ancClientDTO.isHistoryOfAbortion());
+            client.setAgeBelow20Years(ancClientDTO.isAgeBelow20Years());
+            client.setLastPregnancyOver10Years(ancClientDTO.isLastPregnancyOver10Years());
+            client.setPregnancyAbove35Years(ancClientDTO.isPregnancyAbove35Years());
+            client.setHistoryOfStillBirth(ancClientDTO.isHistoryOfStillBirth());
+            client.setHistoryOfPostmartumHaemorrhage(ancClientDTO.isHistoryOfPostmartumHaemorrhage());
+            client.setHistoryOfRetainedPlacenta(ancClientDTO.isHistoryOfRetainedPlacenta());
+            client.setLastChildbirthYear(ancClientDTO.getLastChildbirthYear());
+            client.setLastChildbirthStatus(ancClientDTO.getLastChildbirthStatus());
+            client.setPncStatus(ancClientDTO.isPncStatus());
+
 
             try {
-                Date deathDate = new Date();
-                deathDate.setTime(patientsDTO.getDateOfDeath());
-                ANCClients.setDateOfDeath(deathDate);
+                Date lmnp = new Date();
+                lmnp.setTime(ancClientDTO.getLmnpDate());
+                client.setLmnpDate(lmnp);
             }catch (Exception e){
                 e.printStackTrace();
             }
 
-            ANCClients.setHivStatus(patientsDTO.isHivStatus());
-            ANCClients.setCreatedAt(Calendar.getInstance().getTime());
-            ANCClients.setUpdatedAt(Calendar.getInstance().getTime());
+            try {
+                Date edd = new Date();
+                edd.setTime(ancClientDTO.getEdd());
+                client.setEdd(edd);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
-            return ANCClients;
+            client.setCreatedAt(Calendar.getInstance().getTime());
+            client.setUpdatedAt(Calendar.getInstance().getTime());
+
+
+
+
+            return client;
         } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting CTCPatientDTO :{0}, failed with error: {1}.", patientsDTO, e));
-            throw e;
-        }
-    }
-
-
-
-    public static ANCClients toPatients(CTCPatientsDTO patientsDTO) {
-        try {
-            ANCClients ANCClients = new ANCClients();
-            ANCClients.setFirstName(patientsDTO.getFirstName());
-	        ANCClients.setMiddleName(patientsDTO.getMiddleName());
-            ANCClients.setSurname(patientsDTO.getSurname());
-            ANCClients.setPhoneNumber(patientsDTO.getContact());
-            Date dob = new Date();
-            dob.setTime(patientsDTO.getDateOfBirth());
-            ANCClients.setDateOfBirth(dob);
-            ANCClients.setGender(patientsDTO.getGender());
-
-            Date deathDate = new Date();
-            deathDate.setTime(patientsDTO.getDateOfDeath());
-
-            ANCClients.setCareTakerName(patientsDTO.getCareTakerName());
-            ANCClients.setCareTakerPhoneNumber(patientsDTO.getCareTakerPhoneNumber());
-            ANCClients.setCareTakerRelationship(patientsDTO.getCareTakerRelationship());
-
-            ANCClients.setDateOfDeath(deathDate);
-            ANCClients.setCreatedAt(Calendar.getInstance().getTime());
-            ANCClients.setUpdatedAt(Calendar.getInstance().getTime());
-            ANCClients.setHivStatus(patientsDTO.isHivStatus());
-
-            return ANCClients;
-        } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting CTCPatientDTO :{0}, failed with error: {1}.", patientsDTO, e));
-            throw e;
-        }
-    }
-
-
-    public static ANCClients toPatients(TBPatientMobileClientDTO patientsDTO) {
-        try {
-            ANCClients ANCClients = new ANCClients();
-
-
-            ANCClients.setFirstName(patientsDTO.getFirstName());
-            ANCClients.setSurname(patientsDTO.getSurname());
-            ANCClients.setMiddleName(patientsDTO.getMiddleName());
-            ANCClients.setPhoneNumber(patientsDTO.getPhoneNumber());
-            ANCClients.setHamlet(patientsDTO.getHamlet());
-            ANCClients.setVillage(patientsDTO.getVillage());
-            ANCClients.setHamlet(patientsDTO.getHamlet());
-            ANCClients.setPhoneNumber(patientsDTO.getPhoneNumber());
-            Date dob = new Date();
-            dob.setTime(patientsDTO.getDateOfBirth());
-            ANCClients.setDateOfBirth(dob);
-            ANCClients.setGender(patientsDTO.getGender());
-            ANCClients.setHivStatus(patientsDTO.isHivStatus());
-            ANCClients.setHivStatus(patientsDTO.isHivStatus());
-
-            Date deathDate = new Date();
-            deathDate.setTime(patientsDTO.getDateOfDeath());
-
-            ANCClients.setDateOfDeath(deathDate);
-            ANCClients.setCreatedAt(Calendar.getInstance().getTime());
-            ANCClients.setUpdatedAt(Calendar.getInstance().getTime());
-
-            return ANCClients;
-        } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting TBPatientMobileClientDTO :{0}, failed with error: {1}.", patientsDTO, e));
-            throw e;
-        }
-    }
-
-    public static TBPatient toTBPatients(TBPatientMobileClientDTO patientsDTO) {
-        try {
-            TBPatient tbPatient = new TBPatient();
-            tbPatient.setOutcomeDetails(patientsDTO.getOutcomeDetails());
-            tbPatient.setOutcome(patientsDTO.getOutcome());
-            tbPatient.setTbPatientId(patientsDTO.getPatientId());
-
-	        Date outcomeDate = new Date();
-	        outcomeDate.setTime(patientsDTO.getOutcomeDate());
-
-            tbPatient.setOutcomeDate(outcomeDate);
-            tbPatient.setOtherTestsDetails(patientsDTO.getOtherTestsDetails());
-            tbPatient.setTestType(patientsDTO.getTestType());
-            tbPatient.setMakohozi(patientsDTO.getMakohozi());
-            tbPatient.setWeight(patientsDTO.getWeight());
-            tbPatient.setXray(patientsDTO.getXray());
-            tbPatient.setVeo(patientsDTO.getVeo());
-            tbPatient.setReferralType(patientsDTO.getReferralType());
-            tbPatient.setTreatment_type(patientsDTO.getTreatment_type());
-            tbPatient.setTransferType(patientsDTO.getTransferType());
-            tbPatient.setPatientType(patientsDTO.getPatientType());
-            tbPatient.setPregnant(patientsDTO.isPregnant());
-
-            return tbPatient;
-        } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting TBPatientMobileClientDTO :{0}, failed with error: {1}.", patientsDTO, e));
+            logger.error(MessageFormat.format("Converting CTCPatientDTO :{0}, failed with error: {1}.", ancClientDTO, e));
             throw e;
         }
     }
@@ -200,36 +132,57 @@ public class PatientsConverter {
     }
 
 
-    public static PatientsDTO toPatientsDTO(ANCClients ANCClients) {
+    public static AncClientDTO toPatientsDTO(ANCClients client) {
         try {
-            PatientsDTO patientsDTO = new PatientsDTO();
+            AncClientDTO ancClientDTO = new AncClientDTO();
 
-            patientsDTO.setPatientId(ANCClients.getPatientId());
-            patientsDTO.setFirstName(ANCClients.getFirstName());
-            patientsDTO.setSurname(ANCClients.getSurname());
-            patientsDTO.setMiddleName(ANCClients.getMiddleName());
-            patientsDTO.setPhoneNumber(ANCClients.getPhoneNumber());
-            patientsDTO.setDateOfBirth(ANCClients.getDateOfBirth().getTime());
-            patientsDTO.setGender(ANCClients.getGender());
-            patientsDTO.setWard(ANCClients.getWard());
-            patientsDTO.setVillage(ANCClients.getVillage());
-            patientsDTO.setHamlet(ANCClients.getHamlet());
+            ancClientDTO.setClientId(client.getClientId());
+            ancClientDTO.setFirstName(client.getFirstName());
+            ancClientDTO.setMiddleName(client.getMiddleName());
+            ancClientDTO.setSurname(client.getSurname());
+            ancClientDTO.setPhoneNumber(client.getPhoneNumber());
 
-            patientsDTO.setCareTakerName(ANCClients.getCareTakerName());
-            patientsDTO.setCareTakerPhoneNumber(ANCClients.getCareTakerPhoneNumber());
-            patientsDTO.setCareTakerRelationship(ANCClients.getCareTakerRelationship());
+
+            ancClientDTO.setDateOfBirth(client.getDateOfBirth().getTime());
+
+            ancClientDTO.setWard(client.getWard());
+            ancClientDTO.setVillage(client.getVillage());
+
+            ancClientDTO.setMapCue(client.getMapCue());
+            ancClientDTO.setPmtctStatus(client.getPmtctStatus());
+            ancClientDTO.setHeightBelowAverage(client.isHeightBelowAverage());
+            ancClientDTO.setLevelOfEducation(client.getLevelOfEducation());
+
+            ancClientDTO.setSpouseName(client.getSpouseName());
+            ancClientDTO.setGravida(client.getGravida());
+            ancClientDTO.setPara(client.getPara());
+            ancClientDTO.setGestationalAgeBelow20(client.isGestationalAgeBelow20());
+            ancClientDTO.setHistoryOfAbortion(client.isHistoryOfAbortion());
+            ancClientDTO.setAgeBelow20Years(client.isAgeBelow20Years());
+            ancClientDTO.setLastPregnancyOver10Years(client.isLastPregnancyOver10Years());
+            ancClientDTO.setPregnancyAbove35Years(client.isPregnancyAbove35Years());
+            ancClientDTO.setHistoryOfStillBirth(client.isHistoryOfStillBirth());
+            ancClientDTO.setHistoryOfPostmartumHaemorrhage(client.isHistoryOfPostmartumHaemorrhage());
+            ancClientDTO.setHistoryOfRetainedPlacenta(client.isHistoryOfRetainedPlacenta());
+            ancClientDTO.setLastChildbirthYear(client.getLastChildbirthYear());
+            ancClientDTO.setLastChildbirthStatus(client.getLastChildbirthStatus());
+            ancClientDTO.setPncStatus(client.isPncStatus());
 
             try {
-	            patientsDTO.setDateOfDeath(ANCClients.getDateOfDeath().getTime());
+                ancClientDTO.setLmnpDate(client.getLmnpDate().getTime());
             }catch (Exception e){
-	            patientsDTO.setDateOfDeath((long)0);
-            	e.printStackTrace();
+                e.printStackTrace();
             }
-            patientsDTO.setHivStatus(ANCClients.isHivStatus());
 
-            return patientsDTO;
+            try {
+                ancClientDTO.setEdd(client.getEdd().getTime());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return ancClientDTO;
         } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting Patient :{0}, failed with error: {1}.", ANCClients, e));
+            logger.error(MessageFormat.format("Converting ANCClient :{0}, failed with error: {1}.", client, e));
             throw e;
         }
     }
@@ -238,7 +191,7 @@ public class PatientsConverter {
         try {
             TBPatientDTO tbPatientDTO = new TBPatientDTO();
 
-            tbPatientDTO.setHealthFacilityPatientId(patient.getHealthFacilitiesPatients().getHealthFacilityPatientId());
+            tbPatientDTO.setHealthFacilityPatientId(patient.getHealthFacilitiesClients().getHealthFacilityClientId());
             tbPatientDTO.setMakohozi(patient.getMakohozi());
             tbPatientDTO.setOtherTestsDetails(patient.getOtherTestsDetails());
             tbPatientDTO.setTestType(patient.getTestType());
@@ -263,15 +216,15 @@ public class PatientsConverter {
     }
 
 
-    public static List<PatientReferral> toPatientReferralsList(List<ReferralsDTO> referralsDTOs) {
+    public static List<ClientReferral> toPatientReferralsList(List<ReferralsDTO> referralsDTOs) {
         try {
 
-            List<PatientReferral> patientReferrals = new ArrayList<>();
+            List<ClientReferral> clientReferrals = new ArrayList<>();
             for(ReferralsDTO referralsDTO:referralsDTOs){
-                patientReferrals.add(toPatientReferral(referralsDTO));
+                clientReferrals.add(toPatientReferral(referralsDTO));
             }
 
-            return patientReferrals;
+            return clientReferrals;
         } catch (Exception e) {
             logger.error(MessageFormat.format("Converting List<ReferralsDTO> :{0}, failed with error: {1}.", referralsDTOs, e));
             throw e;
@@ -280,11 +233,11 @@ public class PatientsConverter {
 
 
 
-    public static List<ReferralsDTO> toPatientReferralDTOsList(List<PatientReferral> referrals) {
+    public static List<ReferralsDTO> toPatientReferralDTOsList(List<ClientReferral> referrals) {
         try {
 
             List<ReferralsDTO> referralsDTOS = new ArrayList<>();
-            for(PatientReferral referral:referrals){
+            for(ClientReferral referral:referrals){
                 referralsDTOS.add(toPatientDTO(referral));
             }
 
@@ -297,46 +250,27 @@ public class PatientsConverter {
     }
 
 
-    public static PatientReferral toPatientReferral(ReferralsDTO referralsDTO) {
+    public static ClientReferral toPatientReferral(ReferralsDTO referralsDTO) {
         try {
-            PatientReferral referral = new PatientReferral();
+            ClientReferral referral = new ClientReferral();
 
-	        ANCClients patient  = new ANCClients();
-	        patient.setPatientId(referralsDTO.getPatientId());
-	        referral.setId(referralsDTO.getReferralId());
-            referral.setPatient(patient);
-            referral.setCommunityBasedHivService(referralsDTO.getCommunityBasedHivService());
+            referral.setId(referralsDTO.getId());
+            referral.setAncClientId(referralsDTO.getAncClientId());
             referral.setReferralReason(referralsDTO.getReferralReason());
-            referral.setServiceId(referralsDTO.getServiceId());
-            referral.setCtcNumber(referralsDTO.getServiceProviderGroup());
+            referral.setInstanceId(referralsDTO.getInstanceId());
             referral.setReferralUUID(referralsDTO.getReferralUUID());
+            referral.setServiceProviderUUID(referralsDTO.getServiceProviderUUID());
+            referral.setOtherClinicalInformation(referralsDTO.getOtherClinicalInformation());
             referral.setReferralType(referralsDTO.getReferralType());
-
-            //TODO implement new mechanism for saving referral indicators
-            referral.setReferralStatus(referralsDTO.getReferralStatus());
-            referral.setServiceProviderUIID(referralsDTO.getServiceProviderUIID());
-            referral.setServiceProviderGroup(referralsDTO.getServiceProviderGroup());
-            referral.setVillageLeader(referralsDTO.getVillageLeader());
-            referral.setTestResults(referralsDTO.getTestResults());
-            referral.setLabTest(referralsDTO.getLabTest());
-
+            referral.setFromFacilityId(referralsDTO.getFromFacilityId());
 
             Date referralDate = new Date();
             referralDate.setTime(referralsDTO.getReferralDate());
 
             referral.setReferralDate(referralDate);
             referral.setFacilityId(referralsDTO.getFacilityId());
+            referral.setReferralStatus(referralsDTO.getReferralStatus());
 
-            referral.setReferralSource(referralsDTO.getReferralSource());
-            referral.setServiceGivenToPatient(referralsDTO.getServiceGivenToPatient());
-            referral.setFromFacilityId(referralsDTO.getFromFacilityId());
-            referral.setOtherClinicalInformation(referralsDTO.getOtherClinicalInformation());
-            referral.setOtherNotes(referralsDTO.getOtherNotes());
-
-	        referral.setInstanceId(referralsDTO.getIntanceId());
-
-            referral.setCreatedAt(Calendar.getInstance().getTime());
-            referral.setUpdatedAt(Calendar.getInstance().getTime());
 
             return referral;
         } catch (Exception e) {
@@ -346,70 +280,60 @@ public class PatientsConverter {
     }
 
 
-    public static ReferralsDTO toPatientDTO(PatientReferral referral) {
+    public static ReferralsDTO toPatientDTO(ClientReferral referral) {
         try {
             ReferralsDTO referralsDTO = new ReferralsDTO();
 
-            referralsDTO.setPatientId(referral.getPatient().getPatientId());
-            referralsDTO.setCommunityBasedHivService(referral.getCommunityBasedHivService());
+            referralsDTO.setId(referral.getId());
+            referralsDTO.setAncClientId(referral.getAncClientId());
             referralsDTO.setReferralReason(referral.getReferralReason());
-            referralsDTO.setServiceId(referral.getServiceId());
-            referralsDTO.setReferralId(referral.getId());
-            referralsDTO.setReferralStatus(referral.getReferralStatus());
+            referralsDTO.setInstanceId(referral.getInstanceId());
             referralsDTO.setReferralUUID(referral.getReferralUUID());
-            referralsDTO.setReferralSource(referral.getReferralSource());
-            referralsDTO.setReferralType((int)referral.getReferralType());
-            referralsDTO.setOtherNotes(referral.getOtherNotes());
-            referralsDTO.setServiceGivenToPatient(referral.getServiceGivenToPatient());
-            referralsDTO.setTestResults(referral.isTestResults());
-            referralsDTO.setLabTest(referral.getLabTest());
-            referralsDTO.setFromFacilityId(referral.getFromFacilityId());
+            referralsDTO.setServiceProviderUUID(referral.getServiceProviderUUID());
             referralsDTO.setOtherClinicalInformation(referral.getOtherClinicalInformation());
-            referralsDTO.setIntanceId(referral.getInstanceId());
+            referralsDTO.setReferralType(referral.getReferralType());
+            referralsDTO.setFromFacilityId(referral.getFromFacilityId());
 
-
-            //TODO implement new mechanism for saving referral indicators
-            referralsDTO.setServiceProviderUIID(referral.getServiceProviderUIID());
-            referralsDTO.setServiceProviderGroup(referral.getServiceProviderGroup());
-            referralsDTO.setVillageLeader(referral.getVillageLeader());
             referralsDTO.setReferralDate(referral.getReferralDate().getTime());
             referralsDTO.setFacilityId(referral.getFacilityId());
+            referralsDTO.setReferralStatus(referral.getReferralStatus());
+
 
             return referralsDTO;
+
         } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting ReferralsDTO :{0}, failed with error: {1}.", referral, e));
+            logger.error(MessageFormat.format("Converting ClientReferral :{0}, failed with error: {1}.", referral, e));
             e.printStackTrace();
             throw e;
         }
     }
 
 
-    public static RoutineVisits toTBEncounter(TBEncounterDTO tbEncounterDTO) {
+    public static RoutineVisits toTBEncounter(RoutineVisitDTO routineVisitDTO) {
         try {
            RoutineVisits encounter = new RoutineVisits();
-           encounter.setTbPatientId(tbEncounterDTO.getTbPatientId());
-           Date medicationDate = new Date();
-           medicationDate.setTime(tbEncounterDTO.getMedicationDate());
 
-           encounter.setLocalID(tbEncounterDTO.getLocalID());
-           encounter.setWeight(tbEncounterDTO.getWeight());
-           encounter.setMedicationDate(medicationDate);
-           encounter.setMedicationStatus(tbEncounterDTO.isMedicationStatus());
 
-           encounter.setEncounterYear(tbEncounterDTO.getEncounterYear());
+            routineVisitDTO.setId(encounter.getId());
+            routineVisitDTO.setHealthFacilityClientId(encounter.getHealthFacilityClientId());
+            routineVisitDTO.setVisitNumber(encounter.getVisitNumber());
 
-           Date scheduledDate = new Date();
-           scheduledDate.setTime(tbEncounterDTO.getScheduledDate());
-           encounter.setScheduledDate(scheduledDate);
-           encounter.setHasFinishedPreviousMonthMedication(tbEncounterDTO.isHasFinishedPreviousMonthMedication());
-           encounter.setEncounterMonth(tbEncounterDTO.getEncounterMonth());
-           encounter.setAppointmentId(tbEncounterDTO.getAppointmentId());
-           encounter.setMakohozi(tbEncounterDTO.getMakohozi());
-           encounter.setUpdatedAt(Calendar.getInstance().getTime());
+            routineVisitDTO.setVisitDate(encounter.getVisitDate().getTime());
+            routineVisitDTO.setAppointmentDate(encounter.getAppointmentDate().getTime());
+
+            routineVisitDTO.setAnaemia(encounter.isAnaemia());
+            routineVisitDTO.setOedema(encounter.isOedema());
+            routineVisitDTO.setProtenuria(encounter.isProtenuria());
+            routineVisitDTO.setHighBloodPressure(encounter.isHighBloodPressure());
+            routineVisitDTO.setWeightStagnation(encounter.isWeightStagnation());
+            routineVisitDTO.setAntepartumHaemorrhage(encounter.isAntepartumHaemorrhage());
+            routineVisitDTO.setSugarInTheUrine(encounter.isSugarInTheUrine());
+            routineVisitDTO.setFetusLie(encounter.isFetusLie());
+
 
             return encounter;
         } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting TBEncounterDTO :{0}, failed with error: {1}.", tbEncounterDTO, e));
+            logger.error(MessageFormat.format("Converting TBEncounterDTO :{0}, failed with error: {1}.", routineVisitDTO, e));
             throw e;
         }
     }
@@ -438,7 +362,7 @@ public class PatientsConverter {
 			patientsAppointmentsDTO.setAppointment_id(patientAppointments.getAppointment_id());
 			patientsAppointmentsDTO.setAppointmentDate(patientAppointments.getAppointmentDate().getTime());
 			patientsAppointmentsDTO.setIsCancelled(patientAppointments.getIsCancelled());
-			patientsAppointmentsDTO.setHealthFacilityPatientId(patientAppointments.getHealthFacilityPatientId());
+			patientsAppointmentsDTO.setHealthFacilityPatientId(patientAppointments.getHealthFacilityClientId());
 			patientsAppointmentsDTO.setStatus(patientAppointments.getStatus());
 			patientsAppointmentsDTO.setAppointmentType(patientAppointments.getAppointmentType());
 
@@ -450,40 +374,43 @@ public class PatientsConverter {
 		}
 	}
 
-    public static List<TBEncounterDTO> toTbPatientEncounterDTOsList(List<RoutineVisits> routineVisits) {
+    public static List<RoutineVisitDTO> toTbPatientEncounterDTOsList(List<RoutineVisits> routineVisits) {
         try {
 
-            List<TBEncounterDTO> tbEncounterDTOS = new ArrayList<>();
-            for(RoutineVisits routineVisits : routineVisits){
-                tbEncounterDTOS.add(toTbEncounterDTO(routineVisits));
+            List<RoutineVisitDTO> routineVisitDTOS = new ArrayList<>();
+            for(RoutineVisits routineVisit : routineVisits){
+                routineVisitDTOS.add(toTbEncounterDTO(routineVisit));
             }
 
-            return tbEncounterDTOS;
+            return routineVisitDTOS;
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error(MessageFormat.format("Converting   List<TBEncounterDTO> :{0}, failed with error: {1}.", routineVisits, e));
+            logger.error(MessageFormat.format("Converting   List<RoutineVisits> :{0}, failed with error: {1}.", routineVisits, e));
             throw e;
         }
     }
 
-	public static TBEncounterDTO toTbEncounterDTO(RoutineVisits routineVisits) {
+	public static RoutineVisitDTO toTbEncounterDTO(RoutineVisits routineVisits) {
 		try {
-            TBEncounterDTO tbEncounterDTO = new TBEncounterDTO();
+            RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
 
-            tbEncounterDTO.setLocalID(routineVisits.getLocalID());
-            tbEncounterDTO.setAppointmentId(routineVisits.getAppointmentId());
-            tbEncounterDTO.setEncounterMonth(routineVisits.getEncounterMonth());
-            tbEncounterDTO.setEncounterYear(routineVisits.getEncounterYear());
-            tbEncounterDTO.setHasFinishedPreviousMonthMedication(routineVisits.isHasFinishedPreviousMonthMedication());
-            tbEncounterDTO.setId(routineVisits.getId());
-            tbEncounterDTO.setMakohozi(routineVisits.getMakohozi());
-            tbEncounterDTO.setMedicationDate(routineVisits.getMedicationDate().getTime());
-            tbEncounterDTO.setMedicationStatus(routineVisits.isMedicationStatus());
-            tbEncounterDTO.setTbPatientId(routineVisits.getTbPatientId());
-            tbEncounterDTO.setWeight(routineVisits.getWeight());
-            tbEncounterDTO.setScheduledDate(routineVisits.getScheduledDate().getTime());
+            routineVisitDTO.setId(routineVisits.getId());
+            routineVisitDTO.setHealthFacilityClientId(routineVisits.getHealthFacilityClientId());
+            routineVisitDTO.setVisitNumber(routineVisits.getVisitNumber());
 
-			return tbEncounterDTO;
+            routineVisitDTO.setVisitDate(routineVisits.getVisitDate().getTime());
+            routineVisitDTO.setAppointmentDate(routineVisits.getAppointmentDate().getTime());
+
+            routineVisitDTO.setAnaemia(routineVisits.isAnaemia());
+            routineVisitDTO.setOedema(routineVisits.isOedema());
+            routineVisitDTO.setProtenuria(routineVisits.isProtenuria());
+            routineVisitDTO.setHighBloodPressure(routineVisits.isHighBloodPressure());
+            routineVisitDTO.setWeightStagnation(routineVisits.isWeightStagnation());
+            routineVisitDTO.setAntepartumHaemorrhage(routineVisits.isAntepartumHaemorrhage());
+            routineVisitDTO.setSugarInTheUrine(routineVisits.isSugarInTheUrine());
+            routineVisitDTO.setFetusLie(routineVisits.isFetusLie());
+
+			return routineVisitDTO;
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(MessageFormat.format("Converting TBEncounterDTO :{0}, failed with error: {1}.", routineVisits, e));

@@ -341,45 +341,132 @@ public class FormEntityConverter {
 
 
 	public ANCClients getPatientFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
-		ANCClients ANCClients = new ANCClients();
+		ANCClients client = new ANCClients();
 		try {
 			FormData formData = fsubmission.instance().form();
 			List<org.opensrp.form.domain.FormField> formFields = formData.fields();
 			for(org.opensrp.form.domain.FormField formField : formFields){
 				if(formField.name().equals(ANCClients.COL_PATIENT_FIRST_NAME))
-					ANCClients.setFirstName(formField.value());
+					client.setFirstName(formField.value());
 
 				if(formField.name().equals(ANCClients.COL_PATIENT_MIDDLE_NAME))
-					ANCClients.setMiddleName(formField.value());
+					client.setMiddleName(formField.value());
 
 				if(formField.name().equals(ANCClients.COL_PATIENT_SURNAME))
-					ANCClients.setSurname(formField.value());
+					client.setSurname(formField.value());
+
+				if(formField.name().equals(ANCClients.COL_SPOUSE_NAME))
+					client.setSpouseName(formField.value());
 
 				if(formField.name().equals(ANCClients.COL_PHONE_NUMBER))
-					ANCClients.setPhoneNumber(formField.value());
+					client.setPhoneNumber(formField.value());
+
+				if(formField.name().equals(ANCClients.COL_WARD))
+					client.setWard(formField.value());
 
 				if(formField.name().equals(ANCClients.COL_VILLAGE))
-					ANCClients.setVillage(formField.value());
+					client.setVillage(formField.value());
 
 
 				if(formField.name().equals(ANCClients.COL_WARD))
-					ANCClients.setWard(formField.value());
+					client.setWard(formField.value());
+
+				if(formField.name().equals(ANCClients.COL_HEIGHT_BELOW_AVERAGE))
+					client.setHeightBelowAverage(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_GESTATIONAL_AGE_BELOW_20))
+					client.setGestationalAgeBelow20(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_HISTORY_OF_ABORTION))
+					client.setHistoryOfAbortion(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_AGE_BELOW_20_YEARS))
+					client.setAgeBelow20Years(Boolean.valueOf(formField.value()));
+
+
+				if(formField.name().equals(ANCClients.COL_LAST_PREGNANCY_OVER_10_YEARS))
+					client.setLastPregnancyOver10Years(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_PREGNANCY_ABOVE_35_YEARS))
+					client.setPregnancyAbove35Years(Boolean.valueOf(formField.value()));
+
+
+				if(formField.name().equals(ANCClients.COL_HISTORY_OF_STILL_BIRTH))
+					client.setHistoryOfStillBirth(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_HISTORY_OF_POSTMARTUM_HAEMORRHAGE))
+					client.setHistoryOfPostmartumHaemorrhage(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_HISTORY_OF_RETAINED_PLACENTA))
+					client.setHistoryOfRetainedPlacenta(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_LAST_CHILD_BIRTH_YEAR))
+					client.setLastChildbirthYear(Integer.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_LAST_CHILD_BIRTH_STATUS))
+					client.setLastChildbirthStatus(Integer.valueOf(formField.value()));
+
+
+
+
+				if(formField.name().equals(ANCClients.COL_GRAVIDA))
+					client.setGravida(Integer.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_PARA))
+					client.setPara(Integer.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_LEVEL_OF_EDUCATION))
+					client.setLevelOfEducation(Integer.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_PNC_STATUS))
+					client.setPncStatus(Boolean.valueOf(formField.value()));
+
+
+				try {
+					if (formField.name().equals(ANCClients.COL_PMTCT_STATUS))
+						client.setPmtctStatus(Integer.valueOf(formField.value()));
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 
 				if(formField.name().equals(ANCClients.COL_DATE_OF_BIRTH)) {
 					Date startDate = new Date();
 					try{
 						startDate.setTime(Long.parseLong(formField.value()));
-						ANCClients.setDateOfBirth(startDate);
+						client.setDateOfBirth(startDate);
 					}catch (Exception e1){
 						e1.printStackTrace();
 					}
 				}
 
-				if(formField.name().equals(ANCClients.COL_GENDER))
-					ANCClients.setGender(formField.value());
+
+
+				if(formField.name().equals(ANCClients.COL_LMNP_DATE)) {
+					Date lmnpDate = new Date();
+					try{
+						lmnpDate.setTime(Long.parseLong(formField.value()));
+						client.setLmnpDate(lmnpDate);
+					}catch (Exception e1){
+						e1.printStackTrace();
+					}
+				}
+
+				if(formField.name().equals(ANCClients.COL_EDD)) {
+					Date edd = new Date();
+					try{
+						edd.setTime(Long.parseLong(formField.value()));
+						client.setLmnpDate(edd);
+					}catch (Exception e1){
+						e1.printStackTrace();
+					}
+				}
+
+				if(formField.name().equals(ANCClients.COL_MAP_CUE))
+					client.setMapCue(formField.value());
+
 			}
 
-			return ANCClients;
+			return client;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -402,59 +489,44 @@ public class FormEntityConverter {
 		}
 	}
 
-	public PatientReferral getPatientReferralFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
-		PatientReferral patientReferral = new PatientReferral();
+	public ClientReferral getPatientReferralFromFormSubmission(FormSubmission fsubmission) throws IllegalStateException {
+		ClientReferral clientReferral = new ClientReferral();
 		try {
 			FormData formData = fsubmission.instance().form();
 			List<org.opensrp.form.domain.FormField> formFields = formData.fields();
 
-			patientReferral.setInstanceId(fsubmission.getInstanceId());
+			clientReferral.setInstanceId(fsubmission.getInstanceId());
 
 			for(org.opensrp.form.domain.FormField formField : formFields){
-				if(formField.name().equals(PatientReferral.COL_CTC_NUMBER))
-					patientReferral.setCtcNumber(formField.value());
 
-				if(formField.name().equals(PatientReferral.COL_COMMUNITY_BASED_HIV_SERVICE))
-					patientReferral.setCommunityBasedHivService(formField.value());
-
-				if(formField.name().equals(PatientReferral.COL_FACILITY_ID))
-					patientReferral.setFacilityId(formField.value());
+				if(formField.name().equals(ClientReferral.COL_FACILITY_ID))
+					clientReferral.setFacilityId(formField.value());
 
 				if(formField.name().equals("id"))
-					patientReferral.setReferralUUID(formField.value());
+					clientReferral.setReferralUUID(formField.value());
 
-				//TODO implement new mechanism for storing referral indicators
-				if(formField.name().equals(PatientReferral.COL_REFERRAL_DATE)) {
+				if(formField.name().equals(ClientReferral.COL_REFERRAL_DATE)) {
 					Date startDate = new Date();
 					try {
 						startDate.setTime(Long.parseLong(formField.value()));
-						patientReferral.setReferralDate(startDate);
+						clientReferral.setReferralDate(startDate);
 					}catch (Exception e){
 						e.printStackTrace();
 					}
 				}
 
-				if(formField.name().equals(PatientReferral.COL_REFERRAL_REASON))
-					patientReferral.setReferralReason(formField.value());
+				if(formField.name().equals(ClientReferral.COL_REFERRAL_REASON))
+					clientReferral.setReferralReason(formField.value());
 
-				if(formField.name().equals(PatientReferral.COL_VILLAGE_LEADER))
-					patientReferral.setVillageLeader(formField.value());
+				if(formField.name().equals(ClientReferral.COL_SERVICE_PROVIDER_UUID))
+					clientReferral.setServiceProviderUUID(formField.value());
 
-				if(formField.name().equals(PatientReferral.COL_SERVICE_PROVIDER_GROUP))
-					patientReferral.setServiceProviderGroup(formField.value());
-
-				if(formField.name().equals(PatientReferral.COL_SERVICE_PROVIDER_UIID))
-					patientReferral.setServiceProviderUIID(formField.value());
-
-				if(formField.name().equals(PatientReferral.COL_SERVICE_ID))
-					patientReferral.setServiceId(Integer.parseInt(formField.value()));
-
-				if(formField.name().equals(PatientReferral.COL_REFERRAL_STATUS))
-					patientReferral.setReferralStatus(0);
+				if(formField.name().equals(ClientReferral.COL_REFERRAL_STATUS))
+					clientReferral.setReferralStatus(0);
 
 			}
 
-			return patientReferral;
+			return clientReferral;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
