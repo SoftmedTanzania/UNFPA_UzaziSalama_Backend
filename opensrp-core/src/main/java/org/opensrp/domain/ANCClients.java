@@ -387,7 +387,6 @@ public class ANCClients {
 		this.pncStatus = pncStatus;
 	}
 
-
 	public int getLastChildbirthYear() {
 		return lastChildbirthYear;
 	}

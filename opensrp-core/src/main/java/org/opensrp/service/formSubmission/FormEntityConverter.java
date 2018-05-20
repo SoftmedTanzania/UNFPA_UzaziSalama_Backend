@@ -680,13 +680,10 @@ public class FormEntityConverter {
 						&& att.get("openmrs_entity").equalsIgnoreCase("person")
 						){
 					Map<String, Object> cne = new HashMap<>();
-
 					Client subformClient = createSubformClient(sbf);
-					
 					if(subformClient != null){
 						cne.put("client", subformClient);
 						cne.put("event", getEventForSubform(fs, att.get("openmrs_entity_id"), sbf));
-						
 						map.put(sbf.entityId(), cne);
 					}
 				}
