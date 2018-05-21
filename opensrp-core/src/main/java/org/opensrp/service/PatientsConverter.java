@@ -362,7 +362,7 @@ public class PatientsConverter {
 			patientsAppointmentsDTO.setAppointment_id(patientAppointments.getAppointment_id());
 			patientsAppointmentsDTO.setAppointmentDate(patientAppointments.getAppointmentDate().getTime());
 			patientsAppointmentsDTO.setIsCancelled(patientAppointments.getIsCancelled());
-			patientsAppointmentsDTO.setHealthFacilityPatientId(patientAppointments.getHealthFacilityClientId());
+			patientsAppointmentsDTO.setHealthFacilityClientId(patientAppointments.getHealthFacilityClientId());
 			patientsAppointmentsDTO.setStatus(patientAppointments.getStatus());
 			patientsAppointmentsDTO.setAppointmentType(patientAppointments.getAppointmentType());
 			patientsAppointmentsDTO.setVisitNumber(patientAppointments.getVisitNumber());

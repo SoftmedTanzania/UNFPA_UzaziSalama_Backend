@@ -89,11 +89,16 @@ public class ReferralPatientsService {
 
                 AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
                 ancClientReferralsDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(ancClient));
+                ancClientReferralsDTO.getAncClientDTO().setHealthFacilityClientId(facilitiesPatients.getHealthFacilityClientId());
 
                 String getReferralClientsSQL = "SELECT * from " + ClientReferral.tbName+" WHERE "+ ClientReferral.COL_ANC_CLIENT_ID +" =?";
                 Object[] args = new Object[]{ancClient.getClientId()};
 
                 List<ReferralsDTO> referralsDTOS = PatientsConverter.toPatientReferralDTOsList(patientReferralRepository.getReferrals(getReferralClientsSQL,args));
+
+                for(ReferralsDTO referralsDTO:referralsDTOS){
+                    referralsDTO.setHealthFacilityClientId(facilitiesPatients.getHealthFacilityClientId());
+                }
 
                 ancClientReferralsDTO.setPatientReferralsList(referralsDTOS);
 
@@ -184,6 +189,12 @@ public class ReferralPatientsService {
         if (ancClientsResults.size() > 0) {
             System.out.println("Coze = using the received patients ");
             id = ancClientsResults.get(0).getClientId();
+
+            try {
+                ANCClientsRepository.executeQuery("UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+ancClientsResults.get(0).getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         } else {
             System.out.println("Coze = saving patient Data ");

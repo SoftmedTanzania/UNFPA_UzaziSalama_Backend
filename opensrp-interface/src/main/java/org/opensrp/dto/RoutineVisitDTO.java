@@ -50,9 +50,6 @@ public class RoutineVisitDTO {
 	@JsonProperty
 	private boolean fetusLie;
 
-	@JsonProperty
-	private long appointment_id;
-
 	public long getId() {
 		return id;
 	}

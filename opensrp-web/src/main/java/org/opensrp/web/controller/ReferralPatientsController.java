@@ -95,7 +95,6 @@ public class ReferralPatientsController {
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-anc-client")
 	public ResponseEntity<AncClientReferralsDTO> savePatient(@RequestBody String json) {
-		AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
 		AncClientDTO ancClientDTO = new Gson().fromJson(json, AncClientDTO.class);
 		try {
 			if (ancClientDTO ==null) {
@@ -108,7 +107,7 @@ public class ReferralPatientsController {
 
 			ancClientDTO.setClientId(healthfacilityPatientId);
 
-			createNextAppointments(healthfacilityPatientId,ancClientDTO.getLmnpDate(),true);
+			createNextAppointments(healthfacilityPatientId,ancClientDTO.getLmnpDate(),true,0);
 
 			Long[] healthFacilityPatientArg = new Long[1];
 			healthFacilityPatientArg[0] =  healthfacilityPatientId;
@@ -275,7 +274,7 @@ public class ReferralPatientsController {
 			RoutineVisits encounter = PatientsConverter.toRoutineVisit(routineVisitDTOS);
 			ANCRoutineVisitsRepository.save(encounter);
 
-			createNextAppointments(routineVisitDTOS.getHealthFacilityClientId(),routineVisitDTOS.getVisitDate(),false);
+			createNextAppointments(routineVisitDTOS.getHealthFacilityClientId(),routineVisitDTOS.getVisitDate(),false,routineVisitDTOS.getVisitNumber());
 			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_APPOINTMENT_ID + "=?",
 					new Object[]{encounter.getAppointmentId()});
 
@@ -564,7 +563,6 @@ public class ReferralPatientsController {
 				msg.put("type","ReferralFeedback");
 
 
-				//TODO implement push notification to other tablets in the same facility.
 				try {
 					if(referral.getReferralType()==1)
 						googleFCMService.SendPushNotification(msg, tokens, false);
@@ -759,7 +757,6 @@ public class ReferralPatientsController {
 	}
 
 
-
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-chw-referrals-summary")
 	@ResponseBody
 	public ResponseEntity<List<CHWReferralsSummaryDTO>> getCHWReferralsSummaryLists(@RequestBody String json) {
@@ -897,13 +894,14 @@ public class ReferralPatientsController {
 		}
 	}
 
-	private void createNextAppointments(long healthfacilityPatientId, long time, boolean isFIrstAppointment) {
+	private void createNextAppointments(long healthfacilityPatientId, long time, boolean isFIrstAppointment, int visitNumber) {
 		long today = Calendar.getInstance().getTime().getTime();
 
 		PatientAppointments appointments = new PatientAppointments();
 		appointments.setHealthFacilityClientId(healthfacilityPatientId);
 		appointments.setAppointmentType(2);
 		appointments.setIsCancelled(false);
+		appointments.setVisitNumber(++visitNumber);
 
 		if(isFIrstAppointment){
 			long diff = today - time;
@@ -918,7 +916,6 @@ public class ReferralPatientsController {
 			}else{
 				appointments.setAppointmentDate(Calendar.getInstance().getTime());
 			}
-
 		}else{
 			Calendar c = Calendar.getInstance();
 			c.setTimeInMillis(time);

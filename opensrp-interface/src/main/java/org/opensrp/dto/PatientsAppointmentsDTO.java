@@ -5,15 +5,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.Date;
-import java.util.List;
-
 public class PatientsAppointmentsDTO {
     @JsonProperty
     private Long appointment_id;
 
     @JsonProperty
-    private Long healthFacilityPatientId;
+    private Long healthFacilityClientId;
 
 
     @JsonProperty
@@ -40,12 +37,12 @@ public class PatientsAppointmentsDTO {
         this.appointment_id = appointment_id;
     }
 
-    public Long getHealthFacilityPatientId() {
-        return healthFacilityPatientId;
+    public Long getHealthFacilityClientId() {
+        return healthFacilityClientId;
     }
 
-    public void setHealthFacilityPatientId(Long healthFacilityPatientId) {
-        this.healthFacilityPatientId = healthFacilityPatientId;
+    public void setHealthFacilityClientId(Long healthFacilityClientId) {
+        this.healthFacilityClientId = healthFacilityClientId;
     }
 
     public long getAppointmentDate() {

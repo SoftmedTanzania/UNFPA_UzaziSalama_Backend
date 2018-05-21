@@ -15,6 +15,9 @@ public class ReferralsDTO {
     private Long id;
 
     @JsonProperty
+    private long healthFacilityClientId;
+
+    @JsonProperty
     private long ancClientId;
 
     @JsonProperty
@@ -157,6 +160,14 @@ public class ReferralsDTO {
 
     public void setReferralFeedback(String referralFeedback) {
         this.referralFeedback = referralFeedback;
+    }
+
+    public long getHealthFacilityClientId() {
+        return healthFacilityClientId;
+    }
+
+    public void setHealthFacilityClientId(long healthFacilityClientId) {
+        this.healthFacilityClientId = healthFacilityClientId;
     }
 
     @Override

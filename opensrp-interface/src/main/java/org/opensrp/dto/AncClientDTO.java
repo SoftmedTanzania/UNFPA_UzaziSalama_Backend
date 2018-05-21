@@ -10,6 +10,9 @@ public class AncClientDTO {
     private Long clientId;
 
 	@JsonProperty
+	private Long healthFacilityClientId;
+
+	@JsonProperty
     private String firstName;
 
 	@JsonProperty
@@ -334,6 +337,14 @@ public class AncClientDTO {
 
 	public void setHealthFacilityCode(String healthFacilityCode) {
 		this.healthFacilityCode = healthFacilityCode;
+	}
+
+	public Long getHealthFacilityClientId() {
+		return healthFacilityClientId;
+	}
+
+	public void setHealthFacilityClientId(Long healthFacilityClientId) {
+		this.healthFacilityClientId = healthFacilityClientId;
 	}
 
 	@Override
