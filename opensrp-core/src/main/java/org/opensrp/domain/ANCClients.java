@@ -63,7 +63,9 @@ public class ANCClients {
 
 	public static final String COL_LAST_CHILD_BIRTH_STATUS = "last_child_birth_status";
 
-	public static final String COL_PNC_STATUS = "PNC_STATUS";
+	public static final String COL_CLIENT_TYPE = "client_type";
+
+	public static final String COL_CLIENT_CARD_NUMBER = "card_number";
 
 	public static final String COL_CREATED_AT = "created_at";
 
@@ -157,8 +159,11 @@ public class ANCClients {
 	@Column(name = COL_HISTORY_OF_RETAINED_PLACENTA)
 	private boolean historyOfRetainedPlacenta;
 
-	@Column(name = COL_PNC_STATUS)
-	private boolean pncStatus;
+	@Column(name = COL_CLIENT_TYPE)
+	private int clientType;
+
+	@Column(name = COL_CLIENT_CARD_NUMBER)
+	private String cardNumber;
 
 	@Column(name = COL_LAST_CHILD_BIRTH_YEAR)
 	private int lastChildbirthYear;
@@ -379,12 +384,20 @@ public class ANCClients {
 		this.historyOfRetainedPlacenta = historyOfRetainedPlacenta;
 	}
 
-	public boolean isPncStatus() {
-		return pncStatus;
+	public String getCardNumber() {
+		return cardNumber;
 	}
 
-	public void setPncStatus(boolean pncStatus) {
-		this.pncStatus = pncStatus;
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
+	}
+
+	public int getClientType() {
+		return clientType;
+	}
+
+	public void setClientType(int clientType) {
+		this.clientType = clientType;
 	}
 
 	public int getLastChildbirthYear() {

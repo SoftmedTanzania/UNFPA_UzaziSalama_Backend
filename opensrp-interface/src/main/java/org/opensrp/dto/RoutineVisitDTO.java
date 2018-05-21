@@ -15,6 +15,9 @@ public class RoutineVisitDTO {
 	private long healthFacilityClientId;
 
 	@JsonProperty
+	private long appointmentId;
+
+	@JsonProperty
 	private int visitNumber;
 
 	@JsonProperty
@@ -46,6 +49,9 @@ public class RoutineVisitDTO {
 
 	@JsonProperty
 	private boolean fetusLie;
+
+	@JsonProperty
+	private long appointment_id;
 
 	public long getId() {
 		return id;
@@ -149,6 +155,14 @@ public class RoutineVisitDTO {
 
 	public void setFetusLie(boolean fetusLie) {
 		this.fetusLie = fetusLie;
+	}
+
+	public long getAppointmentId() {
+		return appointmentId;
+	}
+
+	public void setAppointmentId(long appointmentId) {
+		this.appointmentId = appointmentId;
 	}
 
 	@Override

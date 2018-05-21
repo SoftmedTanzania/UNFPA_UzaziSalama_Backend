@@ -95,11 +95,6 @@ public class ReferralPatientsService {
 
                 List<ReferralsDTO> referralsDTOS = PatientsConverter.toPatientReferralDTOsList(patientReferralRepository.getReferrals(getReferralClientsSQL,args));
 
-                for(ReferralsDTO referralsDTO : referralsDTOS) {
-                    Object[] args2 = new Object[]{referralsDTO.getId()};
-                    List<PatientReferralIndicators> patientReferralIndicators = patientReferralIndicatorRepository.getPatientReferralIndicators("SELECT * FROM " + PatientReferralIndicators.tbName + " WHERE " + PatientReferralIndicators.COL_REFERRAL_ID + " =?", args2);
-                }
-
                 ancClientReferralsDTO.setPatientReferralsList(referralsDTOS);
 
 
@@ -172,12 +167,10 @@ public class ReferralPatientsService {
     public long saveClient(ANCClients patient, String healthFacilityCode, String ctcNumber) {
         String query = "SELECT * FROM " + ANCClients.tbName + " WHERE " +
                 ANCClients.COL_PATIENT_FIRST_NAME + " = ?     AND " +
-                ANCClients.COL_PATIENT_MIDDLE_NAME + " = ?    AND " +
                 ANCClients.COL_PATIENT_SURNAME + " = ?        AND " +
                 ANCClients.COL_PHONE_NUMBER + " = ?";
         Object[] params = new Object[]{
                 patient.getFirstName(),
-                patient.getMiddleName(),
                 patient.getSurname(),
                 patient.getPhoneNumber()};
         List<ANCClients> ancClientsResults = null;
@@ -191,9 +184,11 @@ public class ReferralPatientsService {
         if (ancClientsResults.size() > 0) {
             System.out.println("Coze = using the received patients ");
             id = ancClientsResults.get(0).getClientId();
+
         } else {
             System.out.println("Coze = saving patient Data ");
             try {
+                //TODO HANDLE UPDATING OF VALUES IN DB
                 id = ANCClientsRepository.save(patient);
             } catch (Exception e) {
                 e.printStackTrace();

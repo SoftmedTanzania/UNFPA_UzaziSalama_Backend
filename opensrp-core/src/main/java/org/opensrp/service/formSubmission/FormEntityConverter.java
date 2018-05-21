@@ -10,7 +10,6 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
-import org.json.JSONArray;
 import org.opensrp.common.FormEntityConstants;
 import org.opensrp.common.FormEntityConstants.Encounter;
 import org.opensrp.common.FormEntityConstants.FormEntity;
@@ -418,8 +417,8 @@ public class FormEntityConverter {
 				if(formField.name().equals(ANCClients.COL_LEVEL_OF_EDUCATION))
 					client.setLevelOfEducation(Integer.valueOf(formField.value()));
 
-				if(formField.name().equals(ANCClients.COL_PNC_STATUS))
-					client.setPncStatus(Boolean.valueOf(formField.value()));
+				if(formField.name().equals(ANCClients.COL_CLIENT_TYPE))
+					client.setClientType(Integer.valueOf(formField.value()));
 
 
 				try {

@@ -12,6 +12,8 @@ public class PatientAppointments implements Serializable {
 
 	public static final String COL_HEALTH_FACILITY_CLIENT_ID = "health_facility_client_id";
 
+	public static final String COL_VISIT_NUMBER = "visit_umber";
+
 	public static final String COL_APPOINTMENT_ID = "appointment_id";
 
 	public static final String COL_APPOINTMENT_DATE = "appointment_date";
@@ -53,6 +55,8 @@ public class PatientAppointments implements Serializable {
 	@Column(name = COL_ROW_VERSION)
 	private Date rowVersion;
 
+	@Column(name = COL_VISIT_NUMBER)
+	private int visitNumber;
 
 	//TODO implement table and configurations for saving this
 	/***
@@ -93,6 +97,14 @@ public class PatientAppointments implements Serializable {
 
 	public void setHealthFacilityClientId(Long healthFacilityClientId) {
 		this.healthFacilityClientId = healthFacilityClientId;
+	}
+
+	public int getVisitNumber() {
+		return visitNumber;
+	}
+
+	public void setVisitNumber(int visitNumber) {
+		this.visitNumber = visitNumber;
 	}
 
 	public Date getAppointmentDate() {

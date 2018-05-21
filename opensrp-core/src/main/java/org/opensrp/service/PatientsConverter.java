@@ -52,7 +52,8 @@ public class PatientsConverter {
             client.setHistoryOfRetainedPlacenta(ancClientDTO.isHistoryOfRetainedPlacenta());
             client.setLastChildbirthYear(ancClientDTO.getLastChildbirthYear());
             client.setLastChildbirthStatus(ancClientDTO.getLastChildbirthStatus());
-            client.setPncStatus(ancClientDTO.isPncStatus());
+            client.setClientType(ancClientDTO.getClientType());
+            client.setCardNumber(ancClientDTO.getCardNumber());
 
 
             try {
@@ -162,7 +163,8 @@ public class PatientsConverter {
             ancClientDTO.setHistoryOfRetainedPlacenta(client.isHistoryOfRetainedPlacenta());
             ancClientDTO.setLastChildbirthYear(client.getLastChildbirthYear());
             ancClientDTO.setLastChildbirthStatus(client.getLastChildbirthStatus());
-            ancClientDTO.setPncStatus(client.isPncStatus());
+            ancClientDTO.setClientType(client.getClientType());
+            ancClientDTO.setCardNumber(client.getCardNumber());
 
             try {
                 ancClientDTO.setLmnpDate(client.getLmnpDate().getTime());
@@ -307,7 +309,7 @@ public class PatientsConverter {
     }
 
 
-    public static RoutineVisits toTBEncounter(RoutineVisitDTO routineVisitDTO) {
+    public static RoutineVisits toRoutineVisit(RoutineVisitDTO routineVisitDTO) {
         try {
            RoutineVisits encounter = new RoutineVisits();
 
@@ -363,6 +365,7 @@ public class PatientsConverter {
 			patientsAppointmentsDTO.setHealthFacilityPatientId(patientAppointments.getHealthFacilityClientId());
 			patientsAppointmentsDTO.setStatus(patientAppointments.getStatus());
 			patientsAppointmentsDTO.setAppointmentType(patientAppointments.getAppointmentType());
+			patientsAppointmentsDTO.setVisitNumber(patientAppointments.getVisitNumber());
 
 			return patientsAppointmentsDTO;
 		} catch (Exception e) {

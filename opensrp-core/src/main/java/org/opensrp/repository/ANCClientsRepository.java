@@ -59,13 +59,12 @@ public class ANCClientsRepository {
 		parameters.put(ANCClients.COL_HISTORY_OF_RETAINED_PLACENTA, client.isHistoryOfRetainedPlacenta());
 		parameters.put(ANCClients.COL_LAST_CHILD_BIRTH_YEAR, client.getLastChildbirthYear());
 		parameters.put(ANCClients.COL_LAST_CHILD_BIRTH_STATUS, client.getLastChildbirthStatus());
-		parameters.put(ANCClients.COL_PNC_STATUS, client.isPncStatus());
+		parameters.put(ANCClients.COL_CLIENT_TYPE, client.getClientType());
+		parameters.put(ANCClients.COL_CLIENT_CARD_NUMBER, client.getCardNumber());
 
 
 		parameters.put(ANCClients.COL_CREATED_AT , client.getCreatedAt());
 		parameters.put(ANCClients.COL_UPDATED_AT , client.getCreatedAt());
-
-
 
 
 		return insert.executeAndReturnKey(parameters).longValue();
@@ -124,7 +123,8 @@ public class ANCClientsRepository {
 			client.setHistoryOfRetainedPlacenta(rs.getBoolean(rs.findColumn(ANCClients.COL_HISTORY_OF_RETAINED_PLACENTA)));
 			client.setLastChildbirthYear(rs.getInt(rs.findColumn(ANCClients.COL_LAST_CHILD_BIRTH_YEAR)));
 			client.setLastChildbirthStatus(rs.getInt(rs.findColumn(ANCClients.COL_LAST_CHILD_BIRTH_STATUS)));
-			client.setPncStatus(rs.getBoolean(rs.findColumn(ANCClients.COL_PNC_STATUS)));
+			client.setClientType(rs.getInt(rs.findColumn(ANCClients.COL_CLIENT_TYPE)));
+			client.setCardNumber(rs.getString(rs.findColumn(ANCClients.COL_CLIENT_CARD_NUMBER)));
 			return client;
 
 		}

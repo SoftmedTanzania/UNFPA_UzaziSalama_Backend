@@ -5,8 +5,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.Date;
-
 public class AncClientDTO {
 	@JsonProperty
     private Long clientId;
@@ -80,13 +78,16 @@ public class AncClientDTO {
     private boolean historyOfRetainedPlacenta;
 
 	@JsonProperty
-    private boolean pncStatus;
+    private int clientType;
 
 	@JsonProperty
     private int lastChildbirthYear;
 
 	@JsonProperty
 	private String healthFacilityCode;
+
+	@JsonProperty
+	private String cardNumber;
 
 	/**
      * 0 = Dead
@@ -295,12 +296,20 @@ public class AncClientDTO {
 		this.historyOfRetainedPlacenta = historyOfRetainedPlacenta;
 	}
 
-	public boolean isPncStatus() {
-		return pncStatus;
+	public int getClientType() {
+		return clientType;
 	}
 
-	public void setPncStatus(boolean pncStatus) {
-		this.pncStatus = pncStatus;
+	public String getCardNumber() {
+		return cardNumber;
+	}
+
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
+	}
+
+	public void setClientType(int clientType) {
+		this.clientType = clientType;
 	}
 
 	public int getLastChildbirthYear() {

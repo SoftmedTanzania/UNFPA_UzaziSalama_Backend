@@ -26,10 +26,10 @@ public class PatientsAppointmentsDTO {
     private String status;
 
     @JsonProperty
-    private Long rowVersion;
+    private int appointmentType;
 
     @JsonProperty
-    private int appointmentType;
+    private int visitNumber;;
 
 
     public Long getAppointment_id() {
@@ -78,6 +78,14 @@ public class PatientsAppointmentsDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getVisitNumber() {
+        return visitNumber;
+    }
+
+    public void setVisitNumber(int visitNumber) {
+        this.visitNumber = visitNumber;
     }
 
     @Override

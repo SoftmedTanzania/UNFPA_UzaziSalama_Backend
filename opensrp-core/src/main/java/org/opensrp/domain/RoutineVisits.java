@@ -14,6 +14,8 @@ public class RoutineVisits implements Serializable {
 
 	public static final String COL_VISIT_NUMBER = "visit_umber";
 
+	public static final String COL_APPOINTMENT_ID = "appointment_id";
+
 	public static final String COL_VISIT_DATE= "visit_date";
 
 	public static final String COL_APPOINTMENT_DATE= "appointment_date";
@@ -46,6 +48,9 @@ public class RoutineVisits implements Serializable {
 	@Id
 	@Column(name = COL_HEALTH_FACILITY_CLIENT_ID)
 	private Long healthFacilityClientId;
+
+	@Column(name = COL_APPOINTMENT_ID)
+	private Long appointmentId;
 
 	@Column(name = COL_VISIT_NUMBER)
 	private int visitNumber;
@@ -193,6 +198,14 @@ public class RoutineVisits implements Serializable {
 
 	public void setFetusLie(boolean fetusLie) {
 		this.fetusLie = fetusLie;
+	}
+
+	public Long getAppointmentId() {
+		return appointmentId;
+	}
+
+	public void setAppointmentId(Long appointmentId) {
+		this.appointmentId = appointmentId;
 	}
 
 	public Date getCreatedAt() {

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,7 +94,8 @@ public class ReferralPatientsController {
 	}
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-anc-client")
-	public ResponseEntity<AncClientDTO> savePatient(@RequestBody String json) {
+	public ResponseEntity<AncClientReferralsDTO> savePatient(@RequestBody String json) {
+		AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
 		AncClientDTO ancClientDTO = new Gson().fromJson(json, AncClientDTO.class);
 		try {
 			if (ancClientDTO ==null) {
@@ -102,9 +104,14 @@ public class ReferralPatientsController {
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, ancClientDTO));
 
 			ANCClients patient = PatientsConverter.toPatients(ancClientDTO);
-			long healthfacilityPatientId = referralPatientService.saveClient(patient, ancClientDTO.getHealthFacilityCode(), "");
+			final long healthfacilityPatientId = referralPatientService.saveClient(patient, ancClientDTO.getHealthFacilityCode(), "");
 
 			ancClientDTO.setClientId(healthfacilityPatientId);
+
+			createNextAppointments(healthfacilityPatientId,ancClientDTO.getLmnpDate(),true);
+
+			Long[] healthFacilityPatientArg = new Long[1];
+			healthFacilityPatientArg[0] =  healthfacilityPatientId;
 
 
 			Object[] facilityParams = new Object[]{ancClientDTO.getHealthFacilityCode(), 1};
@@ -129,11 +136,9 @@ public class ReferralPatientsController {
 				Phonenumber.PhoneNumber tzPhoneNumber = phoneUtil.parse(phoneNumber, "TZ");
 				phoneNumber = phoneUtil.format(tzPhoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
 
-				System.out.println("Coze:formatted phone number : "+phoneNumber);
 			} catch (NumberParseException e) {
 				System.err.println("NumberParseException was thrown: " + e.toString());
 			}
-
 
 			List<String> urns;
 			urns = new ArrayList<String>();
@@ -141,20 +146,20 @@ public class ReferralPatientsController {
 
 			try {
 				System.out.println("Coze: sending phone number to rapidpro : "+phoneNumber);
-				String response = rapidProService.startFlow(urns, "251c1c0c-a082-474b-826b-a0ab233013e3");
-
-				System.out.println("Coze: received rapidpro response : "+response);
+				rapidProService.startFlow(urns, "251c1c0c-a082-474b-826b-a0ab233013e3");
 			}catch (Exception e){
 				e.printStackTrace();
 			}
-			logger.debug(format("Added  Patient to queue.\nSubmissions: {0}", ancClientDTO));
+
+			List<AncClientReferralsDTO> ancClientReferralsDTOS = referralPatientService.getClients("SELECT * FROM " + HealthFacilitiesClients.tbName +
+					" WHERE " + HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",healthFacilityPatientArg);
+
+			return new ResponseEntity<AncClientReferralsDTO>(ancClientReferralsDTOS.get(0),OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(format("Patients processing failed with exception {0}.\nSubmissions: {1}", e, json));
 			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
 		}
-
-		return new ResponseEntity<AncClientDTO>(ancClientDTO,OK);
 	}
 
 //	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-tb-patient")
@@ -261,71 +266,72 @@ public class ReferralPatientsController {
 //		}
 //		return null;
 //	}
-//
-//	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-tb-encounters")
-//	public ResponseEntity<TBEncounterFeedbackDTO> saveTBEncounter(@RequestBody String json) {
-//		System.out.println("saveTBEncounter : "+json);
-//		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
-//		try {
-//			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, routineVisitDTOS));
-//			RoutineVisits encounter = PatientsConverter.toTBEncounter(routineVisitDTOS);
-//
-//			ANCRoutineVisitsRepository.save(encounter);
-//
-//			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_APPOINTMENT_ID + "=?",
-//					new Object[]{encounter.getAppointmentId()});
-//
-//			recalculateAppointments(patientAppointments.get(0).getHealthFacilityClientId(),encounter.getAppointmentId(),encounter.getMedicationDate().getTime());
-//			String encounterQuery = "SELECT * FROM " + RoutineVisits.tbName + " WHERE " +
-//					RoutineVisits.COL_TB_PATIENT_ID + " = ?    AND " +
-//					RoutineVisits.COL_APPOINTMENT_ID + " = ?  ";
-//
-//			Object[] tbEncountersParams = new Object[]{
-//					encounter.getTbPatientId(),
-//					encounter.getAppointmentId()};
-//
-//			List<RoutineVisits> routineVisits = null;
-//			try {
-//				routineVisits = ANCRoutineVisitsRepository.getTBEncounters(encounterQuery, tbEncountersParams);
-//				RoutineVisits routineVisits = routineVisits.get(0);
-//
-//				RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
-//				routineVisitDTO.setId(routineVisits.getId());
-//				routineVisitDTO.setTbPatientId(routineVisits.getTbPatientId());
-//				routineVisitDTO.setAppointmentId(routineVisits.getAppointmentId());
-//				routineVisitDTO.setLocalID(routineVisits.getLocalID());
-//				routineVisitDTO.setMakohozi(routineVisits.getMakohozi());
-//				routineVisitDTO.setWeight(routineVisits.getWeight());
-//				routineVisitDTO.setEncounterMonth(routineVisits.getEncounterMonth());
-//				routineVisitDTO.setEncounterYear(routineVisits.getEncounterYear());
-//				routineVisitDTO.setScheduledDate(routineVisits.getScheduledDate().getTime());
-//				routineVisitDTO.setMedicationDate(routineVisits.getMedicationDate().getTime());
-//				routineVisitDTO.setMedicationStatus(routineVisits.isMedicationStatus());
-//				routineVisitDTO.setHasFinishedPreviousMonthMedication(routineVisits.isHasFinishedPreviousMonthMedication());
-//
-//				TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
-//				tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
-//
-//				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-//						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
-//				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(appointments));
-//
-//
-//				//TODO push notifications to other tablets in the facility.
-//				return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//
-//
-//			logger.debug(format("Added  TB Encounters Submissions: {0}", routineVisitDTOS));
-//		} catch (Exception e) {
-//			logger.error(format("TB Encounters processing failed with exception {0}.\nSubmissions: {1}", e, routineVisitDTOS));
-//			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
-//		}
-//		return new ResponseEntity<>(CREATED);
-//	}
+
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-visit")
+	public ResponseEntity<TBEncounterFeedbackDTO> saveVisit(@RequestBody String json) {
+		System.out.println("saveVisit : "+json);
+		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
+		try {
+			RoutineVisits encounter = PatientsConverter.toRoutineVisit(routineVisitDTOS);
+			ANCRoutineVisitsRepository.save(encounter);
+
+			createNextAppointments(routineVisitDTOS.getHealthFacilityClientId(),routineVisitDTOS.getVisitDate(),false);
+			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_APPOINTMENT_ID + "=?",
+					new Object[]{encounter.getAppointmentId()});
+
+			String encounterQuery = "SELECT * FROM " + RoutineVisits.tbName + " WHERE " +
+					RoutineVisits.COL_HEALTH_FACILITY_CLIENT_ID + " = ?    AND " +
+					RoutineVisits.COL_APPOINTMENT_ID + " = ?  ";
+
+			Object[] tbEncountersParams = new Object[]{
+					encounter.getHealthFacilityClientId(),
+					encounter.getAppointmentId()};
+
+			List<RoutineVisits> routineVisits = null;
+			try {
+				routineVisits = ANCRoutineVisitsRepository.getTBEncounters(encounterQuery, tbEncountersParams);
+				RoutineVisits routineVisit = routineVisits.get(0);
+
+				RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
+				routineVisitDTO.setId(routineVisit.getId());
+				routineVisitDTO.setHealthFacilityClientId(routineVisit.getHealthFacilityClientId());
+				routineVisitDTO.setAppointmentId(routineVisit.getAppointmentId());
+
+				routineVisitDTO.setAppointmentDate(routineVisit.getAppointmentDate().getTime());
+				routineVisitDTO.setVisitNumber(routineVisit.getVisitNumber());
+				routineVisitDTO.setVisitDate(routineVisit.getVisitDate().getTime());
+				routineVisitDTO.setAppointmentDate(routineVisit.getAppointmentDate().getTime());
+				routineVisitDTO.setAnaemia(routineVisit.isAnaemia());
+				routineVisitDTO.setOedema(routineVisit.isOedema());
+				routineVisitDTO.setProtenuria(routineVisit.isProtenuria());
+				routineVisitDTO.setHighBloodPressure(routineVisit.isHighBloodPressure());
+				routineVisitDTO.setWeightStagnation(routineVisit.isWeightStagnation());
+				routineVisitDTO.setAntepartumHaemorrhage(routineVisit.isAntepartumHaemorrhage());
+				routineVisitDTO.setSugarInTheUrine(routineVisit.isSugarInTheUrine());
+				routineVisitDTO.setFetusLie(routineVisit.isFetusLie());
+
+				TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
+				tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
+
+				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
+						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
+				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(appointments));
+
+
+				return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+			logger.debug(format("Added  Visit Submissions: {0}", routineVisitDTOS));
+		} catch (Exception e) {
+			logger.error(format("TB Encounters processing failed with exception {0}.\nSubmissions: {1}", e, routineVisitDTOS));
+			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(CREATED);
+	}
 
 	@RequestMapping(method = GET, value = "/all-clients-referrals")
 	@ResponseBody
@@ -891,62 +897,45 @@ public class ReferralPatientsController {
 		}
 	}
 
-	private void createAppointments(long healthfacilityPatientId) {
-		for (int i = 1; i <= 8; i++) {
-			PatientAppointments appointments = new PatientAppointments();
-			appointments.setHealthFacilityClientId(healthfacilityPatientId);
-			appointments.setAppointmentType(2);
+	private void createNextAppointments(long healthfacilityPatientId, long time, boolean isFIrstAppointment) {
+		long today = Calendar.getInstance().getTime().getTime();
+
+		PatientAppointments appointments = new PatientAppointments();
+		appointments.setHealthFacilityClientId(healthfacilityPatientId);
+		appointments.setAppointmentType(2);
+		appointments.setIsCancelled(false);
+
+		if(isFIrstAppointment){
+			long diff = today - time;
+			System.out.println ("hours since lmnp Isued: " + TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS));
+			if(TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)<(4*4*7*24)){
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(time);
+				c.add(Calendar.MONTH, +4);
+				c.add(Calendar.DAY_OF_MONTH, +checkIfWeekend(c.getTime()));
+				appointments.setAppointmentDate(c.getTime());
+
+			}else{
+				appointments.setAppointmentDate(Calendar.getInstance().getTime());
+			}
+
+		}else{
 			Calendar c = Calendar.getInstance();
-			c.add(Calendar.MONTH, +i);
+			c.setTimeInMillis(time);
+			c.add(Calendar.MONTH, +1);
 			c.add(Calendar.DAY_OF_MONTH, +checkIfWeekend(c.getTime()));
 			appointments.setAppointmentDate(c.getTime());
-			appointments.setIsCancelled(false);
 
-			try {
-				System.out.println("Coze:save appointment");
-				patientsAppointmentsRepository.save(appointments);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
-	}
-
-	private void recalculateAppointments(long healthfacilityPatientId, long appointmentId, long appointmentDate) {
-
-		List <PatientAppointments> patientAppointments = null;
 		try {
-			patientAppointments  = patientsAppointmentsRepository.getAppointments("SELECT * FROM "+PatientAppointments.tbName+" WHERE "+PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID +" = "+healthfacilityPatientId,null);
+			System.out.println("Coze:save appointment");
+			patientsAppointmentsRepository.save(appointments);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-
-		int i = 1;
-		for (PatientAppointments patientAppointment:patientAppointments) {
-			System.out.println("Checking previous patient appointments");
-			if(patientAppointment.getAppointment_id()>appointmentId){
-
-				System.out.println("updating previous patient appointments date from "+patientAppointment.getAppointmentDate());
-				Calendar c = Calendar.getInstance();
-				c.setTimeInMillis(appointmentDate);
-				c.add(Calendar.MONTH, +i);
-				c.add(Calendar.DAY_OF_MONTH, +checkIfWeekend(c.getTime()));
-				patientAppointment.setAppointmentDate(c.getTime());
-
-				System.out.println("updating to new  patient appointments date  "+c.getTime());
-
-				try {
-					System.out.println("Coze:update appointment");
-					patientsAppointmentsRepository.executeQuery("UPDATE "+PatientAppointments.tbName+ " SET "+PatientAppointments.COL_APPOINTMENT_DATE+" = '"+c.getTime()+"' WHERE "+PatientAppointments.COL_APPOINTMENT_ID+" = "+patientAppointment.getAppointment_id());
-					System.out.println("Coze:update appointment query : UPDATE "+PatientAppointments.tbName+ " SET "+PatientAppointments.COL_APPOINTMENT_DATE+" = '"+c.getTime()+"' WHERE "+PatientAppointments.COL_APPOINTMENT_ID+" = "+patientAppointment.getAppointment_id());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 	}
+
 
 	private int checkIfWeekend(Date d1) {
 		Calendar c1 = Calendar.getInstance();
