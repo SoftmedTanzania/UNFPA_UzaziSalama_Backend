@@ -5,6 +5,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.opensrp.common.AllConstants;
 import org.opensrp.domain.*;
@@ -210,7 +211,7 @@ public class ReferralPatientsController {
 //		}
 //		return null;
 //	}
-
+//
 //	@RequestMapping("get-facility-tb-patients/{facilityUUID}")
 //	@ResponseBody
 //	public ResponseEntity<List<TBCompletePatientDataDTO>> getFacilityTBPatients(@PathVariable("facilityUUID") String facilityUUID) {
@@ -260,71 +261,71 @@ public class ReferralPatientsController {
 //		}
 //		return null;
 //	}
-//
-//	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-tb-encounters")
-//	public ResponseEntity<TBEncounterFeedbackDTO> saveTBEncounter(@RequestBody String json) {
-//		System.out.println("saveTBEncounter : "+json);
-//		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
-//		try {
-//			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, routineVisitDTOS));
-//			RoutineVisits encounter = PatientsConverter.toTBEncounter(routineVisitDTOS);
-//
-//			ANCRoutineVisitsRepository.save(encounter);
-//
-//			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_APPOINTMENT_ID + "=?",
-//					new Object[]{encounter.getAppointmentId()});
-//
-//			recalculateAppointments(patientAppointments.get(0).getHealthFacilityClientId(),encounter.getAppointmentId(),encounter.getMedicationDate().getTime());
-//			String encounterQuery = "SELECT * FROM " + RoutineVisits.tbName + " WHERE " +
-//					RoutineVisits.COL_TB_PATIENT_ID + " = ?    AND " +
-//					RoutineVisits.COL_APPOINTMENT_ID + " = ?  ";
-//
-//			Object[] tbEncountersParams = new Object[]{
-//					encounter.getTbPatientId(),
-//					encounter.getAppointmentId()};
-//
-//			List<RoutineVisits> routineVisits = null;
-//			try {
-//				routineVisits = ANCRoutineVisitsRepository.getTBEncounters(encounterQuery, tbEncountersParams);
-//				RoutineVisits routineVisits = routineVisits.get(0);
-//
-//				RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
-//				routineVisitDTO.setId(routineVisits.getId());
-//				routineVisitDTO.setTbPatientId(routineVisits.getTbPatientId());
-//				routineVisitDTO.setAppointmentId(routineVisits.getAppointmentId());
-//				routineVisitDTO.setLocalID(routineVisits.getLocalID());
-//				routineVisitDTO.setMakohozi(routineVisits.getMakohozi());
-//				routineVisitDTO.setWeight(routineVisits.getWeight());
-//				routineVisitDTO.setEncounterMonth(routineVisits.getEncounterMonth());
-//				routineVisitDTO.setEncounterYear(routineVisits.getEncounterYear());
-//				routineVisitDTO.setScheduledDate(routineVisits.getScheduledDate().getTime());
-//				routineVisitDTO.setMedicationDate(routineVisits.getMedicationDate().getTime());
-//				routineVisitDTO.setMedicationStatus(routineVisits.isMedicationStatus());
-//				routineVisitDTO.setHasFinishedPreviousMonthMedication(routineVisits.isHasFinishedPreviousMonthMedication());
-//
-//				TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
-//				tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
-//
-//				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-//						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
-//				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(appointments));
-//
-//
-//				//TODO push notifications to other tablets in the facility.
-//				return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
-//
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//
-//
-//			logger.debug(format("Added  TB Encounters Submissions: {0}", routineVisitDTOS));
-//		} catch (Exception e) {
-//			logger.error(format("TB Encounters processing failed with exception {0}.\nSubmissions: {1}", e, routineVisitDTOS));
-//			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
-//		}
-//		return new ResponseEntity<>(CREATED);
-//	}
+
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-tb-encounters")
+	public ResponseEntity<TBEncounterFeedbackDTO> saveTBEncounter(@RequestBody String json) {
+		System.out.println("saveTBEncounter : "+json);
+		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
+		try {
+			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, routineVisitDTOS));
+			RoutineVisits encounter = PatientsConverter.toTBEncounter(routineVisitDTOS);
+
+			ANCRoutineVisitsRepository.save(encounter);
+
+			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_APPOINTMENT_ID + "=?",
+					new Object[]{encounter.getAppointmentId()});
+
+			recalculateAppointments(patientAppointments.get(0).getHealthFacilityClientId(),encounter.getAppointmentId(),encounter.getMedicationDate().getTime());
+			String encounterQuery = "SELECT * FROM " + RoutineVisits.tbName + " WHERE " +
+					RoutineVisits.COL_TB_PATIENT_ID + " = ?    AND " +
+					RoutineVisits.COL_APPOINTMENT_ID + " = ?  ";
+
+			Object[] tbEncountersParams = new Object[]{
+					encounter.getTbPatientId(),
+					encounter.getAppointmentId()};
+
+			List<RoutineVisits> routineVisits = null;
+			try {
+				routineVisits = ANCRoutineVisitsRepository.getTBEncounters(encounterQuery, tbEncountersParams);
+				RoutineVisits routineVisits = routineVisits.get(0);
+
+				RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
+				routineVisitDTO.setId(routineVisits.getId());
+				routineVisitDTO.setTbPatientId(routineVisits.getTbPatientId());
+				routineVisitDTO.setAppointmentId(routineVisits.getAppointmentId());
+				routineVisitDTO.setLocalID(routineVisits.getLocalID());
+				routineVisitDTO.setMakohozi(routineVisits.getMakohozi());
+				routineVisitDTO.setWeight(routineVisits.getWeight());
+				routineVisitDTO.setEncounterMonth(routineVisits.getEncounterMonth());
+				routineVisitDTO.setEncounterYear(routineVisits.getEncounterYear());
+				routineVisitDTO.setScheduledDate(routineVisits.getScheduledDate().getTime());
+				routineVisitDTO.setMedicationDate(routineVisits.getMedicationDate().getTime());
+				routineVisitDTO.setMedicationStatus(routineVisits.isMedicationStatus());
+				routineVisitDTO.setHasFinishedPreviousMonthMedication(routineVisits.isHasFinishedPreviousMonthMedication());
+
+				TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
+				tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
+
+				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
+						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
+				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(appointments));
+
+
+				//TODO push notifications to other tablets in the facility.
+				return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+			logger.debug(format("Added  TB Encounters Submissions: {0}", routineVisitDTOS));
+		} catch (Exception e) {
+			logger.error(format("TB Encounters processing failed with exception {0}.\nSubmissions: {1}", e, routineVisitDTOS));
+			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(CREATED);
+	}
 
 	@RequestMapping(method = GET, value = "/all-clients-referrals")
 	@ResponseBody
@@ -751,95 +752,133 @@ public class ReferralPatientsController {
 		}
 	}
 
-//	@RequestMapping(method = GET, value = "/get-tb-test-type")
-//	@ResponseBody
-//	public ResponseEntity<List<TBPatientTestType>> getTBTestTypes() {
-//		try {
-//			List<TBPatientTestType> tbPatientTestTypes  = tbPatientTestTypeRepository.getTBPatientTypes("SELECT * FROM "+TBPatientTestType.tbName,null);
-//			return new ResponseEntity<List<TBPatientTestType>>(tbPatientTestTypes,HttpStatus.OK);
-//		}catch (Exception e){
-//			e.printStackTrace();
-//			return new ResponseEntity<List<TBPatientTestType>>(HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
-
-//	@RequestMapping(method = GET, value = "/get-tb-medication-regimes")
-//	@ResponseBody
-//	public ResponseEntity<List<TBMedicationRegime>> getTBSputumMedicationRegimes() {
-//		try {
-//			List<TBMedicationRegime> tbMedicationRegime = tbSputumMedicationRegimesRepository.getTBSputumMedicationRegime("SELECT * FROM "+ TBMedicationRegime.tbName,null);
-//			return new ResponseEntity<List<TBMedicationRegime>>(tbMedicationRegime,HttpStatus.OK);
-//		}catch (Exception e){
-//			e.printStackTrace();
-//			return new ResponseEntity<List<TBMedicationRegime>>(HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
 
 
-//
-//	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-chw-referrals-summary")
-//	@ResponseBody
-//	public ResponseEntity<List<CHWReferralsSummaryDTO>> getCHWReferralsSummary(@RequestBody String json) {
-//		JSONObject object = null;
-//		try {
-//			object = new JSONObject(json);
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		}
-//		JSONArray array = null;
-//		try {
-//			array = object.getJSONArray("chw_uuid");
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		}
-//
-//		//Default dates if the date range is not passed
-//		String fromDate = "2017-01-01";
-//		String toDate = "2020-01-01";
-//		try {
-//			toDate = object.getString("to_date");
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		}
-//
-//		try {
-//			fromDate = object.getString("from_date");
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		}
-//
-//		int size = array.length();
-//		String chwUIIDs = "";
-//		for(int i=0;i<size;i++){
-//			try {
-//				chwUIIDs+="'"+array.getString(i)+"',";
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//
-//
-//		if ( chwUIIDs.length() > 0 && chwUIIDs.charAt(chwUIIDs.length() - 1) == ',') {
-//			chwUIIDs = chwUIIDs.substring(0, chwUIIDs.length() - 1);
-//		}
-//
-//		try {
-//			List<CHWReferralsSummaryDTO> chwReferralsSummaryDTOS = patientReferralRepository.getCHWReferralsSummary(
-//					"SELECT COUNT("+ ClientReferral.tbName+"."+ ClientReferral.COL_SERVICE_ID+") as count ,"+ReferralService.COL_REFERRAL_SERVICE_NAME+" as service_name FROM "+ ClientReferral.tbName +
-//					" INNER JOIN "+ReferralService.tbName+" ON "+ ClientReferral.tbName+"."+ ClientReferral.COL_SERVICE_ID+" = "+ReferralService.tbName+"."+ReferralService.COL_REFERRAL_SERVICE_ID +
-//					" WHERE "+ ClientReferral.COL_REFERRAL_TYPE+"=1 AND " +
-//							ClientReferral.COL_SERVICE_PROVIDER_UIID+" IN ("+chwUIIDs+") AND "+
-//							ClientReferral.COL_REFERRAL_DATE+" > '"+fromDate+"' AND "+
-//							ClientReferral.COL_REFERRAL_DATE+" <= '"+toDate+"' "+
-//					" GROUP BY "+ReferralService.COL_REFERRAL_SERVICE_NAME,null);
-//
-//
-//			return new ResponseEntity<List<CHWReferralsSummaryDTO>>(chwReferralsSummaryDTOS,HttpStatus.OK);
-//		}catch (Exception e){
-//			e.printStackTrace();
-//			return new ResponseEntity<List<CHWReferralsSummaryDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-chw-referrals-summary")
+	@ResponseBody
+	public ResponseEntity<List<CHWReferralsSummaryDTO>> getCHWReferralsSummary(@RequestBody String json) {
+		JSONObject object = null;
+		try {
+			object = new JSONObject(json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JSONArray array = null;
+		try {
+			array = object.getJSONArray("chw_uuid");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		//Default dates if the date range is not passed
+		String fromDate = "2017-01-01";
+		String toDate = "2020-01-01";
+		try {
+			toDate = object.getString("to_date");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			fromDate = object.getString("from_date");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		int size = array.length();
+		String chwUIIDs = "";
+		for(int i=0;i<size;i++){
+			try {
+				chwUIIDs+="'"+array.getString(i)+"',";
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+		if ( chwUIIDs.length() > 0 && chwUIIDs.charAt(chwUIIDs.length() - 1) == ',') {
+			chwUIIDs = chwUIIDs.substring(0, chwUIIDs.length() - 1);
+		}
+
+		try {
+			List<CHWReferralsSummaryDTO> chwReferralsSummaryDTOS = patientReferralRepository.getCHWReferralsSummary(
+					"SELECT COUNT("+ ClientReferral.tbName+"."+ ClientReferral.COL_REFERRAL_ID+") as count ,"+ClientReferral.COL_SERVICE_PROVIDER_UUID+" as service_name FROM "+ ClientReferral.tbName +
+					" WHERE "+ ClientReferral.COL_REFERRAL_TYPE+"=1 AND " +
+							ClientReferral.COL_SERVICE_PROVIDER_UUID+" IN ("+chwUIIDs+") AND "+
+							ClientReferral.COL_REFERRAL_DATE+" > '"+fromDate+"' AND "+
+							ClientReferral.COL_REFERRAL_DATE+" <= '"+toDate+"' "+
+					" GROUP BY "+ClientReferral.COL_SERVICE_PROVIDER_UUID,null);
+
+
+			return new ResponseEntity<List<CHWReferralsSummaryDTO>>(chwReferralsSummaryDTOS,HttpStatus.OK);
+		}catch (Exception e){
+			e.printStackTrace();
+			return new ResponseEntity<List<CHWReferralsSummaryDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-chw-referrals-summary")
+	@ResponseBody
+	public ResponseEntity<List<CHWReferralsSummaryDTO>> getCHWReferralsSummaryLists(@RequestBody String json) {
+		JSONObject object = null;
+		try {
+			object = new JSONObject(json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JSONArray array = null;
+		try {
+			array = object.getJSONArray("chw_uuid");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		//Default dates if the date range is not passed
+		String fromDate = "2017-01-01";
+		String toDate = "2020-01-01";
+		try {
+			toDate = object.getString("to_date");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			fromDate = object.getString("from_date");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		int size = array.length();
+		String chwUIIDs = "";
+		for(int i=0;i<size;i++){
+			try {
+				chwUIIDs+="'"+array.getString(i)+"',";
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+		if ( chwUIIDs.length() > 0 && chwUIIDs.charAt(chwUIIDs.length() - 1) == ',') {
+			chwUIIDs = chwUIIDs.substring(0, chwUIIDs.length() - 1);
+		}
+
+		try {
+			List<CHWReferralsSummaryDTO> chwReferralsSummaryDTOS = patientReferralRepository.getCHWReferralsSummary(
+					"SELECT COUNT("+ ClientReferral.tbName+"."+ ClientReferral.COL_REFERRAL_ID+") as count ,"+ClientReferral.COL_SERVICE_PROVIDER_UUID+" as service_name FROM "+ ClientReferral.tbName +
+							" WHERE "+ ClientReferral.COL_REFERRAL_TYPE+"=1 AND " +
+							ClientReferral.COL_SERVICE_PROVIDER_UUID+" IN ("+chwUIIDs+") AND "+
+							ClientReferral.COL_REFERRAL_DATE+" > '"+fromDate+"' AND "+
+							ClientReferral.COL_REFERRAL_DATE+" <= '"+toDate+"' "+
+							" GROUP BY "+ClientReferral.COL_SERVICE_PROVIDER_UUID,null);
+
+
+			return new ResponseEntity<List<CHWReferralsSummaryDTO>>(chwReferralsSummaryDTOS,HttpStatus.OK);
+		}catch (Exception e){
+			e.printStackTrace();
+			return new ResponseEntity<List<CHWReferralsSummaryDTO>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	private void createAppointments(long healthfacilityPatientId) {
 		for (int i = 1; i <= 8; i++) {
