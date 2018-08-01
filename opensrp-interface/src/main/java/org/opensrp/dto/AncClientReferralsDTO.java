@@ -16,6 +16,8 @@ public class AncClientReferralsDTO {
 
     @JsonProperty
     private List<PatientsAppointmentsDTO> patientsAppointmentsDTOS;
+    @JsonProperty
+    private List<RoutineVisitDTO> routineVisitDTOS;
 
 
     public AncClientReferralsDTO() {
@@ -43,6 +45,14 @@ public class AncClientReferralsDTO {
 
     public void setPatientsAppointmentsDTOS(List<PatientsAppointmentsDTO> patientsAppointmentsDTOS) {
         this.patientsAppointmentsDTOS = patientsAppointmentsDTOS;
+    }
+
+    public List<RoutineVisitDTO> getRoutineVisitDTOS() {
+        return routineVisitDTOS;
+    }
+
+    public void setRoutineVisitDTOS(List<RoutineVisitDTO> routineVisitDTOS) {
+        this.routineVisitDTOS = routineVisitDTOS;
     }
 
     @Override

@@ -454,7 +454,7 @@ public class FormEntityConverter {
 					Date edd = new Date();
 					try{
 						edd.setTime(Long.parseLong(formField.value()));
-						client.setLmnpDate(edd);
+						client.setEdd(edd);
 					}catch (Exception e1){
 						e1.printStackTrace();
 					}

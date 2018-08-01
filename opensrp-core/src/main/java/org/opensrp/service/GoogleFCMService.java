@@ -24,7 +24,7 @@ public class GoogleFCMService {
 			String androidFcmKey;
 			if(toFacilityUsers) {
 				//Facility client app FCM server key
-				androidFcmKey = "AAAAWBsBKRw:APA91bGhMedUBMMInWSeV4ahsFISP5bo_u3kQSOUA5Yc2opaQ8Y0MwmgjPuF7rRMuAiqTHGmrz2B00zvCaHdwfwxvcwJqpR05XoOnpyKy_el1gJsz8fgSikqzr8OgnV17z_2qZc6bbbp";
+				androidFcmKey = "AAAAWBsBKRw:APA91bHRDR3GMrNRkl2P1s_G5J-58q7TXoAiYZuKNPp0WPm-xsEtfFci39_qOcdwil9yaQcFwy5I4ZmM0MsmzCERRnBzw_viHpw_OowCmz7NotzGC6sxuiP9cTx9SYXr5GTrUBVZEr7P";
 			}else{
 				//Facility CHW app FCM server key
 				androidFcmKey = "AAAACjP5eXU:APA91bGkhqul3WSJrAWP3og9Gadx2NtAfH759RMb9yFodhQ8BeSSVf1G9Zc8aUbM134JhVkWCXmAjucPF2h7a_7HYUjS8055FOlccnBNolZ-J3ImZoPNk7DnBAfQwzi2PGHLPe4f9EUc";

@@ -31,6 +31,9 @@ public class ReferralPatientsService {
     @Autowired
     private PatientsAppointmentsRepository patientsAppointmentsRepository;
 
+    @Autowired
+    private ANCRoutineVisitsRepository ancRoutineVisitsRepository;
+
 	@Autowired
 	private PatientReferralIndicatorRepository patientReferralIndicatorRepository;
 
@@ -109,6 +112,12 @@ public class ReferralPatientsService {
 
                 ancClientReferralsDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(patientAppointments));
 
+
+
+                String getRoutineSQL = "SELECT * from " + RoutineVisits.tbName+" WHERE "+RoutineVisits.COL_HEALTH_FACILITY_CLIENT_ID +" =?";
+                List<RoutineVisits> routineVisits = ancRoutineVisitsRepository.getTBEncounters(getRoutineSQL,args2);
+
+                ancClientReferralsDTO.setRoutineVisitDTOS(PatientsConverter.toTbPatientEncounterDTOsList(routineVisits));
                 ancClientReferralsDTOS.add(ancClientReferralsDTO);
 
             } catch (Exception e) {
@@ -190,8 +199,11 @@ public class ReferralPatientsService {
             System.out.println("Coze = using the received patients ");
             id = ancClientsResults.get(0).getClientId();
 
+            System.out.println("Coze = using the received patients using client id =  "+id);
+
             try {
-                ANCClientsRepository.executeQuery("UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+ancClientsResults.get(0).getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
+                System.out.println("Coze = update query =  "+"UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
+                ANCClientsRepository.executeQuery("UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -37,6 +37,9 @@ public class AncClientDTO {
     private long dateOfBirth;
 
 	@JsonProperty
+    private long createdAt;;
+
+	@JsonProperty
     private boolean heightBelowAverage;
 
     /**
@@ -345,6 +348,14 @@ public class AncClientDTO {
 
 	public void setHealthFacilityClientId(Long healthFacilityClientId) {
 		this.healthFacilityClientId = healthFacilityClientId;
+	}
+
+	public long getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(long createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	@Override

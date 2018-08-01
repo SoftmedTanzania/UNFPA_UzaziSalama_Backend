@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +46,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class ReferralPatientsController {
 	private static Logger logger = LoggerFactory.getLogger(ReferralPatientsController.class.toString());
 	private ReferralPatientsService patientsService;
-	private ANCClientsRepository ANCClientsRepository;
+	private ANCClientsRepository ancClientsRepository;
 	private HealthFacilityRepository healthFacilityRepository;
 	private HealthFacilitiesClientsRepository healthFacilitiesClientsRepository;
 	private ANCRoutineVisitsRepository ANCRoutineVisitsRepository;
@@ -55,32 +54,28 @@ public class ReferralPatientsController {
 	private PatientReferralRepository patientReferralRepository;
 	private PatientReferralIndicatorRepository patientReferralIndicatorRepository;
 	private GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository;
-	private TBPatientsRepository tbPatientsRepository;
+	private PNCClientsRepository pncClientsRepository;
 	private FormSubmissionService formSubmissionService;
 	private FormEntityConverter formEntityConverter;
 	private TaskSchedulerService scheduler;
 	private GoogleFCMService googleFCMService;
 	private ReferralPatientsService referralPatientService;
 	private RapidProServiceImpl rapidProService;
-	private ReferralServiceRepository referralServiceRepository;
-	private TBPatientTestTypeRepository tbPatientTestTypeRepository;
-	private TBMedicatinRegimesRepository tbSputumMedicationRegimesRepository;
 	@Autowired
-	public ReferralPatientsController(ReferralPatientsService patientsService, ANCClientsRepository ANCClientsRepository, TaskSchedulerService scheduler,
+	public ReferralPatientsController(ReferralPatientsService patientsService, ANCClientsRepository ancClientsRepository, TaskSchedulerService scheduler,
 	                                  HealthFacilityRepository healthFacilityRepository, HealthFacilitiesClientsRepository healthFacilitiesClientsRepository, PatientsAppointmentsRepository patientsAppointmentsRepository,
-	                                  ANCRoutineVisitsRepository ANCRoutineVisitsRepository, PatientReferralRepository patientReferralRepository, TBPatientsRepository tbPatientsRepository, FormSubmissionService formSubmissionService,
+	                                  ANCRoutineVisitsRepository ANCRoutineVisitsRepository, PatientReferralRepository patientReferralRepository, PNCClientsRepository pncClientsRepository, FormSubmissionService formSubmissionService,
 	                                  FormEntityConverter formEntityConverter, GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository, GoogleFCMService googleFCMService,
-	                                  PatientReferralIndicatorRepository patientReferralIndicatorRepository, ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService, ReferralServiceRepository referralServiceRepository,
-	                                  TBPatientTestTypeRepository tbPatientTestTypeRepository, TBMedicatinRegimesRepository tbSputumMedicationRegimesRepository) {
+	                                  PatientReferralIndicatorRepository patientReferralIndicatorRepository, ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService) {
 		this.patientsService = patientsService;
-		this.ANCClientsRepository = ANCClientsRepository;
+		this.ancClientsRepository = ancClientsRepository;
 		this.scheduler = scheduler;
 		this.healthFacilityRepository = healthFacilityRepository;
 		this.healthFacilitiesClientsRepository = healthFacilitiesClientsRepository;
 		this.patientsAppointmentsRepository = patientsAppointmentsRepository;
 		this.ANCRoutineVisitsRepository = ANCRoutineVisitsRepository;
 		this.patientReferralRepository = patientReferralRepository;
-		this.tbPatientsRepository = tbPatientsRepository;
+		this.pncClientsRepository = pncClientsRepository;
 		this.formSubmissionService = formSubmissionService;
 		this.formEntityConverter = formEntityConverter;
 		this.googlePushNotificationsUsersRepository = googlePushNotificationsUsersRepository;
@@ -88,9 +83,6 @@ public class ReferralPatientsController {
 		this.patientReferralIndicatorRepository = patientReferralIndicatorRepository;
 		this.referralPatientService = referralPatientService;
 		this.rapidProService = rapidProService;
-		this.referralServiceRepository = referralServiceRepository;
-		this.tbPatientTestTypeRepository = tbPatientTestTypeRepository;
-		this.tbSputumMedicationRegimesRepository = tbSputumMedicationRegimesRepository;
 	}
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-anc-client")
@@ -160,111 +152,86 @@ public class ReferralPatientsController {
 			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
 		}
 	}
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-pnc-client")
+	@ResponseBody
+	public ResponseEntity<PNCCompleteCLientDataDTO> savePNCClients(@RequestBody String json) {
+		PNCClientDTO PNCClientDTO = new Gson().fromJson(json,PNCClientDTO.class);
+		try {
+			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, PNCClientDTO));
 
-//	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-tb-patient")
-//	@ResponseBody
-//	public ResponseEntity<TBCompletePatientDataDTO> saveTBPatients(@RequestBody String json) {
-//		TBPatientMobileClientDTO tbPatientMobileClientDTO = new Gson().fromJson(json,TBPatientMobileClientDTO.class);
-//		try {
-//			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, tbPatientMobileClientDTO));
-//
-//			ANCClients convertedPatient = PatientsConverter.toPatients(tbPatientMobileClientDTO);
-//
-//			System.out.println("Coze:Patient data = "+new Gson().toJson(convertedPatient));
-//
-//			TBPatient tbPatient = PatientsConverter.toTBPatients(tbPatientMobileClientDTO);
-//
-//
-//			System.out.println("Coze:TB patient data = "+new Gson().toJson(tbPatient));
-//
-//			long healthfacilityPatientId = referralPatientService.saveClient(convertedPatient, tbPatientMobileClientDTO.getHealthFacilityCode(), null);
-//
-//			HealthFacilitiesClients hPatient = new HealthFacilitiesClients();
-//			hPatient.setHealthFacilityClientId(healthfacilityPatientId);
-//
-//			tbPatient.setHealthFacilitiesClients(hPatient);
-//			tbPatientsRepository.save(tbPatient);
-//			createAppointments(healthfacilityPatientId);
-//
-//
-//			TBCompletePatientDataDTO tbCompletePatientDataDTO = new TBCompletePatientDataDTO();
-//			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName + " WHERE " + HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-//					new Object[]{healthfacilityPatientId});
-//
-//			HealthFacilitiesClients healthFacilitiesPatient = healthFacilitiesPatients.get(0);
-//			List<ANCClients> patients = patientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
-//					new Object[]{healthFacilitiesPatient.getAncClient().getPatientId()});
-//
-//			tbCompletePatientDataDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
-//
-//			List<TBPatient> tbPatients = tbPatientsRepository.getTBPatients("SELECT * FROM " + org.opensrp.domain.TBPatient.tbName + " WHERE " + TBPatient.COL_HEALTH_FACILITY_PATIENT_ID + "=?",
-//					new Object[]{healthFacilitiesPatient.getAncClient().getPatientId()});
-//			tbCompletePatientDataDTO.setTbPatientDTO(PatientsConverter.toTbPatientDTO(tbPatients.get(0)));
-//
-//			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-//					new Object[]{healthfacilityPatientId});
-//			tbCompletePatientDataDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(patientAppointments));
-//
-//			//TODO implement push notification to other tablets in the same facility.
-//
-//			return new ResponseEntity<TBCompletePatientDataDTO>(tbCompletePatientDataDTO,HttpStatus.CREATED);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			logger.error(format("TB Patients processing failed with exception {0}.\nSubmissions: {1}", e, tbPatientMobileClientDTO));
-//
-//		}
-//		return null;
-//	}
-//
-//	@RequestMapping("get-facility-tb-patients/{facilityUUID}")
-//	@ResponseBody
-//	public ResponseEntity<List<TBCompletePatientDataDTO>> getFacilityTBPatients(@PathVariable("facilityUUID") String facilityUUID) {
-//		try {
-//			List<TBCompletePatientDataDTO> tbCompletePatientDataDTOS = new ArrayList<>();
-//			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName +
-//							" INNER JOIN "+HealthFacilities.tbName+" ON "+ HealthFacilitiesClients.tbName+"."+ HealthFacilitiesClients.COL_FACILITY_ID +" = "+HealthFacilities.tbName+"._id WHERE " + HealthFacilities.COL_OPENMRS_UIID + "=?",
-//					new Object[]{facilityUUID});
-//
-//			for(HealthFacilitiesClients healthFacilitiesPatient:healthFacilitiesPatients){
-//				try {
-//					TBCompletePatientDataDTO tbCompletePatientDataDTO = new TBCompletePatientDataDTO();
-//
-//					List<ANCClients> patients = patientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
-//							new Object[]{healthFacilitiesPatient.getAncClient().getPatientId()});
-//
-//					tbCompletePatientDataDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
-//
-//					List<TBPatient> tbPatients = tbPatientsRepository.getTBPatients("SELECT * FROM " + org.opensrp.domain.TBPatient.tbName + " WHERE " + TBPatient.COL_HEALTH_FACILITY_PATIENT_ID + "=?",
-//							new Object[]{healthFacilitiesPatient.getAncClient().getPatientId()});
-//					tbCompletePatientDataDTO.setTbPatientDTO(PatientsConverter.toTbPatientDTO(tbPatients.get(0)));
-//
-//					List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-//							new Object[]{healthFacilitiesPatient.getAncClient().getPatientId()});
-//					tbCompletePatientDataDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(patientAppointments));
-//
-//
-//
-//					List<RoutineVisits> routineVisits = ANCRoutineVisitsRepository.getTBEncounters("SELECT * FROM " + RoutineVisits.tbName + " WHERE " + RoutineVisits.COL_TB_PATIENT_ID + "=?",
-//							new Object[]{tbPatients.get(0).getTbPatientId()});
-//					tbCompletePatientDataDTO.setRoutineVisitDTOS(PatientsConverter.toTbPatientEncounterDTOsList(routineVisits));
-//
-//
-//
-//					tbCompletePatientDataDTOS.add(tbCompletePatientDataDTO);
-//				}catch (Exception e){
-//					e.printStackTrace();
-//				}
-//			}
-//
-//
-//			return new ResponseEntity<List<TBCompletePatientDataDTO>>(tbCompletePatientDataDTOS,HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			logger.error(format("Obtaining TB Patients failed with exception {0}.\nfacility id: {1}", e, facilityUUID));
-//
-//		}
-//		return null;
-//	}
+
+			PNCClients pncClient = PatientsConverter.toPNCClient(PNCClientDTO);
+
+
+			System.out.println("Coze:PNC Client data = "+new Gson().toJson(pncClient));
+
+
+			pncClientsRepository.save(pncClient);
+
+
+			PNCCompleteCLientDataDTO PNCCompleteCLientDataDTO = new PNCCompleteCLientDataDTO();
+			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName + " WHERE " + HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
+					new Object[]{pncClient.getHealthFacilityClientId()});
+
+			HealthFacilitiesClients healthFacilitiesPatient = healthFacilitiesPatients.get(0);
+			List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
+					new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+
+			PNCCompleteCLientDataDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
+
+			List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
+					new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+
+			PNCCompleteCLientDataDTO.setPncClientDTO(PatientsConverter.toPNCClientDTO(pncClientsList.get(0)));
+
+			return new ResponseEntity<PNCCompleteCLientDataDTO>(PNCCompleteCLientDataDTO,HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(format("PNC Client processing failed with exception {0}.\nSubmissions: {1}", e, PNCClientDTO));
+
+		}
+		return null;
+	}
+
+	@RequestMapping("get-facility-pnc-clients/{facilityUUID}")
+	@ResponseBody
+	public ResponseEntity<List<PNCCompleteCLientDataDTO>> getFacilityTBPatients(@PathVariable("facilityUUID") String facilityUUID) {
+		try {
+			List<PNCCompleteCLientDataDTO> tbCompletePatientDataDTOS = new ArrayList<>();
+			List<HealthFacilitiesClients> healthFacilitiesClients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName +
+							" INNER JOIN "+HealthFacilities.tbName+" ON "+ HealthFacilitiesClients.tbName+"."+ HealthFacilitiesClients.COL_FACILITY_ID +" = "+HealthFacilities.tbName+"._id WHERE " + HealthFacilities.COL_OPENMRS_UIID + "=?",
+					new Object[]{facilityUUID});
+
+			for(HealthFacilitiesClients healthFacilitiesPatient:healthFacilitiesClients){
+				try {
+					PNCCompleteCLientDataDTO pncCompleteCLientDataDTO = new PNCCompleteCLientDataDTO();
+
+					List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
+							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+
+					pncCompleteCLientDataDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
+
+					List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
+							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+
+					pncCompleteCLientDataDTO.setPncClientDTO(PatientsConverter.toPNCClientDTO(pncClientsList.get(0)));
+
+
+					tbCompletePatientDataDTOS.add(pncCompleteCLientDataDTO);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+
+
+			return new ResponseEntity<List<PNCCompleteCLientDataDTO>>(tbCompletePatientDataDTOS,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(format("Obtaining PNC Clients failed with exception {0}.\nfacility id: {1}", e, facilityUUID));
+
+		}
+		return null;
+	}
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-visit")
 	public ResponseEntity<TBEncounterFeedbackDTO> saveVisit(@RequestBody String json) {
@@ -357,29 +324,29 @@ public class ReferralPatientsController {
 			Long referralId = patientReferralRepository.save(clientReferral);
 
 
-			List<ClientReferral> savedClientReferrals = patientReferralRepository.getReferrals("SELECT * FROM "+ ClientReferral.tbName+" ORDER BY "+ ClientReferral.COL_REFERRAL_ID+" DESC LIMIT 1 ",null);
 			logger.debug(format("Added  ReferralsDTO Submissions: {0}", referralsDTO));
 
-			referralsDTO.setId(savedClientReferrals.get(0).getId());
+			referralsDTO.setId(referralId);
 
 
 			Object[] patientParams = new Object[]{
-					savedClientReferrals.get(0).getAncClientId()};
-			List<ANCClients> patients = ANCClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" =?",patientParams);
+					clientReferral.getAncClientId()};
+			List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" =?",patientParams);
 
 			AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
 			ancClientReferralsDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
 
 			List<ReferralsDTO> patientReferrals = new ArrayList<>();
-			patientReferrals.add(PatientsConverter.toPatientDTO(savedClientReferrals.get(0)));
+			patientReferrals.add(PatientsConverter.toPatientDTO(clientReferral));
 
 
 			ancClientReferralsDTO.setPatientReferralsList(patientReferrals);
 
 			if(referralsDTO.getReferralType()==4) {
-				System.out.println("chwreferral : "+ savedClientReferrals.get(0).getFromFacilityId());
-				Object[] facilityParams = new Object[]{savedClientReferrals.get(0).getFromFacilityId(), 0};
-				List<GooglePushNotificationsUsers> googlePushNotificationsUsers = googlePushNotificationsUsersRepository.getGooglePushNotificationsUsers("SELECT * FROM " + GooglePushNotificationsUsers.tbName + " WHERE " + GooglePushNotificationsUsers.COL_FACILITY_UIID + " = ? AND " + GooglePushNotificationsUsers.COL_USER_TYPE + " = ?", facilityParams);
+				System.out.println("chwreferral service provider uuid : "+ clientReferral.getServiceProviderUUID());
+				Object[] facilityParams = new Object[]{clientReferral.getServiceProviderUUID()};
+
+				List<GooglePushNotificationsUsers> googlePushNotificationsUsers = googlePushNotificationsUsersRepository.getGooglePushNotificationsUsers("SELECT * FROM " + GooglePushNotificationsUsers.tbName + " WHERE " + GooglePushNotificationsUsers.COL_USER_UIID + " = ?", facilityParams);
 				JSONArray tokens = new JSONArray();
 				for (GooglePushNotificationsUsers googlePushNotificationsUsers1 : googlePushNotificationsUsers) {
 					tokens.put(googlePushNotificationsUsers1.getGooglePushNotificationToken());
@@ -412,29 +379,6 @@ public class ReferralPatientsController {
 					e.printStackTrace();
 				}
 
-			}else{
-				Object[] facilityParams;
-				if(referralsDTO.getReferralType()==3) {
-					System.out.println("facility-facility referral : " + savedClientReferrals.get(0).getFacilityId());
-					facilityParams = new Object[]{savedClientReferrals.get(0).getFacilityId(), 1};
-				}else{
-					System.out.println("intra-facility referral : " + savedClientReferrals.get(0).getFromFacilityId());
-					facilityParams = new Object[]{savedClientReferrals.get(0).getFromFacilityId(), 1};
-				}
-				try {
-					List<GooglePushNotificationsUsers> googlePushNotificationsUsers = googlePushNotificationsUsersRepository.getGooglePushNotificationsUsers("SELECT * FROM " + GooglePushNotificationsUsers.tbName + " WHERE " + GooglePushNotificationsUsers.COL_FACILITY_UIID + " = ? AND " + GooglePushNotificationsUsers.COL_USER_TYPE + " = ?", facilityParams);
-					JSONArray tokens = new JSONArray();
-					for (GooglePushNotificationsUsers googlePushNotificationsUsers1 : googlePushNotificationsUsers) {
-						tokens.put(googlePushNotificationsUsers1.getGooglePushNotificationToken());
-					}
-					System.out.println("tokens : " + tokens.toString());
-					String json = new Gson().toJson(ancClientReferralsDTO);
-					JSONObject msg = new JSONObject(json);
-					msg.put("type", "ClientReferral");
-					googleFCMService.SendPushNotification(msg, tokens, true);
-				}catch (Exception e){
-					e.printStackTrace();
-				}
 			}
 
 			return new ResponseEntity<ReferralsDTO>(referralsDTO,HttpStatus.OK);
@@ -456,7 +400,7 @@ public class ReferralPatientsController {
 
 		List<ANCClients> patients = null;
 		try {
-			patients = ANCClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+ clientReferral.getAncClientId(),null);
+			patients = ancClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+ clientReferral.getAncClientId(),null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -469,27 +413,103 @@ public class ReferralPatientsController {
 			String uuid = UUID.randomUUID().toString();
 
 			List<org.opensrp.form.domain.FormField> formFields = new ArrayList<>();
-			formFields.add(new org.opensrp.form.domain.FormField("first_name", patient.getFirstName()==null?"":patient.getFirstName(), "followup_client.first_name"));
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("first_name", patient.getFirstName() == null ? "" : patient.getFirstName(), "followup_client.first_name"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
 			formFields.add(new org.opensrp.form.domain.FormField("middle_name", patient.getMiddleName()==null?"": patient.getMiddleName(), "followup_client.middlename"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
 			formFields.add(new org.opensrp.form.domain.FormField("surname", patient.getSurname()==null?"":patient.getSurname(), "followup_client.surname"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
 			formFields.add(new org.opensrp.form.domain.FormField("date_of_birth", patient.getDateOfBirth().getTime()+"", "followup_client.date_of_birth"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
 			formFields.add(new org.opensrp.form.domain.FormField("edd", patient.getEdd().getTime()+"", "followup_client.edd"));
-			formFields.add(new org.opensrp.form.domain.FormField("spouse_name", patient.getSpouseName()==null?"":patient.getSpouseName(), "followup_client.spouse_name"));
-			formFields.add(new org.opensrp.form.domain.FormField("map_cue", patient.getMapCue()==null?"":patient.getMapCue(), "followup_client.map_cue"));
-			formFields.add(new org.opensrp.form.domain.FormField("facility_id", clientReferral.getFromFacilityId()+ "", "followup_client.facility_id"));
-			formFields.add(new org.opensrp.form.domain.FormField("referral_reason", clientReferral.getReferralReason()==null?"": clientReferral.getReferralReason(), "followup_client.referral_reason"));
-			formFields.add(new org.opensrp.form.domain.FormField("phone_number", patient.getPhoneNumber()==null?"":patient.getPhoneNumber(), "followup_client.phone_number"));
-			formFields.add(new org.opensrp.form.domain.FormField("comment",  "", "followup_client.comment"));
-			formFields.add(new org.opensrp.form.domain.FormField("referral_status",  "0", "followup_client.referral_status"));
-			formFields.add(new org.opensrp.form.domain.FormField("service_provider_uiid",  "", "followup_client.service_provider_uiid"));
-			formFields.add(new org.opensrp.form.domain.FormField("visit_date",  "", "followup_client.visit_date"));
-			formFields.add(new org.opensrp.form.domain.FormField("referral_date",  clientReferral.getReferralDate().getTime()+"", "followup_client.referral_date"));
-			formFields.add(new org.opensrp.form.domain.FormField("village",  patient.getVillage()==null?"":patient.getVillage(), "followup_client.village"));
-			formFields.add(new org.opensrp.form.domain.FormField("relationalid",  uuid, "followup_client.relationalid"));
-			formFields.add(new org.opensrp.form.domain.FormField("is_valid",  "true", "followup_client.is_valid"));
-			formFields.add(new org.opensrp.form.domain.FormField("id",  uuid, "followup_client.id"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("spouse_name", patient.getSpouseName()==null?"":patient.getSpouseName(), "followup_client.spouse_name"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("map_cue", patient.getMapCue()==null?"":patient.getMapCue(), "followup_client.map_cue"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("facility_id", clientReferral.getFromFacilityId()+ "", "followup_client.facility_id"));
 
-			FormData formData = new FormData("followup_client", "/model/instance/follow_up_form/", formFields, null);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {formFields.add(new org.opensrp.form.domain.FormField("referral_reason", clientReferral.getReferralReason()==null?"": clientReferral.getReferralReason(), "followup_client.referral_reason"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("phone_number", patient.getPhoneNumber()==null?"":patient.getPhoneNumber(), "followup_client.phone_number"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("comment",  "", "followup_client.comment"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("referral_status",  "0", "followup_client.referral_status"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("service_provider_uiid",  "", "followup_client.service_provider_uiid"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("visit_date",  "", "followup_client.visit_date"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("referral_date",  clientReferral.getReferralDate().getTime()+"", "followup_client.referral_date"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("village",  patient.getVillage()==null?"":patient.getVillage(), "followup_client.village"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("relationalid",  uuid, "followup_client.relationalid"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("is_valid",  "true", "followup_client.is_valid"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			try {
+				formFields.add(new org.opensrp.form.domain.FormField("id",  uuid, "followup_client.id"));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+			FormData formData = new FormData("followup_client", "/model/instance/anc_client_follow_up_form/", formFields, null);
 			FormInstance formInstance = new FormInstance(formData);
 			FormSubmission formSubmission = new FormSubmission(clientReferral.getFromFacilityId()+"", uuid+"", "client_follow_up_form", clientReferral.getReferralUUID() + "", "1", 4, formInstance);
 
@@ -621,7 +641,7 @@ public class ReferralPatientsController {
 					}
 
 
-					List <ANCClients> patients = ANCClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+ clientReferral.getAncClientId(),null);
+					List <ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+ clientReferral.getAncClientId(),null);
 					System.out.println("Coze: Send notification sms to user "+patients.get(0).getPhoneNumber());
 
 					//TODO send notification to the user
@@ -683,7 +703,7 @@ public class ReferralPatientsController {
 				if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) == 3) {
 
 					List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM "+ HealthFacilitiesClients.tbName+" WHERE "+ HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID +" = "+appointments.getHealthFacilitiesClients().getHealthFacilityClientId(),null);
-					List <ANCClients> patients = ANCClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+healthFacilitiesPatients.get(0).getAncClient().getClientId(),null);
+					List <ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+healthFacilitiesPatients.get(0).getAncClient().getClientId(),null);
 					System.out.println("Coze: Send 3 days to Appointment notification to user "+patients.get(0).getPhoneNumber());
 
 					if(patients.get(0).getPhoneNumber().equals("")) {
@@ -710,7 +730,7 @@ public class ReferralPatientsController {
 				}else if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) == 1) {
 
 					List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM "+ HealthFacilitiesClients.tbName+" WHERE "+ HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID +" = "+appointments.getHealthFacilitiesClients().getHealthFacilityClientId(),null);
-					List <ANCClients> patients = ANCClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+healthFacilitiesPatients.get(0).getAncClient().getClientId(),null);
+					List <ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" = "+healthFacilitiesPatients.get(0).getAncClient().getClientId(),null);
 					System.out.println("Coze: Send 1 days to Appointment notification to user "+patients.get(0).getPhoneNumber());
 
 					if(patients.get(0).getPhoneNumber().equals("")) {
@@ -871,21 +891,33 @@ public class ReferralPatientsController {
 					"  SELECT "
 							+ ClientReferral.tbName+"."+ ClientReferral.COL_SERVICE_PROVIDER_UUID+", "
 							+ ANCClients.tbName+"."+ ANCClients.COL_PATIENT_FIRST_NAME+", "
-//							+ ANCClients.tbName+"."+ ANCClients.COL_PATIENT_MIDDLE_NAME+", "
 							+ ANCClients.tbName+"."+ ANCClients.COL_PATIENT_SURNAME+", "
 							+ HealthFacilities.tbName+"."+ HealthFacilities.COL_FACILITY_NAME+", "
 							+ ClientReferral.tbName+"."+ ClientReferral.COL_REFERRAL_STATUS+
 							" FROM "+ ClientReferral.tbName +
-							" INNER JOIN "+ANCClients.tbName+" ON "+ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_ID+" = "+ANCClients.tbName+"."+ANCClients.COL_CLIENTS_ID+
+							" INNER JOIN "+ANCClients.tbName+" ON "+ClientReferral.tbName+"."+ClientReferral.COL_ANC_CLIENT_ID+" = "+ANCClients.tbName+"."+ANCClients.COL_CLIENTS_ID+
 							" INNER JOIN "+HealthFacilities.tbName+" ON "+ClientReferral.tbName+"."+ClientReferral.COL_FACILITY_ID+" = "+HealthFacilities.tbName+"."+HealthFacilities.COL_OPENMRS_UIID+
 							" WHERE "+ ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_TYPE+"=1 AND " +
 							ClientReferral.tbName+"."+ClientReferral.COL_SERVICE_PROVIDER_UUID+" IN ("+chwUIIDs+") AND "+
 							ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_DATE+" > '"+fromDate+"' AND "+
 							ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_DATE+" <= '"+toDate+"' "+
-							" GROUP BY "+ClientReferral.tbName+"."+ClientReferral.COL_SERVICE_PROVIDER_UUID+","+ANCClients.tbName+"."+ANCClients.COL_CLIENTS_ID+","+HealthFacilities.tbName+"._id",null);
+							" GROUP BY "+ClientReferral.tbName+"."+ClientReferral.COL_SERVICE_PROVIDER_UUID+","+ANCClients.tbName+"."+ANCClients.COL_CLIENTS_ID+","+HealthFacilities.tbName+"._id, "+ClientReferral.tbName+"."+ ClientReferral.COL_REFERRAL_STATUS,null);
 
 
-
+			System.out.println("SQL QUERRY = "+"  SELECT "
+					+ ClientReferral.tbName+"."+ ClientReferral.COL_SERVICE_PROVIDER_UUID+", "
+					+ ANCClients.tbName+"."+ ANCClients.COL_PATIENT_FIRST_NAME+", "
+					+ ANCClients.tbName+"."+ ANCClients.COL_PATIENT_SURNAME+", "
+					+ HealthFacilities.tbName+"."+ HealthFacilities.COL_FACILITY_NAME+", "
+					+ ClientReferral.tbName+"."+ ClientReferral.COL_REFERRAL_STATUS+
+					" FROM "+ ClientReferral.tbName +
+					" INNER JOIN "+ANCClients.tbName+" ON "+ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_ID+" = "+ANCClients.tbName+"."+ANCClients.COL_CLIENTS_ID+
+					" INNER JOIN "+HealthFacilities.tbName+" ON "+ClientReferral.tbName+"."+ClientReferral.COL_FACILITY_ID+" = "+HealthFacilities.tbName+"."+HealthFacilities.COL_OPENMRS_UIID+
+					" WHERE "+ ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_TYPE+"=1 AND " +
+					ClientReferral.tbName+"."+ClientReferral.COL_SERVICE_PROVIDER_UUID+" IN ("+chwUIIDs+") AND "+
+					ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_DATE+" > '"+fromDate+"' AND "+
+					ClientReferral.tbName+"."+ClientReferral.COL_REFERRAL_DATE+" <= '"+toDate+"' "+
+					" GROUP BY "+ClientReferral.tbName+"."+ClientReferral.COL_SERVICE_PROVIDER_UUID+","+ANCClients.tbName+"."+ANCClients.COL_CLIENTS_ID+","+HealthFacilities.tbName+"._id");
 
 			return new ResponseEntity<List<CHWReferralsListDTO>>(chwReferralsSummaryDTOS,HttpStatus.OK);
 		}catch (Exception e){

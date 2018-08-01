@@ -7,15 +7,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
 
-public class TBCompletePatientDataDTO {
+public class PNCCompleteCLientDataDTO {
     @JsonProperty
     private AncClientDTO ancClientDTO;
 
     @JsonProperty
-    private TBPatientDTO tbPatientDTO;
-
-    @JsonProperty
-    private List<PatientsAppointmentsDTO> patientsAppointmentsDTOS;
+    private PNCClientDTO pncClientDTO;
 
 
     @JsonProperty
@@ -29,20 +26,12 @@ public class TBCompletePatientDataDTO {
         this.ancClientDTO = ancClientDTO;
     }
 
-    public List<PatientsAppointmentsDTO> getPatientsAppointmentsDTOS() {
-        return patientsAppointmentsDTOS;
+    public PNCClientDTO getPncClientDTO() {
+        return pncClientDTO;
     }
 
-    public void setPatientsAppointmentsDTOS(List<PatientsAppointmentsDTO> patientsAppointmentsDTOS) {
-        this.patientsAppointmentsDTOS = patientsAppointmentsDTOS;
-    }
-
-    public TBPatientDTO getTbPatientDTO() {
-        return tbPatientDTO;
-    }
-
-    public void setTbPatientDTO(TBPatientDTO tbPatientDTO) {
-        this.tbPatientDTO = tbPatientDTO;
+    public void setPncClientDTO(PNCClientDTO pncClientDTO) {
+        this.pncClientDTO = pncClientDTO;
     }
 
     public List<RoutineVisitDTO> getRoutineVisitDTOS() {

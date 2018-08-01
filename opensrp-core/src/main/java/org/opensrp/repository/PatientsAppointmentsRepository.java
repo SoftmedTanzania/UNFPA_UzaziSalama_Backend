@@ -28,8 +28,9 @@ public class PatientsAppointmentsRepository {
 				PatientAppointments.COL_STATUS + "," +
 				PatientAppointments.COL_ROW_VERSION + "," +
 				PatientAppointments.COL_APPOINTMENT_TYPE + "," +
+				PatientAppointments.COL_VISIT_NUMBER + "," +
 				PatientAppointments.COL_UPDATED_AT + "," +
-				PatientAppointments.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?) ";
+				PatientAppointments.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?,?) ";
 
 		Object[] params = new Object[] {
 				patientAppointments.getHealthFacilityClientId(),
@@ -38,6 +39,7 @@ public class PatientsAppointmentsRepository {
 				patientAppointments.getStatus(),
 				patientAppointments.getRowVersion(),
 				patientAppointments.getAppointmentType(),
+				patientAppointments.getVisitNumber(),
 				patientAppointments.getUpdatedAt(),
 				patientAppointments.getCreatedAt() };
 
@@ -47,6 +49,7 @@ public class PatientsAppointmentsRepository {
 				Types.BOOLEAN,
 				Types.VARCHAR,
 				Types.VARCHAR,
+				Types.INTEGER,
 				Types.INTEGER,
 				Types.DATE,
 				Types.TIMESTAMP };
@@ -89,6 +92,7 @@ public class PatientsAppointmentsRepository {
 			patientAppointments.setIsCancelled(rs.getBoolean(rs.findColumn(PatientAppointments.COL_IS_CANCELLED)));
 			patientAppointments.setStatus(rs.getString(rs.findColumn(PatientAppointments.COL_STATUS)));
 			patientAppointments.setRowVersion(rs.getDate(rs.findColumn(PatientAppointments.COL_ROW_VERSION)));
+			patientAppointments.setVisitNumber(rs.getInt(rs.findColumn(PatientAppointments.COL_VISIT_NUMBER)));
 			patientAppointments.setAppointmentType(rs.getInt(rs.findColumn(PatientAppointments.COL_APPOINTMENT_TYPE)));
 			patientAppointments.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(PatientAppointments.COL_CREATED_AT)).getTime()));
 			patientAppointments.setUpdatedAt(rs.getDate(rs.findColumn(PatientAppointments.COL_UPDATED_AT)));

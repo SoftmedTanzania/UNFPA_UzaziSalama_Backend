@@ -40,9 +40,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import static ch.lambdaj.collection.LambdaCollections.with;
 import static java.text.MessageFormat.format;
 import static org.springframework.http.HttpStatus.*;
@@ -68,6 +68,7 @@ public class FormSubmissionController {
     private PatientReferralIndicatorRepository patientReferralIndicatorRepository;
     private GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository;
 	private RapidProServiceImpl rapidProService;
+	private PatientsAppointmentsRepository patientsAppointmentsRepository;
 
     @Autowired
     public FormSubmissionController(FormSubmissionService formSubmissionService, TaskSchedulerService scheduler,
@@ -76,7 +77,7 @@ public class FormSubmissionController {
                                     ErrorTraceService errorTraceService, HealthFacilitiesClientsRepository healthFacilitiesClientsRepository, PatientReferralRepository patientReferralRepository,
                                     GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository, GoogleFCMService googleFCMService,
                                     PatientReferralIndicatorRepository patientReferralIndicatorRepository,
-                                    ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService) {
+                                    ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService,PatientsAppointmentsRepository patientsAppointmentsRepository) {
         this.formSubmissionService = formSubmissionService;
         this.scheduler = scheduler;
         this.errorTraceService=errorTraceService;
@@ -93,6 +94,7 @@ public class FormSubmissionController {
 	    this.patientReferralIndicatorRepository = patientReferralIndicatorRepository;
 	    this.referralPatientService = referralPatientService;
 	    this.rapidProService=rapidProService;
+	    this.patientsAppointmentsRepository=patientsAppointmentsRepository;
     }
 
     @RequestMapping(method = GET, value = "/form-submissions")
@@ -217,6 +219,14 @@ public class FormSubmissionController {
 
 			long healthfacilityPatientId = referralPatientService.saveClient(patient, clientReferral.getFacilityId(), "");
 
+
+			try {
+				createNextAppointments(healthfacilityPatientId, patient.getLmnpDate().getTime(), true, 0);
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+
 			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM "+ HealthFacilitiesClients.tbName+" WHERE "+ HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID +" = "+healthfacilityPatientId,null);
 
 			clientReferral.setAncClientId(healthFacilitiesPatients.get(0).getAncClient().getClientId());
@@ -293,6 +303,61 @@ public class FormSubmissionController {
 
 
 	}
+
+	private void createNextAppointments(long healthfacilityPatientId, long time, boolean isFIrstAppointment, int visitNumber) {
+		long today = Calendar.getInstance().getTime().getTime();
+
+		PatientAppointments appointments = new PatientAppointments();
+		appointments.setHealthFacilityClientId(healthfacilityPatientId);
+		appointments.setAppointmentType(2);
+		appointments.setIsCancelled(false);
+		appointments.setVisitNumber(++visitNumber);
+
+		if(isFIrstAppointment){
+			long diff = today - time;
+			System.out.println ("hours since lmnp Isued: " + TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS));
+			if(TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)<(4*4*7*24)){
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(time);
+				c.add(Calendar.MONTH, +4);
+				c.add(Calendar.DAY_OF_MONTH, +checkIfWeekend(c.getTime()));
+				appointments.setAppointmentDate(c.getTime());
+
+			}else{
+				appointments.setAppointmentDate(Calendar.getInstance().getTime());
+			}
+		}else{
+			Calendar c = Calendar.getInstance();
+			c.setTimeInMillis(time);
+			c.add(Calendar.MONTH, +1);
+			c.add(Calendar.DAY_OF_MONTH, +checkIfWeekend(c.getTime()));
+			appointments.setAppointmentDate(c.getTime());
+
+		}
+
+		try {
+			System.out.println("Coze:save appointment");
+			patientsAppointmentsRepository.save(appointments);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private int checkIfWeekend(Date d1) {
+		Calendar c1 = Calendar.getInstance();
+		c1.setTime(d1);
+		System.out.println(c1.get(Calendar.DAY_OF_WEEK));
+		if ((c1.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
+			return 2;
+		} else if (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+
 
 
 

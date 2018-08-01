@@ -37,6 +37,7 @@ public class ANCRoutineVisitsRepository {
 		parameters.put(RoutineVisits.COL_VISIT_NUMBER, routineVisits.getVisitNumber());
 		parameters.put(RoutineVisits.COL_VISIT_DATE, routineVisits.getVisitDate());
 		parameters.put(RoutineVisits.COL_APPOINTMENT_DATE, routineVisits.getAppointmentDate());
+		parameters.put(RoutineVisits.COL_APPOINTMENT_ID, routineVisits.getAppointmentId());
 		parameters.put(RoutineVisits.COL_ANAEMIA, routineVisits.isAnaemia());
 		parameters.put(RoutineVisits.COL_OEDEMA, routineVisits.isOedema());
 		parameters.put(RoutineVisits.COL_PROTENURIA, routineVisits.isProtenuria());
@@ -128,6 +129,7 @@ public class ANCRoutineVisitsRepository {
 			routineVisits.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(RoutineVisits.COL_CREATED_AT)).getTime()));
 			routineVisits.setHealthFacilityClientId(rs.getLong(rs.findColumn(RoutineVisits.COL_HEALTH_FACILITY_CLIENT_ID)));
 			routineVisits.setVisitNumber(rs.getInt(rs.findColumn(RoutineVisits.COL_VISIT_NUMBER)));
+			routineVisits.setAppointmentId(rs.getLong(rs.findColumn(RoutineVisits.COL_APPOINTMENT_ID)));
 			routineVisits.setVisitDate(rs.getDate(rs.findColumn(RoutineVisits.COL_VISIT_DATE)));
 			routineVisits.setAppointmentDate(rs.getDate(rs.findColumn(RoutineVisits.COL_APPOINTMENT_DATE)));
 			routineVisits.setAnaemia(rs.getBoolean(rs.findColumn(RoutineVisits.COL_ANAEMIA)));
