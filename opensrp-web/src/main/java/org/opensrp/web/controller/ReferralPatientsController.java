@@ -238,6 +238,10 @@ public class ReferralPatientsController {
 		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
 		try {
 			RoutineVisits encounter = ClientConverter.toRoutineVisit(routineVisitDTOS);
+
+			if(encounter.getAppointmentId()==0)
+				return new ResponseEntity<>(BAD_REQUEST);
+
 			ANCRoutineVisitsRepository.save(encounter);
 
 			createNextAppointments(routineVisitDTOS.getHealthFacilityClientId(),routineVisitDTOS.getVisitDate(),false,routineVisitDTOS.getVisitNumber());
