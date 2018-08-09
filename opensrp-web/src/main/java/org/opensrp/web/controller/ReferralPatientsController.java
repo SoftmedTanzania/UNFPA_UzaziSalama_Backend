@@ -17,8 +17,8 @@ import org.opensrp.form.service.FormSubmissionService;
 import org.opensrp.repository.*;
 import org.opensrp.scheduler.SystemEvent;
 import org.opensrp.scheduler.TaskSchedulerService;
+import org.opensrp.service.ClientConverter;
 import org.opensrp.service.GoogleFCMService;
-import org.opensrp.service.PatientsConverter;
 import org.opensrp.service.RapidProServiceImpl;
 import org.opensrp.service.ReferralPatientsService;
 import org.opensrp.service.formSubmission.FormEntityConverter;
@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static ch.lambdaj.collection.LambdaCollections.with;
 import static java.text.MessageFormat.format;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -59,14 +58,14 @@ public class ReferralPatientsController {
 	private FormEntityConverter formEntityConverter;
 	private TaskSchedulerService scheduler;
 	private GoogleFCMService googleFCMService;
-	private ReferralPatientsService referralPatientService;
+	private ReferralPatientsService referralClientService;
 	private RapidProServiceImpl rapidProService;
 	@Autowired
 	public ReferralPatientsController(ReferralPatientsService patientsService, ANCClientsRepository ancClientsRepository, TaskSchedulerService scheduler,
 	                                  HealthFacilityRepository healthFacilityRepository, HealthFacilitiesClientsRepository healthFacilitiesClientsRepository, PatientsAppointmentsRepository patientsAppointmentsRepository,
 	                                  ANCRoutineVisitsRepository ANCRoutineVisitsRepository, PatientReferralRepository patientReferralRepository, PNCClientsRepository pncClientsRepository, FormSubmissionService formSubmissionService,
 	                                  FormEntityConverter formEntityConverter, GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository, GoogleFCMService googleFCMService,
-	                                  PatientReferralIndicatorRepository patientReferralIndicatorRepository, ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService) {
+	                                  PatientReferralIndicatorRepository patientReferralIndicatorRepository, ReferralPatientsService referralClientService, RapidProServiceImpl rapidProService) {
 		this.patientsService = patientsService;
 		this.ancClientsRepository = ancClientsRepository;
 		this.scheduler = scheduler;
@@ -81,12 +80,12 @@ public class ReferralPatientsController {
 		this.googlePushNotificationsUsersRepository = googlePushNotificationsUsersRepository;
 		this.googleFCMService = googleFCMService;
 		this.patientReferralIndicatorRepository = patientReferralIndicatorRepository;
-		this.referralPatientService = referralPatientService;
+		this.referralClientService = referralClientService;
 		this.rapidProService = rapidProService;
 	}
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-anc-client")
-	public ResponseEntity<AncClientReferralsDTO> savePatient(@RequestBody String json) {
+	public ResponseEntity<AncClientReferralsDTO> saveAncClient(@RequestBody String json) {
 		AncClientDTO ancClientDTO = new Gson().fromJson(json, AncClientDTO.class);
 		try {
 			if (ancClientDTO ==null) {
@@ -94,8 +93,8 @@ public class ReferralPatientsController {
 			}
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, ancClientDTO));
 
-			ANCClients patient = PatientsConverter.toPatients(ancClientDTO);
-			final long healthfacilityPatientId = referralPatientService.saveClient(patient, ancClientDTO.getHealthFacilityCode(), "");
+			ANCClients patient = ClientConverter.toANCClient(ancClientDTO);
+			final long healthfacilityPatientId = referralClientService.saveClient(patient, ancClientDTO.getHealthFacilityCode(), "");
 
 			ancClientDTO.setClientId(healthfacilityPatientId);
 
@@ -142,7 +141,7 @@ public class ReferralPatientsController {
 				e.printStackTrace();
 			}
 
-			List<AncClientReferralsDTO> ancClientReferralsDTOS = referralPatientService.getClients("SELECT * FROM " + HealthFacilitiesClients.tbName +
+			List<AncClientReferralsDTO> ancClientReferralsDTOS = referralClientService.getClients("SELECT * FROM " + HealthFacilitiesClients.tbName +
 					" WHERE " + HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",healthFacilityPatientArg);
 
 			return new ResponseEntity<AncClientReferralsDTO>(ancClientReferralsDTOS.get(0),OK);
@@ -152,15 +151,15 @@ public class ReferralPatientsController {
 			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
 		}
 	}
+
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-pnc-client")
-	@ResponseBody
-	public ResponseEntity<PNCCompleteCLientDataDTO> savePNCClients(@RequestBody String json) {
+	public ResponseEntity<PNCCompleteCLientDataDTO> savePncClient(@RequestBody String json) {
 		PNCClientDTO PNCClientDTO = new Gson().fromJson(json,PNCClientDTO.class);
 		try {
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, PNCClientDTO));
 
 
-			PNCClients pncClient = PatientsConverter.toPNCClient(PNCClientDTO);
+			PNCClients pncClient = ClientConverter.toPNCClient(PNCClientDTO);
 
 
 			System.out.println("Coze:PNC Client data = "+new Gson().toJson(pncClient));
@@ -177,12 +176,12 @@ public class ReferralPatientsController {
 			List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
 					new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
-			PNCCompleteCLientDataDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
+			PNCCompleteCLientDataDTO.setAncClientDTO(ClientConverter.toPatientsDTO(patients.get(0)));
 
 			List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
 					new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
-			PNCCompleteCLientDataDTO.setPncClientDTO(PatientsConverter.toPNCClientDTO(pncClientsList.get(0)));
+			PNCCompleteCLientDataDTO.setPncClientDTO(ClientConverter.toPNCClientDTO(pncClientsList.get(0)));
 
 			return new ResponseEntity<PNCCompleteCLientDataDTO>(PNCCompleteCLientDataDTO,HttpStatus.CREATED);
 		} catch (Exception e) {
@@ -209,12 +208,12 @@ public class ReferralPatientsController {
 					List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
 							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
-					pncCompleteCLientDataDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
+					pncCompleteCLientDataDTO.setAncClientDTO(ClientConverter.toPatientsDTO(patients.get(0)));
 
 					List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
 							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
-					pncCompleteCLientDataDTO.setPncClientDTO(PatientsConverter.toPNCClientDTO(pncClientsList.get(0)));
+					pncCompleteCLientDataDTO.setPncClientDTO(ClientConverter.toPNCClientDTO(pncClientsList.get(0)));
 
 
 					tbCompletePatientDataDTOS.add(pncCompleteCLientDataDTO);
@@ -238,7 +237,7 @@ public class ReferralPatientsController {
 		System.out.println("saveVisit : "+json);
 		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
 		try {
-			RoutineVisits encounter = PatientsConverter.toRoutineVisit(routineVisitDTOS);
+			RoutineVisits encounter = ClientConverter.toRoutineVisit(routineVisitDTOS);
 			ANCRoutineVisitsRepository.save(encounter);
 
 			createNextAppointments(routineVisitDTOS.getHealthFacilityClientId(),routineVisitDTOS.getVisitDate(),false,routineVisitDTOS.getVisitNumber());
@@ -253,50 +252,47 @@ public class ReferralPatientsController {
 					encounter.getHealthFacilityClientId(),
 					encounter.getAppointmentId()};
 
-			List<RoutineVisits> routineVisits = null;
+			List<RoutineVisits> routineVisits = ANCRoutineVisitsRepository.getTBEncounters(encounterQuery, tbEncountersParams);
+			RoutineVisits routineVisit = routineVisits.get(0);
+
+			RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
+			routineVisitDTO.setId(routineVisit.getId());
+			routineVisitDTO.setHealthFacilityClientId(routineVisit.getHealthFacilityClientId());
+			routineVisitDTO.setAppointmentId(routineVisit.getAppointmentId());
+
+			routineVisitDTO.setAppointmentDate(routineVisit.getAppointmentDate().getTime());
+			routineVisitDTO.setVisitNumber(routineVisit.getVisitNumber());
+			routineVisitDTO.setVisitDate(routineVisit.getVisitDate().getTime());
+			routineVisitDTO.setAppointmentDate(routineVisit.getAppointmentDate().getTime());
+			routineVisitDTO.setAnaemia(routineVisit.isAnaemia());
+			routineVisitDTO.setOedema(routineVisit.isOedema());
+			routineVisitDTO.setProtenuria(routineVisit.isProtenuria());
+			routineVisitDTO.setHighBloodPressure(routineVisit.isHighBloodPressure());
+			routineVisitDTO.setWeightStagnation(routineVisit.isWeightStagnation());
+			routineVisitDTO.setAntepartumHaemorrhage(routineVisit.isAntepartumHaemorrhage());
+			routineVisitDTO.setSugarInTheUrine(routineVisit.isSugarInTheUrine());
+			routineVisitDTO.setFetusLie(routineVisit.isFetusLie());
+
+			TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
+			tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
+
 			try {
-				routineVisits = ANCRoutineVisitsRepository.getTBEncounters(encounterQuery, tbEncountersParams);
-				RoutineVisits routineVisit = routineVisits.get(0);
-
-				RoutineVisitDTO routineVisitDTO = new RoutineVisitDTO();
-				routineVisitDTO.setId(routineVisit.getId());
-				routineVisitDTO.setHealthFacilityClientId(routineVisit.getHealthFacilityClientId());
-				routineVisitDTO.setAppointmentId(routineVisit.getAppointmentId());
-
-				routineVisitDTO.setAppointmentDate(routineVisit.getAppointmentDate().getTime());
-				routineVisitDTO.setVisitNumber(routineVisit.getVisitNumber());
-				routineVisitDTO.setVisitDate(routineVisit.getVisitDate().getTime());
-				routineVisitDTO.setAppointmentDate(routineVisit.getAppointmentDate().getTime());
-				routineVisitDTO.setAnaemia(routineVisit.isAnaemia());
-				routineVisitDTO.setOedema(routineVisit.isOedema());
-				routineVisitDTO.setProtenuria(routineVisit.isProtenuria());
-				routineVisitDTO.setHighBloodPressure(routineVisit.isHighBloodPressure());
-				routineVisitDTO.setWeightStagnation(routineVisit.isWeightStagnation());
-				routineVisitDTO.setAntepartumHaemorrhage(routineVisit.isAntepartumHaemorrhage());
-				routineVisitDTO.setSugarInTheUrine(routineVisit.isSugarInTheUrine());
-				routineVisitDTO.setFetusLie(routineVisit.isFetusLie());
-
-				TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
-				tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
-
 				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
 						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
-				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(appointments));
-
-
-				return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
-
-			} catch (Exception e) {
+				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(ClientConverter.toPatientAppointmentDTOsList(appointments));
+			}catch (Exception e){
 				e.printStackTrace();
 			}
 
 
 			logger.debug(format("Added  Visit Submissions: {0}", routineVisitDTOS));
+
+			return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
+
 		} catch (Exception e) {
 			logger.error(format("TB Encounters processing failed with exception {0}.\nSubmissions: {1}", e, routineVisitDTOS));
 			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<>(CREATED);
 	}
 
 	@RequestMapping(method = GET, value = "/all-clients-referrals")
@@ -320,7 +316,7 @@ public class ReferralPatientsController {
 		try {
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, referralsDTO));
 
-			ClientReferral clientReferral = PatientsConverter.toPatientReferral(referralsDTO);
+			ClientReferral clientReferral = ClientConverter.toPatientReferral(referralsDTO);
 			Long referralId = patientReferralRepository.save(clientReferral);
 
 
@@ -334,10 +330,10 @@ public class ReferralPatientsController {
 			List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM "+ ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID +" =?",patientParams);
 
 			AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
-			ancClientReferralsDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(patients.get(0)));
+			ancClientReferralsDTO.setAncClientDTO(ClientConverter.toPatientsDTO(patients.get(0)));
 
 			List<ReferralsDTO> patientReferrals = new ArrayList<>();
-			patientReferrals.add(PatientsConverter.toPatientDTO(clientReferral));
+			patientReferrals.add(ClientConverter.toPatientDTO(clientReferral));
 
 
 			ancClientReferralsDTO.setPatientReferralsList(patientReferrals);
@@ -646,7 +642,7 @@ public class ReferralPatientsController {
 
 					//TODO send notification to the user
 
-					ReferralsDTO referralsDTO = PatientsConverter.toPatientDTO(clientReferral);
+					ReferralsDTO referralsDTO = ClientConverter.toPatientDTO(clientReferral);
 					JSONObject body = new JSONObject();
 					body.put("type", "FailedReferrals");
 
@@ -775,7 +771,6 @@ public class ReferralPatientsController {
 			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
 		}
 	}
-
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-chw-referrals-summary")
 	@ResponseBody
@@ -964,7 +959,6 @@ public class ReferralPatientsController {
 			e.printStackTrace();
 		}
 	}
-
 
 	private int checkIfWeekend(Date d1) {
 		Calendar c1 = Calendar.getInstance();

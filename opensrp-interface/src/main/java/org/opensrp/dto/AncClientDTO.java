@@ -55,22 +55,37 @@ public class AncClientDTO {
 
 	@JsonProperty
     private String spouseName;
+
 	@JsonProperty
     private int gravida;
+
 	@JsonProperty
     private int para;
+
 	@JsonProperty
     private long lmnpDate;
+
 	@JsonProperty
     private long edd;
+
 	@JsonProperty
     private boolean gestationalAgeBelow20;
+
 	@JsonProperty
     private boolean historyOfAbortion;
+
+	@JsonProperty
+	private boolean useOfFamilyPlanningTechniques;
+
+	@JsonProperty
+	private int familyPlanningTechniqueId;
+
 	@JsonProperty
     private boolean ageBelow20Years;
+
 	@JsonProperty
     private boolean lastPregnancyOver10Years;
+
 	@JsonProperty
     private boolean pregnancyAbove35Years;
 
@@ -348,6 +363,22 @@ public class AncClientDTO {
 
 	public void setHealthFacilityClientId(Long healthFacilityClientId) {
 		this.healthFacilityClientId = healthFacilityClientId;
+	}
+
+	public boolean isUseOfFamilyPlanningTechniques() {
+		return useOfFamilyPlanningTechniques;
+	}
+
+	public void setUseOfFamilyPlanningTechniques(boolean useOfFamilyPlanningTechniques) {
+		this.useOfFamilyPlanningTechniques = useOfFamilyPlanningTechniques;
+	}
+
+	public int getFamilyPlanningTechniqueId() {
+		return familyPlanningTechniqueId;
+	}
+
+	public void setFamilyPlanningTechniqueId(int familyPlanningTechniqueId) {
+		this.familyPlanningTechniqueId = familyPlanningTechniqueId;
 	}
 
 	public long getCreatedAt() {

@@ -77,7 +77,7 @@ public class FormSubmissionController {
                                     ErrorTraceService errorTraceService, HealthFacilitiesClientsRepository healthFacilitiesClientsRepository, PatientReferralRepository patientReferralRepository,
                                     GooglePushNotificationsUsersRepository googlePushNotificationsUsersRepository, GoogleFCMService googleFCMService,
                                     PatientReferralIndicatorRepository patientReferralIndicatorRepository,
-                                    ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService,PatientsAppointmentsRepository patientsAppointmentsRepository) {
+                                    ReferralPatientsService referralPatientService, RapidProServiceImpl rapidProService, PatientsAppointmentsRepository patientsAppointmentsRepository) {
         this.formSubmissionService = formSubmissionService;
         this.scheduler = scheduler;
         this.errorTraceService=errorTraceService;
@@ -141,6 +141,7 @@ public class FormSubmissionController {
             try{
 
             String json = new Gson().toJson(formSubmissionsDTO);
+
             List<FormSubmissionDTO> formSubmissions = new Gson().fromJson(json, new TypeToken<List<FormSubmissionDTO>>() {
             }.getType());
             List<FormSubmission> fsl = with(formSubmissions).convert(new Converter<FormSubmissionDTO, FormSubmission>() {
@@ -212,7 +213,6 @@ public class FormSubmissionController {
     }
 
 	private void saveFormToOpenSRP(FormSubmission formSubmission) throws ParseException, IllegalStateException, JSONException{
-        System.out.println("Coze = saving patient into OpenSRP");
         ANCClients patient = formEntityConverter.getPatientFromFormSubmission(formSubmission);
         ClientReferral clientReferral = formEntityConverter.getPatientReferralFromFormSubmission(formSubmission);
 		try {
@@ -231,7 +231,6 @@ public class FormSubmissionController {
 
 			clientReferral.setAncClientId(healthFacilitiesPatients.get(0).getAncClient().getClientId());
 
-            //TODO remove hardcoding of these values
             clientReferral.setReferralStatus(0);
             clientReferral.setReferralType(1);
 
@@ -276,12 +275,12 @@ public class FormSubmissionController {
 
 			AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
 
-			AncClientDTO ancClientDTO = PatientsConverter.toPatientsDTO(patient);
+			AncClientDTO ancClientDTO = ClientConverter.toPatientsDTO(patient);
 			ancClientReferralsDTO.setAncClientDTO(ancClientDTO);
 
 
 			List<ReferralsDTO> referralsDTOS = new ArrayList<>();
-			ReferralsDTO referralsDTO = PatientsConverter.toPatientDTO(clientReferral);
+			ReferralsDTO referralsDTO = ClientConverter.toPatientDTO(clientReferral);
 			referralsDTOS.add(referralsDTO);
 			ancClientReferralsDTO.setPatientReferralsList(referralsDTOS);
 

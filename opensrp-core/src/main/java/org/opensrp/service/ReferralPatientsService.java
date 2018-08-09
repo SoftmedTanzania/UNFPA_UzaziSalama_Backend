@@ -23,7 +23,7 @@ public class ReferralPatientsService {
     private HttpClient client;
 
     @Autowired
-    private ANCClientsRepository ANCClientsRepository;
+    private ANCClientsRepository ancClientsRepository;
 
     @Autowired
     private PatientReferralRepository patientReferralRepository;
@@ -88,16 +88,16 @@ public class ReferralPatientsService {
         for(HealthFacilitiesClients facilitiesPatients:healthFacilitiesClients){
             String getPatientsSQL = "SELECT * from " + ANCClients.tbName+" WHERE "+ ANCClients.COL_CLIENTS_ID + " = "+facilitiesPatients.getAncClient().getClientId();
             try {
-                ANCClients ancClient = ANCClientsRepository.getPatients(getPatientsSQL,null).get(0);
+                ANCClients ancClient = ancClientsRepository.getPatients(getPatientsSQL,null).get(0);
 
                 AncClientReferralsDTO ancClientReferralsDTO = new AncClientReferralsDTO();
-                ancClientReferralsDTO.setAncClientDTO(PatientsConverter.toPatientsDTO(ancClient));
+                ancClientReferralsDTO.setAncClientDTO(ClientConverter.toPatientsDTO(ancClient));
                 ancClientReferralsDTO.getAncClientDTO().setHealthFacilityClientId(facilitiesPatients.getHealthFacilityClientId());
 
                 String getReferralClientsSQL = "SELECT * from " + ClientReferral.tbName+" WHERE "+ ClientReferral.COL_ANC_CLIENT_ID +" =?";
                 Object[] args = new Object[]{ancClient.getClientId()};
 
-                List<ReferralsDTO> referralsDTOS = PatientsConverter.toPatientReferralDTOsList(patientReferralRepository.getReferrals(getReferralClientsSQL,args));
+                List<ReferralsDTO> referralsDTOS = ClientConverter.toPatientReferralDTOsList(patientReferralRepository.getReferrals(getReferralClientsSQL,args));
 
                 for(ReferralsDTO referralsDTO:referralsDTOS){
                     referralsDTO.setHealthFacilityClientId(facilitiesPatients.getHealthFacilityClientId());
@@ -110,14 +110,14 @@ public class ReferralPatientsService {
                 String getPatientsAppointmentsSQL = "SELECT * from " + PatientAppointments.tbName+" WHERE "+PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID +" =?";
                 List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments(getPatientsAppointmentsSQL,args2);
 
-                ancClientReferralsDTO.setPatientsAppointmentsDTOS(PatientsConverter.toPatientAppointmentDTOsList(patientAppointments));
+                ancClientReferralsDTO.setPatientsAppointmentsDTOS(ClientConverter.toPatientAppointmentDTOsList(patientAppointments));
 
 
 
                 String getRoutineSQL = "SELECT * from " + RoutineVisits.tbName+" WHERE "+RoutineVisits.COL_HEALTH_FACILITY_CLIENT_ID +" =?";
                 List<RoutineVisits> routineVisits = ancRoutineVisitsRepository.getTBEncounters(getRoutineSQL,args2);
 
-                ancClientReferralsDTO.setRoutineVisitDTOS(PatientsConverter.toTbPatientEncounterDTOsList(routineVisits));
+                ancClientReferralsDTO.setRoutineVisitDTOS(ClientConverter.toTbPatientEncounterDTOsList(routineVisits));
                 ancClientReferralsDTOS.add(ancClientReferralsDTO);
 
             } catch (Exception e) {
@@ -135,7 +135,7 @@ public class ReferralPatientsService {
             String[] args = new String[1];
             args[0] = ancClients.getClientId()+"";
 
-            int rowCount = ANCClientsRepository.checkIfExists(checkIfExistQuery, args);
+            int rowCount = ancClientsRepository.checkIfExists(checkIfExistQuery, args);
 
             logger.info(
                     "[checkIfClientExists] - Card Number:" + args[0] + " - [Exists] " + (rowCount == 0 ? "false" : "true"));
@@ -152,7 +152,7 @@ public class ReferralPatientsService {
             String checkIfExistQuery = "SELECT count(*) from " + ClientReferral.tbName + " WHERE  "+ ClientReferral.COL_REFERRAL_ID+" = ?";
             Object[] args = new Object[1];
             args[0] = clientReferral.getId();
-            int rowCount = ANCClientsRepository.checkIfExists(checkIfExistQuery, args);
+            int rowCount = ancClientsRepository.checkIfExists(checkIfExistQuery, args);
 
             logger.info(
                     "[checkIfClientExists] - Referral ID:" + args[0] + " - [Exists] " + (rowCount == 0 ? "false" : "true"));
@@ -189,7 +189,7 @@ public class ReferralPatientsService {
                 patient.getPhoneNumber()};
         List<ANCClients> ancClientsResults = null;
         try {
-            ancClientsResults = ANCClientsRepository.getPatients(query, params);
+            ancClientsResults = ancClientsRepository.getPatients(query, params);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -203,7 +203,7 @@ public class ReferralPatientsService {
 
             try {
                 System.out.println("Coze = update query =  "+"UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
-                ANCClientsRepository.executeQuery("UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
+                ancClientsRepository.executeQuery("UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -212,7 +212,7 @@ public class ReferralPatientsService {
             System.out.println("Coze = saving patient Data ");
             try {
                 //TODO HANDLE UPDATING OF VALUES IN DB
-                id = ANCClientsRepository.save(patient);
+                id = ancClientsRepository.save(patient);
             } catch (Exception e) {
                 e.printStackTrace();
                 id = -1;

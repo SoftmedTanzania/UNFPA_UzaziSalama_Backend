@@ -11,15 +11,13 @@ import java.util.*;
 import static java.lang.Long.parseLong;
 import static java.lang.String.valueOf;
 
-public class PatientsConverter {
-    private static Logger logger = LoggerFactory.getLogger(PatientsConverter.class.toString());
+public class ClientConverter {
+    private static Logger logger = LoggerFactory.getLogger(ClientConverter.class.toString());
 
 
-    public static ANCClients toPatients(AncClientDTO ancClientDTO) {
+    public static ANCClients toANCClient(AncClientDTO ancClientDTO) {
         try {
             ANCClients client = new ANCClients();
-
-
 
 
             client.setClientId(ancClientDTO.getClientId());
@@ -38,6 +36,9 @@ public class PatientsConverter {
             client.setPmtctStatus(ancClientDTO.getPmtctStatus());
             client.setHeightBelowAverage(ancClientDTO.isHeightBelowAverage());
             client.setLevelOfEducation(ancClientDTO.getLevelOfEducation());
+
+            client.setUseOfFamilyPlanningTechniques(ancClientDTO.isUseOfFamilyPlanningTechniques());
+            client.setFamilyPlanningTechniqueId(ancClientDTO.getFamilyPlanningTechniqueId());
 
             client.setSpouseName(ancClientDTO.getSpouseName());
             client.setGravida(ancClientDTO.getGravida());
@@ -85,6 +86,65 @@ public class PatientsConverter {
         }
     }
 
+	public static AncClientDTO toPatientsDTO(ANCClients client) {
+		try {
+			AncClientDTO ancClientDTO = new AncClientDTO();
+
+			ancClientDTO.setClientId(client.getClientId());
+			ancClientDTO.setFirstName(client.getFirstName());
+			ancClientDTO.setMiddleName(client.getMiddleName());
+			ancClientDTO.setSurname(client.getSurname());
+			ancClientDTO.setPhoneNumber(client.getPhoneNumber());
+
+
+			ancClientDTO.setDateOfBirth(client.getDateOfBirth().getTime());
+
+			ancClientDTO.setWard(client.getWard());
+			ancClientDTO.setVillage(client.getVillage());
+
+			ancClientDTO.setMapCue(client.getMapCue());
+			ancClientDTO.setPmtctStatus(client.getPmtctStatus());
+			ancClientDTO.setHeightBelowAverage(client.isHeightBelowAverage());
+			ancClientDTO.setLevelOfEducation(client.getLevelOfEducation());
+
+			ancClientDTO.setUseOfFamilyPlanningTechniques(client.isUseOfFamilyPlanningTechniques());
+			ancClientDTO.setFamilyPlanningTechniqueId(client.getFamilyPlanningTechniqueId());
+
+			ancClientDTO.setSpouseName(client.getSpouseName());
+			ancClientDTO.setGravida(client.getGravida());
+			ancClientDTO.setPara(client.getPara());
+			ancClientDTO.setGestationalAgeBelow20(client.isGestationalAgeBelow20());
+			ancClientDTO.setHistoryOfAbortion(client.isHistoryOfAbortion());
+			ancClientDTO.setAgeBelow20Years(client.isAgeBelow20Years());
+			ancClientDTO.setLastPregnancyOver10Years(client.isLastPregnancyOver10Years());
+			ancClientDTO.setPregnancyAbove35Years(client.isPregnancyAbove35Years());
+			ancClientDTO.setHistoryOfStillBirth(client.isHistoryOfStillBirth());
+			ancClientDTO.setHistoryOfPostmartumHaemorrhage(client.isHistoryOfPostmartumHaemorrhage());
+			ancClientDTO.setHistoryOfRetainedPlacenta(client.isHistoryOfRetainedPlacenta());
+			ancClientDTO.setLastChildbirthYear(client.getLastChildbirthYear());
+			ancClientDTO.setLastChildbirthStatus(client.getLastChildbirthStatus());
+			ancClientDTO.setClientType(client.getClientType());
+			ancClientDTO.setCardNumber(client.getCardNumber());
+			ancClientDTO.setCreatedAt(client.getCreatedAt().getTime());
+
+			try {
+				ancClientDTO.setLmnpDate(client.getLmnpDate().getTime());
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+			try {
+				ancClientDTO.setEdd(client.getEdd().getTime());
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+			return ancClientDTO;
+		} catch (Exception e) {
+			logger.error(MessageFormat.format("Converting ANCClient :{0}, failed with error: {1}.", client, e));
+			throw e;
+		}
+	}
 
     public static List<PatientAppointments> toPatientsAppointments(CTCPatientsDTO patientsDTO) {
         try {
@@ -124,64 +184,6 @@ public class PatientsConverter {
 
         } catch (Exception e) {
             logger.error(MessageFormat.format("Converting CTCPatientDTO :{0}, failed with error: {1}.", patientsDTO, e));
-            throw e;
-        }
-    }
-
-
-    public static AncClientDTO toPatientsDTO(ANCClients client) {
-        try {
-            AncClientDTO ancClientDTO = new AncClientDTO();
-
-            ancClientDTO.setClientId(client.getClientId());
-            ancClientDTO.setFirstName(client.getFirstName());
-            ancClientDTO.setMiddleName(client.getMiddleName());
-            ancClientDTO.setSurname(client.getSurname());
-            ancClientDTO.setPhoneNumber(client.getPhoneNumber());
-
-
-            ancClientDTO.setDateOfBirth(client.getDateOfBirth().getTime());
-
-            ancClientDTO.setWard(client.getWard());
-            ancClientDTO.setVillage(client.getVillage());
-
-            ancClientDTO.setMapCue(client.getMapCue());
-            ancClientDTO.setPmtctStatus(client.getPmtctStatus());
-            ancClientDTO.setHeightBelowAverage(client.isHeightBelowAverage());
-            ancClientDTO.setLevelOfEducation(client.getLevelOfEducation());
-
-            ancClientDTO.setSpouseName(client.getSpouseName());
-            ancClientDTO.setGravida(client.getGravida());
-            ancClientDTO.setPara(client.getPara());
-            ancClientDTO.setGestationalAgeBelow20(client.isGestationalAgeBelow20());
-            ancClientDTO.setHistoryOfAbortion(client.isHistoryOfAbortion());
-            ancClientDTO.setAgeBelow20Years(client.isAgeBelow20Years());
-            ancClientDTO.setLastPregnancyOver10Years(client.isLastPregnancyOver10Years());
-            ancClientDTO.setPregnancyAbove35Years(client.isPregnancyAbove35Years());
-            ancClientDTO.setHistoryOfStillBirth(client.isHistoryOfStillBirth());
-            ancClientDTO.setHistoryOfPostmartumHaemorrhage(client.isHistoryOfPostmartumHaemorrhage());
-            ancClientDTO.setHistoryOfRetainedPlacenta(client.isHistoryOfRetainedPlacenta());
-            ancClientDTO.setLastChildbirthYear(client.getLastChildbirthYear());
-            ancClientDTO.setLastChildbirthStatus(client.getLastChildbirthStatus());
-            ancClientDTO.setClientType(client.getClientType());
-            ancClientDTO.setCardNumber(client.getCardNumber());
-            ancClientDTO.setCreatedAt(client.getCreatedAt().getTime());
-
-            try {
-                ancClientDTO.setLmnpDate(client.getLmnpDate().getTime());
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-            try {
-                ancClientDTO.setEdd(client.getEdd().getTime());
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-            return ancClientDTO;
-        } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting ANCClient :{0}, failed with error: {1}.", client, e));
             throw e;
         }
     }
@@ -262,7 +264,6 @@ public class PatientsConverter {
         }
     }
 
-
     public static List<ClientReferral> toPatientReferralsList(List<ReferralsDTO> referralsDTOs) {
         try {
 
@@ -277,8 +278,6 @@ public class PatientsConverter {
             throw e;
         }
     }
-
-
 
     public static List<ReferralsDTO> toPatientReferralDTOsList(List<ClientReferral> referrals) {
         try {

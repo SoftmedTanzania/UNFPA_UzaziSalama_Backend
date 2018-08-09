@@ -43,6 +43,10 @@ public class ANCClients {
 
 	public static final String COL_EDD = "edd";
 
+	public static final String COL_USE_OF_FAMILY_PLANNING_TECHNIQUES= "use_of_family_planning_techniques";
+
+	public static final String COL_FAMILY_PLANNING_TECHNIQUE_ID= "family_planning_technique_id";
+
 	public static final String COL_GESTATIONAL_AGE_BELOW_20 = "gestational_age_below_20";
 
 	public static final String COL_HISTORY_OF_ABORTION = "history_of_abortion";
@@ -53,7 +57,7 @@ public class ANCClients {
 
 	public static final String COL_PREGNANCY_ABOVE_35_YEARS = "pregnancy_above_35_years";
 
-	public static final String COL_HISTORY_OF_STILL_BIRTH = "history_of_still_birth";
+	public static final String COL_HISTORY_OF_STILL_BIRTH = "history_of_still_births";
 
 	public static final String COL_HISTORY_OF_POSTMARTUM_HAEMORRHAGE = "history_of_postmartum_haemorrhage";
 
@@ -134,6 +138,13 @@ public class ANCClients {
 
 	@Column(name = COL_GESTATIONAL_AGE_BELOW_20)
 	private boolean gestationalAgeBelow20;
+
+
+	@Column(name = COL_USE_OF_FAMILY_PLANNING_TECHNIQUES)
+	private boolean useOfFamilyPlanningTechniques;
+
+	@Column(name = COL_FAMILY_PLANNING_TECHNIQUE_ID)
+	private int familyPlanningTechniqueId = 0;
 
 
 	@Column(name = COL_HISTORY_OF_ABORTION)
@@ -382,6 +393,22 @@ public class ANCClients {
 
 	public void setHistoryOfRetainedPlacenta(boolean historyOfRetainedPlacenta) {
 		this.historyOfRetainedPlacenta = historyOfRetainedPlacenta;
+	}
+
+	public boolean isUseOfFamilyPlanningTechniques() {
+		return useOfFamilyPlanningTechniques;
+	}
+
+	public void setUseOfFamilyPlanningTechniques(boolean useOfFamilyPlanningTechniques) {
+		this.useOfFamilyPlanningTechniques = useOfFamilyPlanningTechniques;
+	}
+
+	public int getFamilyPlanningTechniqueId() {
+		return familyPlanningTechniqueId;
+	}
+
+	public void setFamilyPlanningTechniqueId(int familyPlanningTechniqueId) {
+		this.familyPlanningTechniqueId = familyPlanningTechniqueId;
 	}
 
 	public String getCardNumber() {

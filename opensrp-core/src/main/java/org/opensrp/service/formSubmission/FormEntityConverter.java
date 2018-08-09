@@ -373,6 +373,12 @@ public class FormEntityConverter {
 				if(formField.name().equals(ANCClients.COL_HEIGHT_BELOW_AVERAGE))
 					client.setHeightBelowAverage(Boolean.valueOf(formField.value()));
 
+				if(formField.name().equals(ANCClients.COL_USE_OF_FAMILY_PLANNING_TECHNIQUES))
+					client.setUseOfFamilyPlanningTechniques(Boolean.valueOf(formField.value()));
+
+				if(formField.name().equals(ANCClients.COL_FAMILY_PLANNING_TECHNIQUE_ID))
+					client.setFamilyPlanningTechniqueId(Integer.valueOf(formField.value()));
+
 				if(formField.name().equals(ANCClients.COL_GESTATIONAL_AGE_BELOW_20))
 					client.setGestationalAgeBelow20(Boolean.valueOf(formField.value()));
 

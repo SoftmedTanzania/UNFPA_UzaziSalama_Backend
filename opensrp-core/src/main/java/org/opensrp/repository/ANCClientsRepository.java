@@ -49,6 +49,9 @@ public class ANCClientsRepository {
 		parameters.put(ANCClients.COL_PARA, client.getPara());
 		parameters.put(ANCClients.COL_LMNP_DATE, client.getLmnpDate());
 		parameters.put(ANCClients.COL_EDD, client.getEdd());
+		parameters.put(ANCClients.COL_USE_OF_FAMILY_PLANNING_TECHNIQUES, client.isUseOfFamilyPlanningTechniques());
+		parameters.put(ANCClients.COL_FAMILY_PLANNING_TECHNIQUE_ID, client.getFamilyPlanningTechniqueId());
+
 		parameters.put(ANCClients.COL_GESTATIONAL_AGE_BELOW_20, client.isGestationalAgeBelow20());
 		parameters.put(ANCClients.COL_HISTORY_OF_ABORTION, client.isHistoryOfAbortion());
 		parameters.put(ANCClients.COL_AGE_BELOW_20_YEARS, client.isGestationalAgeBelow20());
@@ -114,6 +117,11 @@ public class ANCClientsRepository {
 			client.setEdd(rs.getDate(rs.findColumn(ANCClients.COL_EDD)));
 			client.setPmtctStatus(rs.getInt(rs.findColumn(ANCClients.COL_PMTCT_STATUS)));
 			client.setGestationalAgeBelow20(rs.getBoolean(rs.findColumn(ANCClients.COL_GESTATIONAL_AGE_BELOW_20)));
+
+			client.setUseOfFamilyPlanningTechniques(rs.getBoolean(rs.findColumn(ANCClients.COL_USE_OF_FAMILY_PLANNING_TECHNIQUES)));
+			client.setFamilyPlanningTechniqueId(rs.getInt(rs.findColumn(ANCClients.COL_FAMILY_PLANNING_TECHNIQUE_ID)));
+
+
 			client.setHistoryOfAbortion(rs.getBoolean(rs.findColumn(ANCClients.COL_HISTORY_OF_ABORTION)));
 			client.setAgeBelow20Years(rs.getBoolean(rs.findColumn(ANCClients.COL_AGE_BELOW_20_YEARS)));
 			client.setLastPregnancyOver10Years(rs.getBoolean(rs.findColumn(ANCClients.COL_LAST_PREGNANCY_OVER_10_YEARS)));
