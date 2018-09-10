@@ -37,14 +37,18 @@ public class ServiceController {
     private ReferralTypeRepository referralTypeRepository;
     private TBPatientTestTypeRepository tbPatientTestTypeRepository;
     private TaskSchedulerService scheduler;
+    private ReferralServiceIndicatorRepository referralServiceIndicatorRepository;
 
     @Autowired
-    public ServiceController(ReferralServiceRepository referralServiceRepository, TaskSchedulerService scheduler, TBPatientTestTypeRepository tbPatientTestTypeRepository, IndicatorRepository indicatorRepository, ReferralTypeRepository referralTypeRepository) {
+    public ServiceController(ReferralServiceRepository referralServiceRepository, TaskSchedulerService scheduler,
+                             TBPatientTestTypeRepository tbPatientTestTypeRepository, IndicatorRepository indicatorRepository,
+                             ReferralTypeRepository referralTypeRepository, ReferralServiceIndicatorRepository referralServiceIndicatorRepository) {
         this.referralServiceRepository = referralServiceRepository;
         this.tbPatientTestTypeRepository = tbPatientTestTypeRepository;
         this.scheduler = scheduler;
         this.indicatorRepository = indicatorRepository;
         this.referralTypeRepository = referralTypeRepository;
+        this.referralServiceIndicatorRepository=referralServiceIndicatorRepository;
     }
 
     @RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/add-referral-services")
@@ -229,7 +233,76 @@ public class ServiceController {
 //    }
 
 
+    @RequestMapping(headers = {"Accept=application/json"}, method = GET, value = "/get-services-indicators")
+    @ResponseBody
+    public List<ReferralServiceIndicatorsDTO> getServicesIndicators() {
 
+        List<ReferralService> allReferralServices = null;
+        try {
+            allReferralServices = referralServiceRepository.getReferralServices("Select * from "+ ReferralService.tbName,null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        List<ReferralServiceIndicatorsDTO> referralServiceIndicatorsDTOS = new ArrayList<>();
+        for(ReferralService referralService:allReferralServices) {
+            ReferralServiceIndicatorsDTO referralServiceIndicatorsDTO = new ReferralServiceIndicatorsDTO();
+
+            referralServiceIndicatorsDTO.setCategory(referralService.getReferralCategoryName());
+            referralServiceIndicatorsDTO.setServiceId(referralService.getReferralServiceId());
+            referralServiceIndicatorsDTO.setServiceName(referralService.getReferralServiceName());
+            referralServiceIndicatorsDTO.setServiceNameSw(referralService.getReferralServiceNameSw());
+            referralServiceIndicatorsDTO.setActive(referralService.isActive());
+
+
+            List<ServiceIndicator> serviceIndicators = null;
+            try {
+                Object[] objects = new Object[]{
+                        referralService.getReferralServiceId()
+                };
+                serviceIndicators =
+                        referralServiceIndicatorRepository.getReferralServicesIndicators("SELECT * FROM " + ServiceIndicator.tbName+" WHERE "+ ServiceIndicator.COL_SERVICE_ID +" =?", objects);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            List<IndicatorDTO> indicatorDTOS = new ArrayList<>();
+            for(ServiceIndicator serviceIndicator: serviceIndicators){
+                IndicatorDTO indicatorDTO = new IndicatorDTO();
+                indicatorDTO.setReferralServiceIndicatorId(serviceIndicator.getServiceIndicatorId());
+
+
+                Object[] objects = new Object[]{
+                        serviceIndicator.getPkReferralServiceIndicator().getIndicatorId()
+                };
+                List<Indicator> indicators = null;
+                try {
+                    indicators = indicatorRepository.getReferralIndicators("SELECT * FROM "+ Indicator.tbName+" WHERE "+ Indicator.COL_REFERRAL_INDICATOR_ID+" =?",objects);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if(indicators.size()>0) {
+                    indicatorDTO.setIndicatorName(indicators.get(0).getReferralIndicatorName());
+                    indicatorDTO.setIndicatorNameSw(indicators.get(0).getReferralIndicatorNameSw());
+                    indicatorDTO.setReferralIndicatorId(indicators.get(0).getReferralIndicatorId());
+                    indicatorDTO.setActive(indicators.get(0).isActive());
+                }
+
+                indicatorDTOS.add(indicatorDTO);
+
+            }
+            referralServiceIndicatorsDTO.setIndicators(indicatorDTOS);
+
+            referralServiceIndicatorsDTOS.add(referralServiceIndicatorsDTO);
+        }
+
+
+
+
+        return referralServiceIndicatorsDTOS;
+    }
 
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = GET, value = "/referral-types")
