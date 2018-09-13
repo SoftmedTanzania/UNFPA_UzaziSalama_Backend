@@ -35,16 +35,13 @@ public class ServiceController {
     private ReferralServiceRepository referralServiceRepository;
     private IndicatorRepository indicatorRepository;
     private ReferralTypeRepository referralTypeRepository;
-    private TBPatientTestTypeRepository tbPatientTestTypeRepository;
     private TaskSchedulerService scheduler;
     private ReferralServiceIndicatorRepository referralServiceIndicatorRepository;
 
     @Autowired
-    public ServiceController(ReferralServiceRepository referralServiceRepository, TaskSchedulerService scheduler,
-                             TBPatientTestTypeRepository tbPatientTestTypeRepository, IndicatorRepository indicatorRepository,
+    public ServiceController(ReferralServiceRepository referralServiceRepository, TaskSchedulerService scheduler, IndicatorRepository indicatorRepository,
                              ReferralTypeRepository referralTypeRepository, ReferralServiceIndicatorRepository referralServiceIndicatorRepository) {
         this.referralServiceRepository = referralServiceRepository;
-        this.tbPatientTestTypeRepository = tbPatientTestTypeRepository;
         this.scheduler = scheduler;
         this.indicatorRepository = indicatorRepository;
         this.referralTypeRepository = referralTypeRepository;
@@ -420,60 +417,4 @@ public class ServiceController {
         return new ResponseEntity<Indicator>(OK);
     }
 
-
-
-
-    @RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-tb-patient-type")
-    public ResponseEntity<HttpStatus> savePatientType(@RequestBody List<TBPatientTypesDTO> tbPatientTypesDTOS) {
-        try {
-            if (tbPatientTypesDTOS.isEmpty()) {
-                return new ResponseEntity<>(BAD_REQUEST);
-            }
-
-            scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.HEALTH_FACILITY_SUBMISSION, tbPatientTypesDTOS));
-
-            String json = new Gson().toJson(tbPatientTypesDTOS);
-            List<TBPatientTypesDTO> tbPatientTypesDTOS1 = new Gson().fromJson(json, new TypeToken<List<TBPatientTypesDTO>>() {
-            }.getType());
-
-            List<TBPatientTestType> tbPatientTestTypes =  with(tbPatientTypesDTOS1).convert(new Converter<TBPatientTypesDTO, TBPatientTestType>() {
-                @Override
-                public TBPatientTestType convert(TBPatientTypesDTO tbPatientTypesDTO) {
-                    TBPatientTestType tbPatientTestType = new TBPatientTestType();
-                    tbPatientTestType.setTestTypeName(tbPatientTypesDTO.getPatientTypeName());
-                    tbPatientTestType.setIsActive(tbPatientTypesDTO.isActive());
-                    return tbPatientTestType;
-                }
-            });
-
-            for (TBPatientTestType tbPatientTestType : tbPatientTestTypes) {
-                tbPatientTestTypeRepository.save(tbPatientTestType);
-            }
-
-            logger.debug(format("Saved TB Patient types to queue.\nSubmissions: {0}", tbPatientTypesDTOS));
-        } catch (Exception e) {
-            logger.error(format("TB Patient Types processing failed with exception {0}.\nSubmissions: {1}", e, tbPatientTypesDTOS));
-            return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(CREATED);
-    }
-
-    @RequestMapping(headers = {"Accept=application/json"}, method = GET, value = "/tb-patient-test-types")
-    @ResponseBody
-    public List<TBPatientTypesDTO> getTBPatientTestTypes() {
-
-        List<TBPatientTestType> tbPatientTestTypes = null;
-        try {
-            tbPatientTestTypes = tbPatientTestTypeRepository.getTBPatientTypes("Select * from "+ TBPatientTestType.tbName,null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return with(tbPatientTestTypes).convert(new Converter<TBPatientTestType, TBPatientTypesDTO>() {
-            @Override
-            public TBPatientTypesDTO convert(TBPatientTestType tbPatientTestType) {
-                return new TBPatientTypesDTO(tbPatientTestType.getId(), tbPatientTestType.getTestTypeName(), tbPatientTestType.getIsActive());
-            }
-        });
-    }
 }

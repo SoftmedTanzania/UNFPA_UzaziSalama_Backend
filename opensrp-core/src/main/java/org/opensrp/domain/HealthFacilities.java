@@ -40,7 +40,6 @@ public class HealthFacilities {
 	@Column(name = COL_PARENT_HFR_CODE)
 	private String parentHFRCode;
 
-
 	@Column(name = COL_HFR_CODE,unique=true)
 	private String hfrCode;
 
