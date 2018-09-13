@@ -30,8 +30,6 @@ public class HealthFacilitiesConverter {
 
             healthFacilities.setFacilityName(healthFacilitiesDTO.getFacilityName());
 
-            healthFacilities.setFacilityCtcCode(healthFacilitiesDTO.getFacilityCTCCode());
-
             healthFacilities.setCreatedAt(Calendar.getInstance().getTime());
 
             return healthFacilities;

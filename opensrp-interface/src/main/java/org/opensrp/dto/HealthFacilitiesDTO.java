@@ -16,9 +16,6 @@ public class HealthFacilitiesDTO {
     private String facilityName;
 
     @JsonProperty
-    private String facilityCTCCode;
-
-    @JsonProperty
     private String openmrsUIID;
 
 	@JsonProperty
@@ -45,14 +42,6 @@ public class HealthFacilitiesDTO {
 
 	public void setFacilityName(String facilityName) {
 		this.facilityName = facilityName;
-	}
-
-	public String getFacilityCTCCode() {
-		return facilityCTCCode;
-	}
-
-	public void setFacilityCTCCode(String facilityCTCCode) {
-		this.facilityCTCCode = facilityCTCCode;
 	}
 
 	public String getOpenmrsUIID() {

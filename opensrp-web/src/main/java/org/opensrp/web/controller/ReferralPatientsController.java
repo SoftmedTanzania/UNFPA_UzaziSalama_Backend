@@ -360,8 +360,7 @@ public class ReferralPatientsController {
 				msg.put("type","ClientReferral");
 
 				googleFCMService.SendPushNotification(msg, tokens, false);
-				String healthFacilitySql = "SELECT * FROM " + HealthFacilities.tbName + " WHERE " +
-						HealthFacilities.COL_FACILITY_CTC_CODE + " = ? OR " + HealthFacilities.COL_OPENMRS_UIID + " = ?";
+				String healthFacilitySql = "SELECT * FROM " + HealthFacilities.tbName + " WHERE " + HealthFacilities.COL_OPENMRS_UIID + " = ?";
 				Object[] healthFacilityParams = new Object[]{
 						clientReferral.getFacilityId(), clientReferral.getFacilityId()};
 

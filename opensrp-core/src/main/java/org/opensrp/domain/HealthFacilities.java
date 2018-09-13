@@ -13,8 +13,6 @@ public class HealthFacilities {
 
 	public static final String COL_FACILITY_NAME = "facility_name";
 
-	public static final String COL_FACILITY_CTC_CODE = "facility_ctc_code";
-
 	public static final String COL_PARENT_OPENMRS_UIID= "parent_openmrs_UIID";
 
 	public static final String COL_PARENT_HFR_CODE= "parent_HFR_code";
@@ -35,9 +33,6 @@ public class HealthFacilities {
 
 	@Column(name = COL_FACILITY_NAME)
 	private String facilityName;
-
-	@Column(name = COL_FACILITY_CTC_CODE,unique=true)
-	private String facilityCtcCode;
 
 	@Column(name = COL_PARENT_OPENMRS_UIID)
 	private String parentOpenmrsUIID;
@@ -80,14 +75,6 @@ public class HealthFacilities {
 
 	public void setFacilityName(String facilityName) {
 		this.facilityName = facilityName;
-	}
-
-	public String getFacilityCtcCode() {
-		return facilityCtcCode;
-	}
-
-	public void setFacilityCtcCode(String facilityCtcCode) {
-		this.facilityCtcCode = facilityCtcCode;
 	}
 
 	public String getHfrCode() {

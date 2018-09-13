@@ -220,12 +220,11 @@ public class ReferralPatientsService {
         }
 
         //Obtaining health facilityId from tbl_facilities
-        String healthFacilitySql = "SELECT * FROM " + HealthFacilities.tbName + " WHERE " +
-                HealthFacilities.COL_FACILITY_CTC_CODE + " = ? OR " + HealthFacilities.COL_OPENMRS_UIID + " = ?";
+        String healthFacilitySql = "SELECT * FROM " + HealthFacilities.tbName + " WHERE " + HealthFacilities.COL_OPENMRS_UIID + " = ?";
         Object[] healthFacilityParams = new Object[]{
-                healthFacilityCode,healthFacilityCode};
+                healthFacilityCode};
 
-        System.out.println("Coze facility ctc code = " + healthFacilityCode);
+
         Long healthFacilityId = (long) 0;
         List<HealthFacilities> healthFacilities = null;
         try {

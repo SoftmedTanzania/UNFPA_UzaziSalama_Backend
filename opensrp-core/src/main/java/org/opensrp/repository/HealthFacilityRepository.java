@@ -24,24 +24,21 @@ public class HealthFacilityRepository {
 		String insertQuery = "insert into " + HealthFacilities.tbName + " (" +
 				HealthFacilities.COL_OPENMRS_UIID + "," +
 				HealthFacilities.COL_FACILITY_NAME + "," +
-				HealthFacilities.COL_FACILITY_CTC_CODE + "," +
 				HealthFacilities.COL_HFR_CODE + "," +
 				HealthFacilities.COL_PARENT_OPENMRS_UIID + "," +
 				HealthFacilities.COL_PARENT_HFR_CODE + "," +
 				HealthFacilities.COL_UPDATED_AT + "," +
-				HealthFacilities.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?) ";
+				HealthFacilities.COL_CREATED_AT + ") values (?,?,?,?,?,?,?) ";
 
 		Object[] params = new Object[] {
 				healthFacilities.getOpenMRSUIID(),
 				healthFacilities.getFacilityName(),
-				healthFacilities.getFacilityCtcCode(),
 		        healthFacilities.getHfrCode(),
 		        healthFacilities.getParentOpenmrsUIID(),
 				healthFacilities.getParentHFRCode(),
 		        healthFacilities.getUpdatedAt(),
 				healthFacilities.getCreatedAt() };
 		int[] types = new int[] {
-				Types.VARCHAR,
 				Types.VARCHAR,
 				Types.VARCHAR,
 				Types.VARCHAR,
@@ -80,7 +77,6 @@ public class HealthFacilityRepository {
 			healthFacilitie.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(HealthFacilities.COL_CREATED_AT)).getTime()));
 			healthFacilitie.setOpenMRSUIID(rs.getString(rs.findColumn(HealthFacilities.COL_OPENMRS_UIID)));
 			healthFacilitie.setFacilityName(rs.getString(rs.findColumn(HealthFacilities.COL_FACILITY_NAME)));
-			healthFacilitie.setFacilityCtcCode(rs.getString(rs.findColumn(HealthFacilities.COL_FACILITY_CTC_CODE)));
 			healthFacilitie.setHfrCode(rs.getString(rs.findColumn(HealthFacilities.COL_HFR_CODE)));
 			healthFacilitie.setParentHFRCode(rs.getString(rs.findColumn(HealthFacilities.COL_PARENT_HFR_CODE)));
 			healthFacilitie.setParentOpenmrsUIID(rs.getString(rs.findColumn(HealthFacilities.COL_PARENT_OPENMRS_UIID)));
