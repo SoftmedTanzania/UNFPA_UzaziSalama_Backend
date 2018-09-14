@@ -261,7 +261,7 @@ public class ReferralPatientsController {
 	}
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-visit")
-	public ResponseEntity<TBEncounterFeedbackDTO> saveVisit(@RequestBody String json) {
+	public ResponseEntity<EncounterVisitFeedbackDTO> saveVisit(@RequestBody String json) {
 		System.out.println("saveVisit : "+json);
 		RoutineVisitDTO routineVisitDTOS = new Gson().fromJson(json,RoutineVisitDTO.class);
 		try {
@@ -305,13 +305,13 @@ public class ReferralPatientsController {
 			routineVisitDTO.setSugarInTheUrine(routineVisit.isSugarInTheUrine());
 			routineVisitDTO.setFetusLie(routineVisit.isFetusLie());
 
-			TBEncounterFeedbackDTO tbEncounterFeedbackDTO = new TBEncounterFeedbackDTO();
-			tbEncounterFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
+			EncounterVisitFeedbackDTO encounterVisitFeedbackDTO = new EncounterVisitFeedbackDTO();
+			encounterVisitFeedbackDTO.setRoutineVisitDTO(routineVisitDTO);
 
 			try {
 				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
 						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
-				tbEncounterFeedbackDTO.setPatientsAppointmentsDTOS(ClientConverter.toPatientAppointmentDTOsList(appointments));
+				encounterVisitFeedbackDTO.setPatientsAppointmentsDTOS(ClientConverter.toPatientAppointmentDTOsList(appointments));
 			}catch (Exception e){
 				e.printStackTrace();
 			}
@@ -319,7 +319,7 @@ public class ReferralPatientsController {
 
 			logger.debug(format("Added  Visit Submissions: {0}", routineVisitDTOS));
 
-			return new ResponseEntity<TBEncounterFeedbackDTO>(tbEncounterFeedbackDTO,HttpStatus.OK);
+			return new ResponseEntity<EncounterVisitFeedbackDTO>(encounterVisitFeedbackDTO,HttpStatus.OK);
 
 		} catch (Exception e) {
 			logger.error(format("TB Encounters processing failed with exception {0}.\nSubmissions: {1}", e, routineVisitDTOS));

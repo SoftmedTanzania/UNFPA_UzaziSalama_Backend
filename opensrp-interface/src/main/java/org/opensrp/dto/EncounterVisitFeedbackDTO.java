@@ -7,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
 
-public class TBEncounterFeedbackDTO {
+public class EncounterVisitFeedbackDTO {
 	@JsonProperty
 	private RoutineVisitDTO routineVisitDTO;
 
