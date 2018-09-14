@@ -194,9 +194,9 @@ public class ReferralPatientsController {
 
 	@RequestMapping("get-facility-pnc-clients/{facilityUUID}")
 	@ResponseBody
-	public ResponseEntity<List<PNCCompleteCLientDataDTO>> getFacilityTBPatients(@PathVariable("facilityUUID") String facilityUUID) {
+	public ResponseEntity<List<PNCCompleteCLientDataDTO>> getFacilityPNCClients(@PathVariable("facilityUUID") String facilityUUID) {
 		try {
-			List<PNCCompleteCLientDataDTO> tbCompletePatientDataDTOS = new ArrayList<>();
+			List<PNCCompleteCLientDataDTO> pncCompleteCLientDataDTOS = new ArrayList<>();
 			List<HealthFacilitiesClients> healthFacilitiesClients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName +
 							" INNER JOIN "+HealthFacilities.tbName+" ON "+ HealthFacilitiesClients.tbName+"."+ HealthFacilitiesClients.COL_FACILITY_ID +" = "+HealthFacilities.tbName+"._id WHERE " + HealthFacilities.COL_OPENMRS_UIID + "=?",
 					new Object[]{facilityUUID});
@@ -204,29 +204,57 @@ public class ReferralPatientsController {
 			for(HealthFacilitiesClients healthFacilitiesPatient:healthFacilitiesClients){
 				try {
 					PNCCompleteCLientDataDTO pncCompleteCLientDataDTO = new PNCCompleteCLientDataDTO();
+					List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
+							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+					pncCompleteCLientDataDTO.setPncClientDTO(ClientConverter.toPNCClientDTO(pncClientsList.get(0)));
 
 					List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
 							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
 					pncCompleteCLientDataDTO.setAncClientDTO(ClientConverter.toPatientsDTO(patients.get(0)));
 
-					List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
-					pncCompleteCLientDataDTO.setPncClientDTO(ClientConverter.toPNCClientDTO(pncClientsList.get(0)));
-
-
-					tbCompletePatientDataDTOS.add(pncCompleteCLientDataDTO);
+					pncCompleteCLientDataDTOS.add(pncCompleteCLientDataDTO);
 				}catch (Exception e){
 					e.printStackTrace();
 				}
 			}
 
 
-			return new ResponseEntity<List<PNCCompleteCLientDataDTO>>(tbCompletePatientDataDTOS,HttpStatus.OK);
+			return new ResponseEntity<List<PNCCompleteCLientDataDTO>>(pncCompleteCLientDataDTOS,HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(format("Obtaining PNC Clients failed with exception {0}.\nfacility id: {1}", e, facilityUUID));
+
+		}
+		return null;
+	}
+
+	@RequestMapping("get-facility-anc-clients/{facilityUUID}")
+	@ResponseBody
+	public ResponseEntity<List<AncClientDTO>> getFacilityANCClients(@PathVariable("facilityUUID") String facilityUUID) {
+		try {
+			List<AncClientDTO> ancClientsList = new ArrayList<>();
+			List<HealthFacilitiesClients> healthFacilitiesClients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName +
+							" INNER JOIN "+HealthFacilities.tbName+" ON "+ HealthFacilitiesClients.tbName+"."+ HealthFacilitiesClients.COL_FACILITY_ID +" = "+HealthFacilities.tbName+"._id WHERE " + HealthFacilities.COL_OPENMRS_UIID + "=?",
+					new Object[]{facilityUUID});
+
+			for(HealthFacilitiesClients healthFacilitiesPatient:healthFacilitiesClients){
+				try {
+
+					List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
+							new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+
+					ancClientsList.add(ClientConverter.toPatientsDTO(patients.get(0)));
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+
+			return new ResponseEntity<List<AncClientDTO>>(ancClientsList,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(format("Obtaining ANC Clients failed with exception {0}.\nfacility id: {1}", e, facilityUUID));
 
 		}
 		return null;

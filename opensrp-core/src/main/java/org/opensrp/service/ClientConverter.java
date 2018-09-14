@@ -315,7 +315,6 @@ public class ClientConverter {
             referralDate.setTime(referralsDTO.getReferralDate());
 
             referral.setReferralDate(referralDate);
-            referral.setFacilityId(referralsDTO.getFacilityId());
             referral.setReferralStatus(referralsDTO.getReferralStatus());
 
 
