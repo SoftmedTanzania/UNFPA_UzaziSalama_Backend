@@ -98,11 +98,8 @@ public class ReferralPatientsController {
 
 			ancClientDTO.setClientId(healthfacilityPatientId);
 
-			createNextAppointments(healthfacilityPatientId,ancClientDTO.getLmnpDate(),true,0);
-
 			Long[] healthFacilityPatientArg = new Long[1];
 			healthFacilityPatientArg[0] =  healthfacilityPatientId;
-
 
 			Object[] facilityParams = new Object[]{ancClientDTO.getHealthFacilityCode(), 1};
 			List<GooglePushNotificationsUsers> googlePushNotificationsUsers = googlePushNotificationsUsersRepository.getGooglePushNotificationsUsers("SELECT * FROM " + GooglePushNotificationsUsers.tbName + " WHERE " + GooglePushNotificationsUsers.COL_FACILITY_UIID + " = ? AND " + GooglePushNotificationsUsers.COL_USER_TYPE + " = ?", facilityParams);
@@ -148,6 +145,53 @@ public class ReferralPatientsController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(format("Patients processing failed with exception {0}.\nSubmissions: {1}", e, json));
+			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	//separate endpoint for saving the first client Appointment.
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-first-appointment")
+	public ResponseEntity<PatientsAppointmentsDTO> saveFirstAppointment(@RequestBody String json) {
+		PatientsAppointmentsDTO appointmentsDTO = new Gson().fromJson(json, PatientsAppointmentsDTO.class);
+		try {
+			if (appointmentsDTO ==null) {
+				return new ResponseEntity<>(BAD_REQUEST);
+			}
+
+			Object[] healthFacilityPatientArg = new Object[]{ appointmentsDTO.getHealthFacilityClientId()};
+			List<AncClientReferralsDTO> ancClientReferralsDTOS = referralClientService.getClients("SELECT * FROM " + HealthFacilitiesClients.tbName +
+					" WHERE " + HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",healthFacilityPatientArg);
+
+			//checking if the client has already been saved in the server
+			if(ancClientReferralsDTOS.size()==0){
+				return new ResponseEntity<>(PRECONDITION_FAILED);
+			}
+
+			AncClientDTO ancClientDTO = ancClientReferralsDTOS.get(0).getAncClientDTO();
+			createNextAppointments(appointmentsDTO.getHealthFacilityClientId(),ancClientDTO.getLmnpDate(),true,0);
+
+			Object[] facilityParams = new Object[]{ancClientDTO.getHealthFacilityCode(), 1};
+			List<GooglePushNotificationsUsers> googlePushNotificationsUsers = googlePushNotificationsUsersRepository.getGooglePushNotificationsUsers("SELECT * FROM " + GooglePushNotificationsUsers.tbName + " WHERE " + GooglePushNotificationsUsers.COL_FACILITY_UIID + " = ? AND " + GooglePushNotificationsUsers.COL_USER_TYPE + " = ?", facilityParams);
+			JSONArray tokens = new JSONArray();
+			for (GooglePushNotificationsUsers googlePushNotificationsUsers1 : googlePushNotificationsUsers) {
+				tokens.put(googlePushNotificationsUsers1.getGooglePushNotificationToken());
+			}
+
+			if(tokens.length()>0) {
+				String jsonData = new Gson().toJson(ancClientDTO);
+				JSONObject msg = new JSONObject(jsonData);
+				msg.put("type","FirstAppointmentRegistration");
+
+				googleFCMService.SendPushNotification(msg, tokens, true);
+			}
+			String getPatientsAppointmentsSQL = "SELECT * from " + PatientAppointments.tbName+" WHERE "+PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID +" =?";
+			List<PatientAppointments> patientAppointments = patientsAppointmentsRepository.getAppointments(getPatientsAppointmentsSQL,healthFacilityPatientArg);
+
+			PatientsAppointmentsDTO patientsAppointmentsDTO =  ClientConverter.toPatientAppointmentsDTO(patientAppointments.get(0));
+			return new ResponseEntity<>(patientsAppointmentsDTO,OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(format("First Appointment Processing failed with exception {0}.\nSubmissions: {1}", e, json));
 			return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
 		}
 	}
