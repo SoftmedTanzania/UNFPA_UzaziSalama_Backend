@@ -234,6 +234,8 @@ public class ReferralPatientsService {
         }
         if (healthFacilities.size() > 0) {
             healthFacilityId = healthFacilities.get(0).getId();
+        }else{
+            throw new NullPointerException();
         }
 
         HealthFacilitiesClients healthFacilitiesClients = new HealthFacilitiesClients();

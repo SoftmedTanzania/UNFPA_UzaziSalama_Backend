@@ -94,7 +94,14 @@ public class ReferralPatientsController {
 			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, ancClientDTO));
 
 			ANCClients patient = ClientConverter.toANCClient(ancClientDTO);
-			final long healthfacilityPatientId = referralClientService.saveClient(patient, ancClientDTO.getHealthFacilityCode(), "");
+
+			long healthfacilityPatientId=0;
+			try {
+				healthfacilityPatientId = referralClientService.saveClient(patient, ancClientDTO.getHealthFacilityCode(), "");
+			}catch (Exception e){
+				e.printStackTrace();
+				return new ResponseEntity<>(PRECONDITION_FAILED);
+			}
 
 			ancClientDTO.setClientId(healthfacilityPatientId);
 
