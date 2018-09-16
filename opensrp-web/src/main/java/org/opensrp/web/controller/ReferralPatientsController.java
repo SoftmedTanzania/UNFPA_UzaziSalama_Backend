@@ -354,7 +354,7 @@ public class ReferralPatientsController {
 
 			try {
 				List<PatientAppointments> appointments = patientsAppointmentsRepository.getAppointments("SELECT * FROM " + PatientAppointments.tbName + " WHERE " + PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-						new Object[]{patientAppointments.get(0).getHealthFacilityClientId()});
+						new Object[]{patientAppointments.get(0).getHealthFacilitiesClients().getHealthFacilityClientId()});
 				encounterVisitFeedbackDTO.setPatientsAppointmentsDTOS(ClientConverter.toPatientAppointmentDTOsList(appointments));
 			}catch (Exception e){
 				e.printStackTrace();
@@ -996,18 +996,19 @@ public class ReferralPatientsController {
 		}
 	}
 
-	private void createNextAppointments(long healthfacilityPatientId, long time, boolean isFIrstAppointment, int visitNumber) {
+	private void createNextAppointments(long healthfacilityClientId, long time, boolean isFIrstAppointment, int visitNumber) {
 		long today = Calendar.getInstance().getTime().getTime();
 
 		PatientAppointments appointments = new PatientAppointments();
-		appointments.setHealthFacilityClientId(healthfacilityPatientId);
-		appointments.setAppointmentType(2);
-		appointments.setIsCancelled(false);
+
+		HealthFacilitiesClients facilitiesClients = new HealthFacilitiesClients();
+		facilitiesClients.setHealthFacilityClientId(healthfacilityClientId);
+		appointments.setHealthFacilitiesClients(facilitiesClients);
 		appointments.setVisitNumber(++visitNumber);
+		appointments.setIsCancelled(false);
 
 		if(isFIrstAppointment){
 			long diff = today - time;
-			System.out.println ("hours since lmnp Isued: " + TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS));
 			if(TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)<(4*4*7*24)){
 				Calendar c = Calendar.getInstance();
 				c.setTimeInMillis(time);

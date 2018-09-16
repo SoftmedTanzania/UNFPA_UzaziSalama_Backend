@@ -146,48 +146,6 @@ public class ClientConverter {
 		}
 	}
 
-    public static List<PatientAppointments> toPatientsAppointments(CTCPatientsDTO patientsDTO) {
-        try {
-
-            List<PatientAppointments> patientAppointments = new ArrayList<>();
-            List<CTCPatientsAppointmesDTO> appointments = patientsDTO.getPatientAppointments();
-
-            if (appointments!=null) {
-	            for (CTCPatientsAppointmesDTO appointment : appointments) {
-		            PatientAppointments patientAppointment = new PatientAppointments();
-		            Date appointDate = new Date();
-		            appointDate.setTime(appointment.getDateOfAppointment());
-
-		            patientAppointment.setAppointmentDate(appointDate);
-		            patientAppointment.setIsCancelled(appointment.isCancelled());
-
-
-		            try {
-			            Date rowVersion = new Date();
-			            rowVersion.setTime(appointment.getRowVersion());
-			            patientAppointment.setRowVersion(rowVersion);
-		            }catch (Exception e){
-		            	e.printStackTrace();
-			            patientAppointment.setRowVersion(null);
-		            }
-
-
-		            patientAppointment.setStatus("0");
-		            patientAppointment.setAppointmentType(1);
-		            patientAppointments.add(patientAppointment);
-	            }
-            }else{
-                System.out.println("coze patients appointment is empty");
-            }
-
-            return patientAppointments;
-
-        } catch (Exception e) {
-            logger.error(MessageFormat.format("Converting CTCPatientDTO :{0}, failed with error: {1}.", patientsDTO, e));
-            throw e;
-        }
-    }
-
     public static PNCClientDTO toPNCClientDTO(PNCClients clients) {
         try {
             PNCClientDTO pncClientDTO = new PNCClientDTO();
@@ -416,9 +374,8 @@ public class ClientConverter {
 			patientsAppointmentsDTO.setAppointment_id(patientAppointments.getAppointment_id());
 			patientsAppointmentsDTO.setAppointmentDate(patientAppointments.getAppointmentDate().getTime());
 			patientsAppointmentsDTO.setIsCancelled(patientAppointments.getIsCancelled());
-			patientsAppointmentsDTO.setHealthFacilityClientId(patientAppointments.getHealthFacilityClientId());
+			patientsAppointmentsDTO.setHealthFacilityClientId(patientAppointments.getHealthFacilitiesClients().getHealthFacilityClientId());
 			patientsAppointmentsDTO.setStatus(patientAppointments.getStatus());
-			patientsAppointmentsDTO.setAppointmentType(patientAppointments.getAppointmentType());
 			patientsAppointmentsDTO.setVisitNumber(patientAppointments.getVisitNumber());
 
 			return patientsAppointmentsDTO;

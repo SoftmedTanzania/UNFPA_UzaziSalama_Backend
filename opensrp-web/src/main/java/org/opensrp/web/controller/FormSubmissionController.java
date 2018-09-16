@@ -307,8 +307,11 @@ public class FormSubmissionController {
 		long today = Calendar.getInstance().getTime().getTime();
 
 		PatientAppointments appointments = new PatientAppointments();
-		appointments.setHealthFacilityClientId(healthfacilityPatientId);
-		appointments.setAppointmentType(2);
+
+		HealthFacilitiesClients facilitiesClients = new HealthFacilitiesClients();
+		facilitiesClients.setHealthFacilityClientId(healthfacilityPatientId);
+		appointments.setHealthFacilitiesClients(facilitiesClients);
+
 		appointments.setIsCancelled(false);
 		appointments.setVisitNumber(++visitNumber);
 

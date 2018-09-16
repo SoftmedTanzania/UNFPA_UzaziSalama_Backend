@@ -1,5 +1,6 @@
 package org.opensrp.repository;
 
+import org.opensrp.domain.HealthFacilitiesClients;
 import org.opensrp.domain.PatientAppointments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,18 +28,16 @@ public class PatientsAppointmentsRepository {
 				PatientAppointments.COL_IS_CANCELLED + "," +
 				PatientAppointments.COL_STATUS + "," +
 				PatientAppointments.COL_ROW_VERSION + "," +
-				PatientAppointments.COL_APPOINTMENT_TYPE + "," +
 				PatientAppointments.COL_VISIT_NUMBER + "," +
 				PatientAppointments.COL_UPDATED_AT + "," +
-				PatientAppointments.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?,?) ";
+				PatientAppointments.COL_CREATED_AT + ") values (?,?,?,?,?,?,?,?) ";
 
 		Object[] params = new Object[] {
-				patientAppointments.getHealthFacilityClientId(),
+				patientAppointments.getHealthFacilitiesClients().getHealthFacilityClientId(),
 				patientAppointments.getAppointmentDate(),
 				patientAppointments.getIsCancelled(),
 				patientAppointments.getStatus(),
 				patientAppointments.getRowVersion(),
-				patientAppointments.getAppointmentType(),
 				patientAppointments.getVisitNumber(),
 				patientAppointments.getUpdatedAt(),
 				patientAppointments.getCreatedAt() };
@@ -49,7 +48,6 @@ public class PatientsAppointmentsRepository {
 				Types.BOOLEAN,
 				Types.VARCHAR,
 				Types.VARCHAR,
-				Types.INTEGER,
 				Types.INTEGER,
 				Types.DATE,
 				Types.TIMESTAMP };
@@ -87,13 +85,17 @@ public class PatientsAppointmentsRepository {
 			PatientAppointments patientAppointments = new PatientAppointments();
 
 			patientAppointments.setAppointment_id(rs.getLong(rs.findColumn(PatientAppointments.COL_APPOINTMENT_ID)));
-			patientAppointments.setHealthFacilityClientId(rs.getLong(rs.findColumn(PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID)));
+
+
+			HealthFacilitiesClients facilitiesClients = new HealthFacilitiesClients();
+			facilitiesClients.setHealthFacilityClientId(rs.getLong(rs.findColumn(PatientAppointments.COL_HEALTH_FACILITY_CLIENT_ID)));
+
+			patientAppointments.setHealthFacilitiesClients(facilitiesClients);
 			patientAppointments.setAppointmentDate(rs.getDate(rs.findColumn(PatientAppointments.COL_APPOINTMENT_DATE)));
 			patientAppointments.setIsCancelled(rs.getBoolean(rs.findColumn(PatientAppointments.COL_IS_CANCELLED)));
 			patientAppointments.setStatus(rs.getString(rs.findColumn(PatientAppointments.COL_STATUS)));
 			patientAppointments.setRowVersion(rs.getDate(rs.findColumn(PatientAppointments.COL_ROW_VERSION)));
 			patientAppointments.setVisitNumber(rs.getInt(rs.findColumn(PatientAppointments.COL_VISIT_NUMBER)));
-			patientAppointments.setAppointmentType(rs.getInt(rs.findColumn(PatientAppointments.COL_APPOINTMENT_TYPE)));
 			patientAppointments.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(PatientAppointments.COL_CREATED_AT)).getTime()));
 			patientAppointments.setUpdatedAt(rs.getDate(rs.findColumn(PatientAppointments.COL_UPDATED_AT)));
 			return patientAppointments;

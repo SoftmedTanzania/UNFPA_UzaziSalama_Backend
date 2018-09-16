@@ -45,10 +45,10 @@ public class RoutineVisits implements Serializable {
 	@Column(name = "_id")
 	private Long id;
 
-	@Id
 	@Column(name = COL_HEALTH_FACILITY_CLIENT_ID)
 	private Long healthFacilityClientId;
 
+	@Id
 	@Column(name = COL_APPOINTMENT_ID)
 	private Long appointmentId;
 
@@ -84,8 +84,6 @@ public class RoutineVisits implements Serializable {
 
 	@Column(name = COL_FETUS_LIE)
 	private boolean fetusLie;
-
-
 
 
 	@Column(name = COL_CREATED_AT, columnDefinition = "TIMESTAMP")

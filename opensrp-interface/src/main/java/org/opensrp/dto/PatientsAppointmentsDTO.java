@@ -23,9 +23,6 @@ public class PatientsAppointmentsDTO {
     private String status;
 
     @JsonProperty
-    private int appointmentType;
-
-    @JsonProperty
     private int visitNumber;;
 
 
@@ -55,14 +52,6 @@ public class PatientsAppointmentsDTO {
 
     public boolean isCancelled() {
         return isCancelled;
-    }
-
-    public int getAppointmentType() {
-        return appointmentType;
-    }
-
-    public void setAppointmentType(int appointmentType) {
-        this.appointmentType = appointmentType;
     }
 
     public void setIsCancelled(boolean isCancelled) {
