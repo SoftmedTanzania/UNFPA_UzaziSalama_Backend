@@ -125,7 +125,12 @@ public class ClientConverter {
 			ancClientDTO.setLastChildbirthStatus(client.getLastChildbirthStatus());
 			ancClientDTO.setClientType(client.getClientType());
 			ancClientDTO.setCardNumber(client.getCardNumber());
-			ancClientDTO.setCreatedAt(client.getCreatedAt().getTime());
+
+			try {
+				ancClientDTO.setCreatedAt(client.getCreatedAt().getTime());
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 
 			try {
 				ancClientDTO.setLmnpDate(client.getLmnpDate().getTime());

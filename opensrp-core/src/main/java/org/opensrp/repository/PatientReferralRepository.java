@@ -96,6 +96,7 @@ public class PatientReferralRepository {
 			clientReferral.setInstanceId(rs.getString(rs.findColumn(ClientReferral.COL_INSTANCE_ID)));
 			clientReferral.setReferralType(rs.getLong(rs.findColumn(ClientReferral.COL_REFERRAL_TYPE)));
 			clientReferral.setOtherNotes(rs.getString(rs.findColumn(ClientReferral.COL_OTHER_NOTES)));
+			clientReferral.setServiceProviderUUID(rs.getString(rs.findColumn(ClientReferral.COL_SERVICE_PROVIDER_UUID)));
 			clientReferral.setReferralFeedback(rs.getString(rs.findColumn(ClientReferral.COL_REFERRAL_FEEDBACK)));
 			clientReferral.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(ClientReferral.COL_CREATED_AT)).getTime()));
 			clientReferral.setUpdatedAt(rs.getDate(rs.findColumn(ClientReferral.COL_UPDATED_AT)));

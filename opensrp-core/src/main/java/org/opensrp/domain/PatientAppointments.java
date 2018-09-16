@@ -22,8 +22,6 @@ public class PatientAppointments implements Serializable {
 
 	public static final String COL_STATUS = "status";
 
-	public static final String COL_ROW_VERSION = "row_version";
-
 	public static final String COL_CREATED_AT = "created_at";
 
 	public static final String COL_UPDATED_AT = "updated_at";
@@ -47,9 +45,6 @@ public class PatientAppointments implements Serializable {
 
 	@Column(name = COL_STATUS)
 	private String status;
-
-	@Column(name = COL_ROW_VERSION)
-	private Date rowVersion;
 
 	@Column(name = COL_VISIT_NUMBER)
 	private int visitNumber;
@@ -108,14 +103,6 @@ public class PatientAppointments implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Date getRowVersion() {
-		return rowVersion;
-	}
-
-	public void setRowVersion(Date rowVersion) {
-		this.rowVersion = rowVersion;
 	}
 
 	public Date getCreatedAt() {
