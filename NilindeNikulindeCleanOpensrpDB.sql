@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 15, 2018 at 05:50 AM
+-- Generation Time: Sep 16, 2018 at 05:15 PM
 -- Server version: 5.7.23-0ubuntu0.16.04.1
 -- PHP Version: 7.0.30-0ubuntu0.16.04.1
 
@@ -67,7 +67,12 @@ CREATE TABLE `tbl_anc_clients` (
 --
 
 INSERT INTO `tbl_anc_clients` (`clients_id`, `age_below_20_years`, `card_number`, `client_type`, `created_at`, `date_of_birth`, `edd`, `family_planning_technique_id`, `first_name`, `gestational_age_below_20`, `gravida`, `height_below_average`, `history_of_abortion`, `history_of_postmartum_haemorrhage`, `history_of_retained_placenta`, `history_of_still_births`, `last_child_birth_status`, `last_child_birth_year`, `last_pregnancy_over_10_years`, `level_of_education`, `lmnp_date`, `map_cue`, `middle_name`, `para`, `phone_number`, `pmtct_status`, `pregnancy_above_35_years`, `spouse_name`, `surname`, `updated_at`, `use_of_family_planning_techniques`, `village`, `ward`) VALUES
-(1, 1, '112', 1, '2018-09-15 05:23:50', '2008-09-01 00:00:00', '2018-09-01 00:00:00', 1, 'test', 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, '2018-09-01 00:00:00', 'test', 'test', 0, '0714417593', 0, 0, 'John Doe', 'Doe', '2018-09-15 05:23:50', 0, 'Test village', 'Test ward');
+(1, 1, '112', 1, '2018-09-15 05:23:50', '2008-09-01 00:00:00', '2018-09-01 00:00:00', 1, 'test', 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, '2018-09-01 00:00:00', 'test', 'test', 0, '0714417593', 0, 0, 'John Doe', 'Doe', '2018-09-15 05:23:50', 0, 'Test village', 'Test ward'),
+(2, 1, '25488', 1, '2018-09-15 11:49:33', '1993-06-10 11:25:27', '2019-04-27 11:25:49', 0, 'Bixqibbixq', 1, 1, 1, 0, 0, 0, 0, 0, 2010, 0, 4, '2018-07-20 11:25:49', NULL, 'Xuvhvqxvuq', 1, '67857', 0, 0, 'Jebnmks', 'Uvxqbuqxub', '2018-09-15 11:49:33', 0, 'Hdnhjjs', NULL),
+(3, 1, '23141', 1, '2018-09-15 13:11:52', '1988-08-03 13:09:22', '2019-02-21 13:09:56', 0, 'Salma', 1, 1, 1, 0, 0, 0, 0, 0, 2010, 0, 3, '2018-05-16 13:09:56', NULL, 'H', 1, '0766889977', 0, 0, 'Mikidadi', 'Kiure', '2018-09-15 13:11:52', 0, 'Simiyu Chini', NULL),
+(4, 1, '1234242342', 1, '2018-09-15 13:15:28', '1992-05-06 13:14:38', '2019-03-14 13:15:05', 0, 'Josias', 1, 1, 1, 0, 0, 0, 0, 0, 2011, 0, 3, '2018-06-06 13:15:05', NULL, 'John', 1, '3242423', 0, 0, 'Fred', 'Kweka', '2018-09-15 13:15:28', 0, 'Chikili', NULL),
+(5, 0, NULL, 1, '2018-09-16 14:14:02', '1988-12-07 21:00:00', '2019-04-10 21:00:00', 1, 'Lala', 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 2, '2018-07-03 21:00:00', 'Chemchem', '', 0, '071269258', 0, 0, 'Zack Mroso', 'Zack', '2018-09-15 14:37:28', 1, 'Chinamili Village', 'Chinamili Village'),
+(6, 0, NULL, 0, '2018-09-15 14:44:29', '1983-06-12 21:00:00', '2019-05-28 21:00:00', 2, 'Lora', 0, 3, 0, 0, 0, 0, 1, 0, 0, 0, 2, '2018-08-20 21:00:00', 'Bondeni', '', 2, '0789501111', 1, 0, 'Shack Marwa', 'Shack', '2018-09-15 14:44:29', 1, 'Nanga Village', 'Nanga Village');
 
 -- --------------------------------------------------------
 
@@ -86,6 +91,15 @@ CREATE TABLE `tbl_client_appointments` (
   `visit_umber` int(11) DEFAULT NULL,
   `health_facility_client_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tbl_client_appointments`
+--
+
+INSERT INTO `tbl_client_appointments` (`appointment_date`, `appointment_id`, `created_at`, `is_cancelled`, `row_version`, `status`, `updated_at`, `visit_umber`, `health_facility_client_id`) VALUES
+('2019-01-01 00:00:00', 1, '2018-09-15 06:06:19', 0, NULL, NULL, '2018-09-15 06:06:19', 1, 1),
+('2018-11-05 00:00:00', 2, '2018-09-15 14:37:28', 0, NULL, NULL, '2018-09-15 14:37:28', 1, 5),
+('2018-12-20 00:00:00', 3, '2018-09-15 14:44:29', 0, NULL, NULL, '2018-09-15 14:44:29', 1, 6);
 
 -- --------------------------------------------------------
 
@@ -110,6 +124,14 @@ CREATE TABLE `tbl_client_referral` (
   `service_provider_uuid` varchar(255) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tbl_client_referral`
+--
+
+INSERT INTO `tbl_client_referral` (`referral_id`, `anc_client_id`, `created_at`, `facility_id`, `from_facility_id`, `instance_id`, `other_notes`, `referral_date`, `referral_feedback`, `referral_reason`, `referral_status`, `referral_type`, `referral_uuid`, `service_provider_uuid`, `updated_at`) VALUES
+(1, 5, '2018-09-16 14:13:33', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', NULL, '59de0609-61b3-4e80-9494-b67cbfa5a711', 'null', '2018-09-15 14:34:27', 'Client has been enrolled to the clinic', 'hajaanza clinic', 1, 1, 'dee724d6-6608-4100-af52-518c5bdaac29', 'e19dd911-dd19-4416-8090-aa8ec7a20b72', '2018-09-15 14:37:28'),
+(2, 6, '2018-09-15 14:44:29', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', NULL, '9a5a7630-09d9-4859-ab6f-319f337b9eff', NULL, '2018-09-15 14:39:46', NULL, 'hajaanza clinic', 0, 1, '3c8c686e-3134-4a0e-9f85-17e622e4bdc4', 'e19dd911-dd19-4416-8090-aa8ec7a20b72', '2018-09-15 14:44:29');
 
 -- --------------------------------------------------------
 
@@ -365,7 +387,13 @@ CREATE TABLE `tbl_health_facility_clients` (
 --
 
 INSERT INTO `tbl_health_facility_clients` (`health_facility_client_id`, `created_at`, `ctc_number`, `facility_id`, `updated_at`, `client_id`) VALUES
-(1, '2018-09-15 05:24:22', NULL, 1, '2018-09-15 05:24:22', 1);
+(1, '2018-09-15 05:24:22', NULL, 1, '2018-09-15 05:24:22', 1),
+(2, '2018-09-15 11:49:33', '', 0, '2018-09-15 11:49:33', 2),
+(3, '2018-09-15 13:11:51', '', 0, '2018-09-15 13:11:51', 3),
+(4, '2018-09-15 13:15:28', '', 0, '2018-09-15 13:15:28', 4),
+(5, '2018-09-15 14:37:28', '', 21, '2018-09-15 14:37:28', 5),
+(6, '2018-09-15 14:44:29', '', 21, '2018-09-15 14:44:29', 6),
+(7, '2018-09-16 14:14:02', '', 0, '2018-09-16 14:14:02', 5);
 
 -- --------------------------------------------------------
 
@@ -388,7 +416,11 @@ CREATE TABLE `tbl_indicator_signs` (
 
 INSERT INTO `tbl_indicator_signs` (`referral_indicator_id`, `created_at`, `is_active`, `referral_indicator_name`, `referral_indicator_name_sw`, `updated_at`) VALUES
 (1, '2018-09-13 14:03:31', 1, 'Condoms', 'Kondomu', '2018-09-13 14:03:31'),
-(2, '2018-09-13 14:03:31', 1, 'Emergency Contraceptive Pills', 'Vidonge vya kuzuia mimba', '2018-09-13 14:03:31');
+(2, '2018-09-16 17:04:40', 1, 'Contraceptive Pills', 'Vidonge vya Majira', '2018-09-13 14:03:31'),
+(3, '2018-09-15 08:55:31', 1, 'Injection', 'Sindano', '2018-09-15 08:55:31'),
+(4, '2018-09-16 17:05:44', 1, 'Implants', 'Vipandikizi', '2018-09-16 17:05:44'),
+(5, '2018-09-16 17:05:44', 1, 'Intrauterine Contraceptive device', 'Kitanzi', '2018-09-16 17:05:44'),
+(6, '2018-09-16 17:06:28', 1, 'Voluntary surgical contraceptive', 'Kufunga kizazi kwa upasuaji wa hiari', '2018-09-16 17:06:28');
 
 -- --------------------------------------------------------
 
@@ -463,7 +495,13 @@ INSERT INTO `tbl_push_notifications_users` (`_id`, `created_at`, `facility_uiid`
 (9, '2018-09-13 15:02:13', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'cMPW9nX6Lgw:APA91bGoDgOWAfz0OjAwoShrb8jhKjBU-tC3MoFOq7FjRMiG5jAGIlDhOyMoCMyD-WyflpxVmr1HlSpf_2CYTrgpHls5R-roX9ZKP9-htVgHYfIngtqub4-6KclyAZn7gswxZfRysS0j', '2018-09-13 15:02:13', 0, 'bb20ba32-7fa5-4e73-a6c9-2f7d023a9074'),
 (10, '2018-09-13 15:29:23', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'f0xRXJmnFJU:APA91bFIjClET_daqr3YIRYsDdV1lLNQmwKUbOI64AjHZEhApQRao-iz7fOLZYLahoQB6vGA5ip2yaEZoJhMrdyU9Amk6pjir8PfReLdCRMbuJqbiEGpCaoNUsSFKeQe7WpP1BkyK7gS', '2018-09-13 15:29:23', 0, '222ea795-9f1d-4051-8b09-ef08108be9bc'),
 (11, '2018-09-14 07:30:41', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'cjVxtA6Ad0A:APA91bF-OGYuBCBFeur0wbYB0uJDKufip4KH3S351TYkURiYQMZKR25AtZsvriOmXlX1ctlxjvhm8kg428Wy0hz2oC9TTLW6SwtXlb_kONDsW9dxBZGZ_k23pKpZDrFyt-SwhIIALTLg', '2018-09-14 07:30:41', 1, '953bb5ce-fa16-4213-890a-e8a0fb712a52'),
-(13, '2018-09-14 10:39:13', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'fecMvR92SlE:APA91bGJziL2FBKaoCZg7GOzmaZ9cEfHLW61sJslr8HXwWkW-r-4LX6prR_J7IbRdUoqGn49fTnNZG5YFEbJS_P12HQ2GloL6Kxgr-gCDhGSjAqlVY6YoIJo2nL8aD73sNBWkAy4sIEh', '2018-09-14 10:39:13', 1, '953bb5ce-fa16-4213-890a-e8a0fb712a52');
+(13, '2018-09-14 10:39:13', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'fecMvR92SlE:APA91bGJziL2FBKaoCZg7GOzmaZ9cEfHLW61sJslr8HXwWkW-r-4LX6prR_J7IbRdUoqGn49fTnNZG5YFEbJS_P12HQ2GloL6Kxgr-gCDhGSjAqlVY6YoIJo2nL8aD73sNBWkAy4sIEh', '2018-09-14 10:39:13', 1, '953bb5ce-fa16-4213-890a-e8a0fb712a52'),
+(19, '2018-09-15 08:27:11', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'f4ZCA-gUJPg:APA91bGUNhDkCLzqRnS62ERTDL1WeWb8qR-rglx4H4QFgZUGwWGqWfddCStzTd15rdDGetTnxpCaY_gNrKOuMVuPFtxI_P9ospH9q3uov2Bu9TcK8myyXbUA3WW6lb6fN1I_mFu2P07i', '2018-09-15 08:27:11', 0, 'e19dd911-dd19-4416-8090-aa8ec7a20b72'),
+(20, '2018-09-15 10:07:34', '0239829d-b682-11e8-8c84-f23c91cc1ef2', 'eGZLtXAIjx4:APA91bFv26Z7ePL3hlwReyWpAX2QrXvltLmjW1Hd1J-mCmfbACqdgqmBssS1bOD4NLwMW3EjERXui_uNw80B9FrszoKK5thlcC9U6Gb8A_vwvHzJg6FPXepss7X8GhfoVcsavKrtWcLU', '2018-09-15 10:07:34', 0, '8be6c09a-643c-4c25-aa21-eff7c86fe665'),
+(21, '2018-09-15 10:44:04', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'dkpjNMx6RHQ:APA91bHclZvhYktaTNAcxXfKDzetNBYqRkU7N37arRzcMbH-FR_yylrkE_Bj_rXEaZoWTTfMjMgDiVFkmKWeA2Z2cNxTarSXaaAEVt_Vupb_MPtvBHgF0ci3AbS5JDipV6hYhFbDBOJa', '2018-09-15 10:44:04', 0, 'e19dd911-dd19-4416-8090-aa8ec7a20b72'),
+(27, '2018-09-15 12:28:49', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'fbRjrOg0-wg:APA91bEapp_vfHkelM6rxlF8Vjhkw5gnL2aCSet3T4PxdDkxGgXWCt-lMgHk49FdHCPjATXcjR7QRRw_SiUfcDwzDZIlGYtJ8RRvuc1ZXxhlGmcIQsjEyEFGeZs4Y3l8Dkd-QoKE5sGE', '2018-09-15 12:28:49', 1, '953bb5ce-fa16-4213-890a-e8a0fb712a52'),
+(30, '2018-09-16 11:46:16', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'fYpqH2rrLu8:APA91bH6GEHCKjs7W5I3g2nyZ09G3QppeWBaT6vGmbXbe97UYLJi-3ocf7EIGzuUl165eyUq_94K8JDj1FJwQ4luXTpeqzXmgsKjci_B0328_y2umw4C3tT3DLyuvxIPK0ZYdxm9UDSH', '2018-09-16 11:46:16', 1, '953bb5ce-fa16-4213-890a-e8a0fb712a52'),
+(33, '2018-09-16 15:14:37', '022a0ea1-b682-11e8-8c84-f23c91cc1ef2', 'cCrmfVS_2n8:APA91bGyV_AUuiI0w8ihdUTb2-j9xgGvfjnXWNS3U-ELXBGfAa7A5GQ6evA77c-wkuQ1X-Ix3Uw5s6YZ7_xek2ZxngmA2hE11A35k98g8pK9dNz4NeLAyjr92pRDH3mqGERiIF3kOILz', '2018-09-16 15:14:37', 1, '953bb5ce-fa16-4213-890a-e8a0fb712a52');
 
 -- --------------------------------------------------------
 
@@ -490,11 +528,11 @@ CREATE TABLE `tbl_routine_visits` (
   `anaemia` tinyint(1) DEFAULT NULL,
   `antepartum_Haemorrhage` tinyint(1) DEFAULT NULL,
   `appointment_date` datetime DEFAULT NULL,
-  `appointment_id` bigint(20) DEFAULT NULL,
+  `appointment_id` bigint(20) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `fetus_lie` tinyint(1) DEFAULT NULL,
   `high_blood_pressure` tinyint(1) DEFAULT NULL,
-  `_id` bigint(20) DEFAULT NULL,
+  `_id` bigint(20) NOT NULL,
   `oedema` tinyint(1) DEFAULT NULL,
   `protenuria` tinyint(1) DEFAULT NULL,
   `sugar_in_the_urine` tinyint(1) DEFAULT NULL,
@@ -503,6 +541,14 @@ CREATE TABLE `tbl_routine_visits` (
   `visit_umber` int(11) DEFAULT NULL,
   `weight_stagnation` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tbl_routine_visits`
+--
+
+INSERT INTO `tbl_routine_visits` (`health_facility_client_id`, `anaemia`, `antepartum_Haemorrhage`, `appointment_date`, `appointment_id`, `created_at`, `fetus_lie`, `high_blood_pressure`, `_id`, `oedema`, `protenuria`, `sugar_in_the_urine`, `updated_at`, `visit_date`, `visit_umber`, `weight_stagnation`) VALUES
+(5, 1, 1, '2018-11-05 00:00:00', 2, '2018-09-16 15:14:57', 0, 0, 1, 1, 0, 1, '2018-09-16 15:14:57', '2018-09-16 15:14:46', 1, 0),
+(7, 1, 1, '2018-09-16 14:50:53', 453566, '2018-09-16 15:13:04', 0, 0, 2, 1, 0, 1, '2018-09-16 15:13:04', '2018-09-16 15:07:11', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -538,7 +584,7 @@ CREATE TABLE `tbl_service_indicator` (
   `service_id` bigint(20) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `is_active` tinyint(1) DEFAULT NULL,
-  `service_indicator_id` bigint(20) DEFAULT NULL,
+  `service_indicator_id` bigint(20) NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -548,7 +594,11 @@ CREATE TABLE `tbl_service_indicator` (
 
 INSERT INTO `tbl_service_indicator` (`indicator_id`, `service_id`, `created_at`, `is_active`, `service_indicator_id`, `updated_at`) VALUES
 (1, 1, '2018-09-13 14:05:06', 1, 1, '2018-09-13 14:05:06'),
-(2, 1, '2018-09-13 14:05:06', 1, 2, '2018-09-13 14:05:06');
+(2, 1, '2018-09-13 14:05:06', 1, 2, '2018-09-13 14:05:06'),
+(3, 1, '2018-09-16 17:10:05', 1, 3, '2018-09-16 17:09:52'),
+(4, 1, '2018-09-16 17:10:08', 1, 4, '2018-09-16 17:09:52'),
+(5, 1, '2018-09-16 17:11:40', 1, 5, '2018-09-16 17:11:40'),
+(6, 1, '2018-09-16 17:11:40', 1, 6, '2018-09-16 17:11:40');
 
 -- --------------------------------------------------------
 
@@ -644,7 +694,8 @@ ALTER TABLE `tbl_referral_type`
 -- Indexes for table `tbl_routine_visits`
 --
 ALTER TABLE `tbl_routine_visits`
-  ADD PRIMARY KEY (`health_facility_client_id`);
+  ADD PRIMARY KEY (`appointment_id`),
+  ADD KEY `_id` (`_id`);
 
 --
 -- Indexes for table `tbl_services`
@@ -658,7 +709,8 @@ ALTER TABLE `tbl_services`
 -- Indexes for table `tbl_service_indicator`
 --
 ALTER TABLE `tbl_service_indicator`
-  ADD PRIMARY KEY (`indicator_id`,`service_id`);
+  ADD PRIMARY KEY (`indicator_id`,`service_id`),
+  ADD KEY `service_indicator_id` (`service_indicator_id`);
 
 --
 -- Indexes for table `unique_ids`
@@ -674,12 +726,17 @@ ALTER TABLE `unique_ids`
 -- AUTO_INCREMENT for table `tbl_anc_clients`
 --
 ALTER TABLE `tbl_anc_clients`
-  MODIFY `clients_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `clients_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `tbl_client_appointments`
+--
+ALTER TABLE `tbl_client_appointments`
+  MODIFY `appointment_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `tbl_client_referral`
 --
 ALTER TABLE `tbl_client_referral`
-  MODIFY `referral_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `referral_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `tbl_health_facilities`
 --
@@ -689,12 +746,12 @@ ALTER TABLE `tbl_health_facilities`
 -- AUTO_INCREMENT for table `tbl_health_facility_clients`
 --
 ALTER TABLE `tbl_health_facility_clients`
-  MODIFY `health_facility_client_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `health_facility_client_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `tbl_indicator_signs`
 --
 ALTER TABLE `tbl_indicator_signs`
-  MODIFY `referral_indicator_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `referral_indicator_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `tbl_patient_referral_indicator`
 --
@@ -709,17 +766,27 @@ ALTER TABLE `tbl_pnc_clients`
 -- AUTO_INCREMENT for table `tbl_push_notifications_users`
 --
 ALTER TABLE `tbl_push_notifications_users`
-  MODIFY `_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 --
 -- AUTO_INCREMENT for table `tbl_referral_type`
 --
 ALTER TABLE `tbl_referral_type`
   MODIFY `referral_type_id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `tbl_routine_visits`
+--
+ALTER TABLE `tbl_routine_visits`
+  MODIFY `_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
 -- AUTO_INCREMENT for table `tbl_services`
 --
 ALTER TABLE `tbl_services`
   MODIFY `referral_service_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `tbl_service_indicator`
+--
+ALTER TABLE `tbl_service_indicator`
+  MODIFY `service_indicator_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `unique_ids`
 --

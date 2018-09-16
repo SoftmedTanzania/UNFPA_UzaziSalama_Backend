@@ -23,6 +23,7 @@ public class ServiceIndicator implements Serializable {
 	public static final String COL_UPDATED_AT = "updated_at";
 
 
+	@GeneratedValue
 	@Column(name = COL_SERVICE_INDICATOR_ID)
 	private Long serviceIndicatorId;
 
