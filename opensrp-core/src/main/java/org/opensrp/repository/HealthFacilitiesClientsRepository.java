@@ -67,10 +67,10 @@ public class HealthFacilitiesClientsRepository {
 
 			facilitiesPatients.setHealthFacilityClientId(rs.getLong(rs.findColumn(HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID)));
 
-			ANCClients ANCClients = new ANCClients();
-			ANCClients.setClientId(rs.getLong(rs.findColumn(HealthFacilitiesClients.COL_CLIENT_ID)));
+			ANCClients clients = new ANCClients();
+			clients.setClientId(rs.getLong(rs.findColumn(HealthFacilitiesClients.COL_CLIENT_ID)));
 
-			facilitiesPatients.setAncClient(ANCClients);
+			facilitiesPatients.setAncClient(clients);
 			facilitiesPatients.setCtcNumber(rs.getString(rs.findColumn(HealthFacilitiesClients.COL_CTC_NUMBER)));
 			facilitiesPatients.setFacilityId(rs.getLong(rs.findColumn(HealthFacilitiesClients.COL_FACILITY_ID)));
 			facilitiesPatients.setCreatedAt(new Date(rs.getTimestamp(rs.findColumn(HealthFacilitiesClients.COL_CREATED_AT)).getTime()));

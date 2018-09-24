@@ -31,6 +31,8 @@ public class PNCClients {
 
 	public static final String COL_APGAR_SCORE= "apgar_score";
 
+	public static final String COL_CHILDS_PLACE_OF_BIRTH= "childs_place_of_birth";
+
 	public static final String COL_CHILDS_ABNORMALITIES= "childs_abnormalites";
 
 	public static final String COL_CHILDS_DISCHARGE_CONDITION= "childs_discharge_condition";
@@ -88,6 +90,9 @@ public class PNCClients {
 
 	@Column(name = COL_CHILDS_GENDER)
 	private String childsGender;
+
+	@Column(name = COL_CHILDS_PLACE_OF_BIRTH)
+	private int childPlaceOfBirth;
 
 
 	@Column(name = COL_CHILDS_WEIGHT)
@@ -246,6 +251,14 @@ public class PNCClients {
 
 	public void setTypes_of_still_birth(int types_of_still_birth) {
 		this.types_of_still_birth = types_of_still_birth;
+	}
+
+	public int getChildPlaceOfBirth() {
+		return childPlaceOfBirth;
+	}
+
+	public void setChildPlaceOfBirth(int childPlaceOfBirth) {
+		this.childPlaceOfBirth = childPlaceOfBirth;
 	}
 
 	public Date getUpdatedAt() {

@@ -43,6 +43,7 @@ public class PNCClientsRepository {
 		parameters.put(PNCClients.COL_CHILDS_DISCHARGE_CONDITION , client.getChilds_discharge_condition());
 		parameters.put(PNCClients.COL_DIED_WITHIN_24_HRS, client.isDied_within_24_hrs());
 		parameters.put(PNCClients.COL_TYPES_OF_STILL_BIRTH, client.getTypes_of_still_birth());
+		parameters.put(PNCClients.COL_CHILDS_PLACE_OF_BIRTH, client.getChildPlaceOfBirth());
 
 
 		parameters.put(PNCClients.COL_CREATED_AT , client.getCreatedAt());
@@ -92,6 +93,7 @@ public class PNCClientsRepository {
 			client.setChilds_discharge_condition(rs.getInt(rs.findColumn(PNCClients.COL_CHILDS_DISCHARGE_CONDITION)));
 			client.setDied_within_24_hrs(rs.getBoolean(rs.findColumn(PNCClients.COL_DIED_WITHIN_24_HRS)));
 			client.setTypes_of_still_birth(rs.getInt(rs.findColumn(PNCClients.COL_TYPES_OF_STILL_BIRTH)));
+			client.setChildPlaceOfBirth(rs.getInt(rs.findColumn(PNCClients.COL_CHILDS_PLACE_OF_BIRTH)));
 			return client;
 
 		}

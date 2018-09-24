@@ -7,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class AncClientDTO {
 	@JsonProperty
-    private Long clientId;
+    private Long ancClientId;
 
 	@JsonProperty
 	private Long healthFacilityClientId;
@@ -117,12 +117,12 @@ public class AncClientDTO {
 	@JsonProperty
     private int lastChildbirthStatus;
 
-	public Long getClientId() {
-		return clientId;
+	public Long getAncClientId() {
+		return ancClientId;
 	}
 
-	public void setClientId(Long clientId) {
-		this.clientId = clientId;
+	public void setAncClientId(Long ancClientId) {
+		this.ancClientId = ancClientId;
 	}
 
 	public String getFirstName() {

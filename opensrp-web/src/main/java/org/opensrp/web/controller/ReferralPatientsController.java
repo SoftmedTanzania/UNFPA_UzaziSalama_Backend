@@ -103,7 +103,7 @@ public class ReferralPatientsController {
 				return new ResponseEntity<>(PRECONDITION_FAILED);
 			}
 
-			ancClientDTO.setClientId(healthfacilityPatientId);
+			ancClientDTO.setAncClientId(healthfacilityPatientId);
 
 			Long[] healthFacilityPatientArg = new Long[1];
 			healthFacilityPatientArg[0] =  healthfacilityPatientId;
@@ -205,21 +205,20 @@ public class ReferralPatientsController {
 
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/save-pnc-client")
 	public ResponseEntity<PNCCompleteCLientDataDTO> savePncClient(@RequestBody String json) {
-		PNCClientDTO PNCClientDTO = new Gson().fromJson(json,PNCClientDTO.class);
+		PNCClientDTO pncClientDTO = new Gson().fromJson(json,PNCClientDTO.class);
 		try {
-			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, PNCClientDTO));
+//			scheduler.notifyEvent(new SystemEvent<>(AllConstants.OpenSRPEvent.REFERRED_PATIENTS_SUBMISSION, pncClientDTO));
 
-
-			PNCClients pncClient = ClientConverter.toPNCClient(PNCClientDTO);
+			System.out.println("Coze:Received Json = "+json);
+			System.out.println("Coze:PNC DTO Client data = "+pncClientDTO.toString());
+			PNCClients pncClient = ClientConverter.toPNCClient(pncClientDTO);
 
 
 			System.out.println("Coze:PNC Client data = "+new Gson().toJson(pncClient));
-
-
 			pncClientsRepository.save(pncClient);
 
 
-			PNCCompleteCLientDataDTO PNCCompleteCLientDataDTO = new PNCCompleteCLientDataDTO();
+			PNCCompleteCLientDataDTO pncCompleteCLientDataDTO = new PNCCompleteCLientDataDTO();
 			List<HealthFacilitiesClients> healthFacilitiesPatients = healthFacilitiesClientsRepository.getHealthFacilityPatients("SELECT * FROM " + HealthFacilitiesClients.tbName + " WHERE " + HealthFacilitiesClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
 					new Object[]{pncClient.getHealthFacilityClientId()});
 
@@ -227,17 +226,17 @@ public class ReferralPatientsController {
 			List<ANCClients> patients = ancClientsRepository.getPatients("SELECT * FROM " + ANCClients.tbName + " WHERE " + ANCClients.COL_CLIENTS_ID + "=?",
 					new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
 
-			PNCCompleteCLientDataDTO.setAncClientDTO(ClientConverter.toPatientsDTO(patients.get(0)));
+			pncCompleteCLientDataDTO.setAncClientDTO(ClientConverter.toPatientsDTO(patients.get(0)));
 
 			List<PNCClients> pncClientsList = pncClientsRepository.getPncClients("SELECT * FROM " + PNCClients.tbName + " WHERE " + PNCClients.COL_HEALTH_FACILITY_CLIENT_ID + "=?",
-					new Object[]{healthFacilitiesPatient.getAncClient().getClientId()});
+					new Object[]{healthFacilitiesPatient.getHealthFacilityClientId()});
 
-			PNCCompleteCLientDataDTO.setPncClientDTO(ClientConverter.toPNCClientDTO(pncClientsList.get(0)));
+			pncCompleteCLientDataDTO.setPncClientDTO(ClientConverter.toPNCClientDTO(pncClientsList.get(0)));
 
-			return new ResponseEntity<PNCCompleteCLientDataDTO>(PNCCompleteCLientDataDTO,HttpStatus.CREATED);
+			return new ResponseEntity<PNCCompleteCLientDataDTO>(pncCompleteCLientDataDTO,HttpStatus.CREATED);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(format("PNC Client processing failed with exception {0}.\nSubmissions: {1}", e, PNCClientDTO));
+			logger.error(format("PNC Client processing failed with exception {0}.\nSubmissions: {1}", e, pncClientDTO));
 
 		}
 		return null;
@@ -441,7 +440,7 @@ public class ReferralPatientsController {
 				googleFCMService.SendPushNotification(msg, tokens, false);
 				String healthFacilitySql = "SELECT * FROM " + HealthFacilities.tbName + " WHERE " + HealthFacilities.COL_OPENMRS_UIID + " = ?";
 				Object[] healthFacilityParams = new Object[]{
-						clientReferral.getFacilityId(), clientReferral.getFacilityId()};
+						clientReferral.getFromFacilityId()};
 
 				List<HealthFacilities> healthFacilities = null;
 				try {

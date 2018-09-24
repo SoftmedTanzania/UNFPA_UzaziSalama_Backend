@@ -6,12 +6,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class PNCClientDTO {
-
 	@JsonProperty
-	private Long pncClientsId;
+	private long pncClientID;
 
     @JsonProperty
-    private Long healthFacilityClientId;
+    private long healthFacilityClientID;
 
     @JsonProperty
     private long dateOfDelivery;
@@ -28,7 +27,7 @@ public class PNCClientDTO {
 	 * 3 = scissory incection
 	 */
 	@JsonProperty
-	private int deliveryMethods;
+	private int deliveryMethod;
 
 
 	/**
@@ -37,62 +36,65 @@ public class PNCClientDTO {
 	 * 3 = retain placenta
 	 */
 	@JsonProperty
-	private int delivery_complications;
+	private int deliveryComplications;
 
 	/**
 	 *  0 = BAD
 	 *  1 = TRUE
 	 */
 	@JsonProperty
-	private int mothersDischargeCondition;
+	private int motherDischargeCondition;
 
 
 
 	@JsonProperty
-	private String childsGender;
+	private String childGender;
 
 
 	@JsonProperty
-	private double childsWeight;
+	private double childWeight;
 
 	@JsonProperty
 	private int apgarScore;
 
 
 	@JsonProperty
-	private boolean childs_abnormalites;
+	private boolean childAbnomalities;
 
 	/**
 	 *  0 = BAD
 	 *  1 = TRUE
 	 */
 	@JsonProperty
-	private int childs_discharge_condition;
+	private int childDischargeCondition;
 
 	@JsonProperty
-	private boolean died_within_24_hrs;
+	private boolean diedWithin24Hours;
+
+	@JsonProperty
+	private int childPlaceOfBirth;
 
 	/**
 	 * 1 = FBS
 	 * 2 = MSB
 	 */
 	@JsonProperty
-	private int types_of_still_birth;
+	private int stillBirthTypes;
 
-	public Long getPncClientsId() {
-		return pncClientsId;
+	public Long getPncClientID() {
+		return pncClientID;
 	}
 
-	public void setPncClientsId(Long pncClientsId) {
-		this.pncClientsId = pncClientsId;
+	public void setPncClientID(Long pncClientID) {
+		this.pncClientID = pncClientID;
 	}
 
-	public Long getHealthFacilityClientId() {
-		return healthFacilityClientId;
+	public Long getHealthFacilityClientID() {
+		return healthFacilityClientID;
 	}
 
-	public void setHealthFacilityClientId(Long healthFacilityClientId) {
-		this.healthFacilityClientId = healthFacilityClientId;
+	public void setHealthFacilityClientID(Long healthFacilityClientID) {
+		this.healthFacilityClientID = healthFacilityClientID;
 	}
 
 	public long getDateOfDelivery() {
@@ -119,44 +121,44 @@ public class PNCClientDTO {
 		this.kuharibikaMimba = kuharibikaMimba;
 	}
 
-	public int getDeliveryMethods() {
-		return deliveryMethods;
+	public int getDeliveryMethod() {
+		return deliveryMethod;
 	}
 
-	public void setDeliveryMethods(int deliveryMethods) {
-		this.deliveryMethods = deliveryMethods;
+	public void setDeliveryMethod(int deliveryMethod) {
+		this.deliveryMethod = deliveryMethod;
 	}
 
-	public int getDelivery_complications() {
-		return delivery_complications;
+	public int getDeliveryComplications() {
+		return deliveryComplications;
 	}
 
-	public void setDelivery_complications(int delivery_complications) {
-		this.delivery_complications = delivery_complications;
+	public void setDeliveryComplications(int deliveryComplications) {
+		this.deliveryComplications = deliveryComplications;
 	}
 
-	public int getMothersDischargeCondition() {
-		return mothersDischargeCondition;
+	public int getMotherDischargeCondition() {
+		return motherDischargeCondition;
 	}
 
-	public void setMothersDischargeCondition(int mothersDischargeCondition) {
-		this.mothersDischargeCondition = mothersDischargeCondition;
+	public void setMotherDischargeCondition(int motherDischargeCondition) {
+		this.motherDischargeCondition = motherDischargeCondition;
 	}
 
-	public String getChildsGender() {
-		return childsGender;
+	public String getChildGender() {
+		return childGender;
 	}
 
-	public void setChildsGender(String childsGender) {
-		this.childsGender = childsGender;
+	public void setChildGender(String childGender) {
+		this.childGender = childGender;
 	}
 
-	public double getChildsWeight() {
-		return childsWeight;
+	public double getChildWeight() {
+		return childWeight;
 	}
 
-	public void setChildsWeight(double childsWeight) {
-		this.childsWeight = childsWeight;
+	public void setChildWeight(double childWeight) {
+		this.childWeight = childWeight;
 	}
 
 	public int getApgarScore() {
@@ -167,36 +169,44 @@ public class PNCClientDTO {
 		this.apgarScore = apgarScore;
 	}
 
-	public boolean isChilds_abnormalites() {
-		return childs_abnormalites;
+	public boolean isChildAbnomalities() {
+		return childAbnomalities;
 	}
 
-	public void setChilds_abnormalites(boolean childs_abnormalites) {
-		this.childs_abnormalites = childs_abnormalites;
+	public void setChildAbnomalities(boolean childAbnomalities) {
+		this.childAbnomalities = childAbnomalities;
 	}
 
-	public int getChilds_discharge_condition() {
-		return childs_discharge_condition;
+	public int getChildDischargeCondition() {
+		return childDischargeCondition;
 	}
 
-	public void setChilds_discharge_condition(int childs_discharge_condition) {
-		this.childs_discharge_condition = childs_discharge_condition;
+	public void setChildDischargeCondition(int childDischargeCondition) {
+		this.childDischargeCondition = childDischargeCondition;
 	}
 
-	public boolean isDied_within_24_hrs() {
-		return died_within_24_hrs;
+	public boolean isDiedWithin24Hours() {
+		return diedWithin24Hours;
 	}
 
-	public void setDied_within_24_hrs(boolean died_within_24_hrs) {
-		this.died_within_24_hrs = died_within_24_hrs;
+	public void setDiedWithin24Hours(boolean diedWithin24Hours) {
+		this.diedWithin24Hours = diedWithin24Hours;
 	}
 
-	public int getTypes_of_still_birth() {
-		return types_of_still_birth;
+	public int getStillBirthTypes() {
+		return stillBirthTypes;
 	}
 
-	public void setTypes_of_still_birth(int types_of_still_birth) {
-		this.types_of_still_birth = types_of_still_birth;
+	public void setStillBirthTypes(int stillBirthTypes) {
+		this.stillBirthTypes = stillBirthTypes;
+	}
+
+	public int getChildPlaceOfBirth() {
+		return childPlaceOfBirth;
+	}
+
+	public void setChildPlaceOfBirth(int childPlaceOfBirth) {
+		this.childPlaceOfBirth = childPlaceOfBirth;
 	}
 
 	@Override

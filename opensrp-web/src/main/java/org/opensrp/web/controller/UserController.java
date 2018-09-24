@@ -190,4 +190,38 @@ public class UserController {
 
 		return new ResponseEntity<>(jsonArray.toString(), OK);
 	}
+
+
+	@RequestMapping("get-facility-chw/{facilityUUID}")
+	@ResponseBody
+	public ResponseEntity<String> getTeamMembersByFacility(@PathVariable("facilityUUID") String facilityUUID) {
+
+
+		List<HealthFacilities> healthFacilities = null;
+		try {
+			String sql = "SELECT * FROM "+ HealthFacilities.tbName+" WHERE "+HealthFacilities.COL_OPENMRS_UIID+ " = '"+facilityUUID+"'";
+			healthFacilities = facilityRepository.getHealthFacility(sql,null);
+
+			System.out.println("FACILITY-HFR-SQL : "+sql);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		List<String> healthFacilitiesOpenMRSUUIDS = new ArrayList<>();
+		for(HealthFacilities healthFacility:healthFacilities){
+			healthFacilitiesOpenMRSUUIDS.add(healthFacility.getOpenMRSUIID());
+			System.out.println("FACILITY-UUID : "+healthFacility.getOpenMRSUIID());
+		}
+
+		System.out.println("FACILITY-UUID-LIST : "+new Gson().toJson(healthFacilitiesOpenMRSUUIDS));
+		JSONArray jsonArray = null;
+		try {
+			jsonArray = openmrsUserService.getTeamMembersByFacilityId(healthFacilitiesOpenMRSUUIDS);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return new ResponseEntity<>(jsonArray.toString(), OK);
+	}
 }

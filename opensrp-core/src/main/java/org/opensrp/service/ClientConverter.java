@@ -20,7 +20,7 @@ public class ClientConverter {
             ANCClients client = new ANCClients();
 
 
-            client.setClientId(ancClientDTO.getClientId());
+            client.setClientId(ancClientDTO.getAncClientId());
             client.setFirstName(ancClientDTO.getFirstName());
             client.setMiddleName(ancClientDTO.getMiddleName());
             client.setSurname(ancClientDTO.getSurname());
@@ -90,7 +90,7 @@ public class ClientConverter {
 		try {
 			AncClientDTO ancClientDTO = new AncClientDTO();
 
-			ancClientDTO.setClientId(client.getClientId());
+			ancClientDTO.setAncClientId(client.getClientId());
 			ancClientDTO.setFirstName(client.getFirstName());
 			ancClientDTO.setMiddleName(client.getMiddleName());
 			ancClientDTO.setSurname(client.getSurname());
@@ -155,21 +155,22 @@ public class ClientConverter {
         try {
             PNCClientDTO pncClientDTO = new PNCClientDTO();
 
-            pncClientDTO.setHealthFacilityClientId(clients.getHealthFacilityClientId());
-            pncClientDTO.setPncClientsId(clients.getPncClientsId());
+            pncClientDTO.setHealthFacilityClientID(clients.getHealthFacilityClientId());
+            pncClientDTO.setPncClientID(clients.getPncClientsId());
             pncClientDTO.setApgarScore(clients.getApgarScore());
-            pncClientDTO.setChilds_abnormalites(clients.isChilds_abnormalites());
-            pncClientDTO.setChilds_discharge_condition(clients.getChilds_discharge_condition());
-            pncClientDTO.setChildsGender(clients.getChildsGender());
-            pncClientDTO.setChildsWeight(clients.getChildsWeight());
+            pncClientDTO.setChildAbnomalities(clients.isChilds_abnormalites());
+            pncClientDTO.setChildDischargeCondition(clients.getChilds_discharge_condition());
+            pncClientDTO.setChildGender(clients.getChildsGender());
+            pncClientDTO.setChildWeight(clients.getChildsWeight());
             pncClientDTO.setDateOfAdmission(clients.getDateOfAdmission().getTime());
             pncClientDTO.setDateOfDelivery(clients.getDateOfDelivery().getTime());
-            pncClientDTO.setDelivery_complications(clients.getDelivery_complications());
-            pncClientDTO.setDeliveryMethods(clients.getDeliveryMethods());
-            pncClientDTO.setDied_within_24_hrs(clients.isDied_within_24_hrs());
+            pncClientDTO.setDeliveryComplications(clients.getDelivery_complications());
+            pncClientDTO.setDeliveryMethod(clients.getDeliveryMethods());
+            pncClientDTO.setDiedWithin24Hours(clients.isDied_within_24_hrs());
             pncClientDTO.setKuharibikaMimba(clients.getKuharibikaMimba());
-            pncClientDTO.setMothersDischargeCondition(clients.getMothersDischargeCondition());
-            pncClientDTO.setTypes_of_still_birth(clients.getTypes_of_still_birth());
+            pncClientDTO.setMotherDischargeCondition(clients.getMothersDischargeCondition());
+            pncClientDTO.setStillBirthTypes(clients.getTypes_of_still_birth());
+            pncClientDTO.setChildPlaceOfBirth(clients.getChildPlaceOfBirth());
 
 
             return pncClientDTO;
@@ -183,13 +184,13 @@ public class ClientConverter {
         try {
             PNCClients pncClient = new PNCClients();
 
-            pncClient.setHealthFacilityClientId(clientsDTO.getHealthFacilityClientId());
-            pncClient.setPncClientsId(clientsDTO.getPncClientsId());
+            pncClient.setHealthFacilityClientId(clientsDTO.getHealthFacilityClientID());
+            pncClient.setPncClientsId(clientsDTO.getPncClientID());
             pncClient.setApgarScore(clientsDTO.getApgarScore());
-            pncClient.setChilds_abnormalites(clientsDTO.isChilds_abnormalites());
-            pncClient.setChilds_discharge_condition(clientsDTO.getChilds_discharge_condition());
-            pncClient.setChildsGender(clientsDTO.getChildsGender());
-            pncClient.setChildsWeight(clientsDTO.getChildsWeight());
+            pncClient.setChilds_abnormalites(clientsDTO.isChildAbnomalities());
+            pncClient.setChilds_discharge_condition(clientsDTO.getChildDischargeCondition());
+            pncClient.setChildsGender(clientsDTO.getChildGender());
+            pncClient.setChildsWeight(clientsDTO.getChildWeight());
 
 
             try {
@@ -212,12 +213,12 @@ public class ClientConverter {
 
 
 
-            pncClient.setDelivery_complications(clientsDTO.getDelivery_complications());
-            pncClient.setDeliveryMethods(clientsDTO.getDeliveryMethods());
-            pncClient.setDied_within_24_hrs(clientsDTO.isDied_within_24_hrs());
+            pncClient.setDelivery_complications(clientsDTO.getDeliveryComplications());
+            pncClient.setDeliveryMethods(clientsDTO.getDeliveryMethod());
+            pncClient.setDied_within_24_hrs(clientsDTO.isDiedWithin24Hours());
             pncClient.setKuharibikaMimba(clientsDTO.isKuharibikaMimba());
-            pncClient.setMothersDischargeCondition(clientsDTO.getMothersDischargeCondition());
-            pncClient.setTypes_of_still_birth(clientsDTO.getTypes_of_still_birth());
+            pncClient.setMothersDischargeCondition(clientsDTO.getMotherDischargeCondition());
+            pncClient.setTypes_of_still_birth(clientsDTO.getStillBirthTypes());
 
 
             return pncClient;

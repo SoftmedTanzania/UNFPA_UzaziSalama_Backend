@@ -200,7 +200,6 @@ public class ReferralPatientsService {
             id = ancClientsResults.get(0).getClientId();
 
             System.out.println("Coze = using the received patients using client id =  "+id);
-
             try {
                 System.out.println("Coze = update query =  "+"UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
                 ancClientsRepository.executeQuery("UPDATE "+ANCClients.tbName+" SET "+ANCClients.COL_CLIENT_TYPE+" = "+patient.getClientType()+" WHERE "+ANCClients.COL_CLIENTS_ID+" = "+ancClientsResults.get(0).getClientId());
@@ -232,6 +231,7 @@ public class ReferralPatientsService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         if (healthFacilities.size() > 0) {
             healthFacilityId = healthFacilities.get(0).getId();
         }else{
