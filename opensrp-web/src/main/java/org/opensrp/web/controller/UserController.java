@@ -165,7 +165,7 @@ public class UserController {
 
 		List<HealthFacilities> healthFacilities = null;
 		try {
-			String sql = "SELECT * FROM "+ HealthFacilities.tbName+" WHERE "+HealthFacilities.COL_HFR_CODE+ " IN ("+facilitiesHFRCodes+")";
+			String sql = "SELECT * FROM "+ HealthFacilities.tbName+" WHERE "+HealthFacilities.COL_OPENMRS_UIID+ " IN ("+facilitiesHFRCodes+")";
 			healthFacilities = facilityRepository.getHealthFacility(sql,null);
 
 			System.out.println("FACILITY-HFR-SQL : "+sql);

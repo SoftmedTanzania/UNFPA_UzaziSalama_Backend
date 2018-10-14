@@ -916,6 +916,69 @@ public class ReferralPatientsController {
 		}
 	}
 
+	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-facility-referrals-summary")
+	@ResponseBody
+	public ResponseEntity<List<FacilityReferralsSummaryDTO>> getFacilityReferralsSummaryLists(@RequestBody String json) {
+		JSONObject object = null;
+		try {
+			object = new JSONObject(json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JSONArray array = null;
+		try {
+			array = object.getJSONArray("facility_uuid");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		//Default dates if the date range is not passed
+		String fromDate = "2017-01-01";
+		String toDate = "2020-01-01";
+		try {
+			toDate = object.getString("to_date");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			fromDate = object.getString("from_date");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		int size = array.length();
+		String faciityUIIDs = "";
+		for(int i=0;i<size;i++){
+			try {
+				faciityUIIDs+="'"+array.getString(i)+"',";
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+		if ( faciityUIIDs.length() > 0 && faciityUIIDs.charAt(faciityUIIDs.length() - 1) == ',') {
+			faciityUIIDs = faciityUIIDs.substring(0, faciityUIIDs.length() - 1);
+		}
+
+		try {
+			List<FacilityReferralsSummaryDTO> chwReferralsSummaryDTOS = patientReferralRepository.getFacilityReferrals(
+					"SELECT COUNT("+ ClientReferral.tbName+"."+ ClientReferral.COL_REFERRAL_ID+") as count ,"+ClientReferral.COL_FACILITY_ID+" as facility_id FROM "+ ClientReferral.tbName +
+					" WHERE "+ ClientReferral.COL_REFERRAL_TYPE+"=1 AND " +
+							ClientReferral.COL_FACILITY_ID+" IN ("+faciityUIIDs+") AND "+
+							ClientReferral.COL_REFERRAL_DATE+" > '"+fromDate+"' AND "+
+							ClientReferral.COL_REFERRAL_DATE+" <= '"+toDate+"' "+
+					" GROUP BY "+ClientReferral.COL_FACILITY_ID,null);
+
+
+			return new ResponseEntity<>(chwReferralsSummaryDTOS,HttpStatus.OK);
+		}catch (Exception e){
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	@RequestMapping(headers = {"Accept=application/json"}, method = POST, value = "/get-chw-referrals-list")
 	@ResponseBody
 	public ResponseEntity<List<CHWReferralsListDTO>> getCHWANCReferralsLists(@RequestBody String json) {

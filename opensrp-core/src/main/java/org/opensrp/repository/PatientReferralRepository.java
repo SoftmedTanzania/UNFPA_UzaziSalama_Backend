@@ -4,6 +4,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.opensrp.domain.ClientReferral;
 import org.opensrp.dto.CHWReferralsListDTO;
 import org.opensrp.dto.CHWReferralsSummaryDTO;
+import org.opensrp.dto.FacilityReferralsSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -77,6 +78,10 @@ public class PatientReferralRepository {
 		return this.jdbcTemplate.query(sql, args, new CHWReferralsSummaryRowMapper());
 	}
 
+	public List<FacilityReferralsSummaryDTO> getFacilityReferrals(String sql, Object[] args) throws Exception {
+		return this.jdbcTemplate.query(sql, args, new FacilityReferralsSummaryRowMapper());
+	}
+
 	public List<CHWReferralsListDTO> getCHWReferralsList(String sql, Object[] args) throws Exception {
 		return this.jdbcTemplate.query(sql, args, new CHWReferralsListRowMapper());
 	}
@@ -112,6 +117,17 @@ public class PatientReferralRepository {
 			chwReferralsSummaryDTO.setCount(rs.getInt(rs.findColumn("count")));
 			chwReferralsSummaryDTO.setServiceName(rs.getString(rs.findColumn("service_name")));
 			return  chwReferralsSummaryDTO;
+		}
+
+	}
+
+	public class FacilityReferralsSummaryRowMapper implements RowMapper<FacilityReferralsSummaryDTO> {
+		public FacilityReferralsSummaryDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FacilityReferralsSummaryDTO facilityReferralsSummaryDTO =new FacilityReferralsSummaryDTO();
+
+			facilityReferralsSummaryDTO.setCount(rs.getInt(rs.findColumn("count")));
+			facilityReferralsSummaryDTO.setFacility_uuid(rs.getString(rs.findColumn("facility_id")));
+			return  facilityReferralsSummaryDTO;
 		}
 
 	}
